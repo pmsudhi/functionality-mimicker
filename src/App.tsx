@@ -9,7 +9,7 @@ import StaffingStructure from '@/components/staffing/index';
 import ScenarioManager from '@/components/scenarios/index';
 import FinancialImpact from '@/components/financial/FinancialImpact';
 import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
-import ScenarioBuilder from '@/components/ScenarioBuilder';  // This is the standalone component
+import WhatIfAnalisis from '@/components/WhatIfAnalisis';  // Updated import path
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
             {/* Planning & Scenarios */}
             <Route path="/planning" element={<PlanningBoard />} />
             <Route path="/scenarios" element={<ScenarioManager />} />
-            <Route path="/scenario-builder" element={<ScenarioBuilder />} />
+            <Route path="/scenario-builder" element={<WhatIfAnalisis />} />
             
             {/* Analysis & Reports */}
             <Route path="/financial" element={<FinancialImpact />} />
