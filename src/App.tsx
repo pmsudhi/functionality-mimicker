@@ -9,7 +9,7 @@ import StaffingStructure from '@/components/staffing/index';
 import ScenarioManager from '@/components/scenarios/index';
 import FinancialImpact from '@/components/financial/FinancialImpact';
 import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
-import ScenarioBuilder from '@/components/ScenarioBuilder';  // Updated import path
+import ScenarioBuilder from '@/components/ScenarioBuilder';  // This is the standalone component
 
 function App() {
   return (
