@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface WhatIfMetricCardProps {
   title: string;
   value: string;
-  change: string;
+  change?: string;
 }
 
 const WhatIfMetricCard = ({ title, value, change }: WhatIfMetricCardProps) => (
@@ -12,7 +12,7 @@ const WhatIfMetricCard = ({ title, value, change }: WhatIfMetricCardProps) => (
     <CardContent className="p-4">
       <h3 className="text-sm font-medium mb-1">{title}</h3>
       <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{change}</p>
+      {change && <p className="text-xs text-green-500">{change}</p>}
     </CardContent>
   </Card>
 );

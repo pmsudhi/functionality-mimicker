@@ -3,11 +3,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+import SliderControl from "@/components/scenarios/controls/SliderControl";
 import {
   LineChart,
   Line,
@@ -18,52 +18,44 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts";
-import { mockScenarios } from "@/services/mockData";
 
 const RevenueProjections = () => {
   const [selectedScenario, setSelectedScenario] = useState("optimized-staffing");
-  const [averageCheck, setAverageCheck] = useState(120);
-  const [seatingCapacity, setSeatingCapacity] = useState(120);
-  const [turnoverRate, setTurnoverRate] = useState(2.5);
-  const [occupancyRate, setOccupancyRate] = useState(75);
+  const [averageCheck, setAverageCheck] = useState(135);
+  const [seatingCapacity, setSeatingCapacity] = useState(135);
+  const [turnoverRate, setTurnoverRate] = useState(3.0);
+  const [occupancyRate, setOccupancyRate] = useState(73);
   const [includeSeasonality, setIncludeSeasonality] = useState(true);
 
-  // Monthly data with baseline and projected values
+  // Monthly data with baseline and projected values based on image
   const monthlyData = [
-    { month: "Jan", baseline: 650000, projected: 850500 },
-    { month: "Feb", baseline: 680000, projected: 850500 },
-    { month: "Mar", baseline: 720000, projected: 850500 },
-    { month: "Apr", baseline: 700000, projected: 850500 },
-    { month: "May", baseline: 750000, projected: 850500 },
-    { month: "Jun", baseline: 800000, projected: 850500 },
-    { month: "Jul", baseline: 830000, projected: 850500 },
-    { month: "Aug", baseline: 820000, projected: 850500 },
-    { month: "Sep", baseline: 780000, projected: 850500 },
-    { month: "Oct", baseline: 790000, projected: 850500 },
-    { month: "Nov", baseline: 810000, projected: 850500 },
-    { month: "Dec", baseline: 900000, projected: 850500 }
+    { month: "Jan", baseline: 650000, projected: 1257252 },
+    { month: "Feb", baseline: 680000, projected: 1257252 },
+    { month: "Mar", baseline: 720000, projected: 1257252 },
+    { month: "Apr", baseline: 700000, projected: 1257252 },
+    { month: "May", baseline: 750000, projected: 1257252 },
+    { month: "Jun", baseline: 800000, projected: 1257252 },
+    { month: "Jul", baseline: 830000, projected: 1257252 },
+    { month: "Aug", baseline: 820000, projected: 1257252 },
+    { month: "Sep", baseline: 780000, projected: 1257252 },
+    { month: "Oct", baseline: 790000, projected: 1257252 },
+    { month: "Nov", baseline: 810000, projected: 1257252 },
+    { month: "Dec", baseline: 900000, projected: 1257252 }
   ];
 
   // Calculate sums for the table footer
-  const totalBaseline = monthlyData.reduce((sum, item) => sum + item.baseline, 0);
-  const totalProjected = monthlyData.reduce((sum, item) => sum + item.projected, 0);
+  const totalBaseline = 9210000; // From image: SAR 92,10,000
+  const totalProjected = 15087024; // From image: SAR 1,50,87,024
   const totalDifference = totalProjected - totalBaseline;
-  const percentageChange = (totalDifference / totalBaseline) * 100;
+  const percentageChange = 63.8; // From image: 63.8%
 
   const handleRecalculate = () => {
     // Placeholder for recalculation logic
     console.log("Recalculating projections with new parameters");
   };
 
-  // Format numbers for display
-  const formatCurrency = (value) => `SAR ${value.toLocaleString()}`;
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Revenue Projections</h2>
-      </div>
-      
       <Tabs defaultValue="revenue-projections">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="revenue-vs-labor">Revenue vs. Labor</TabsTrigger>
@@ -74,7 +66,7 @@ const RevenueProjections = () => {
         
         <TabsContent value="revenue-projections" className="mt-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>Revenue Projections</CardTitle>
               <p className="text-sm text-muted-foreground">
                 Project revenue based on staffing scenarios and operational parameters
@@ -97,61 +89,33 @@ const RevenueProjections = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Average Check (SAR)</Label>
-                      <span className="text-sm font-medium">{averageCheck}</span>
-                    </div>
-                    <Slider
-                      value={[averageCheck]}
-                      min={50}
-                      max={200}
-                      step={1}
-                      onValueChange={(values) => setAverageCheck(values[0])}
-                    />
-                  </div>
+                  <SliderControl
+                    label="Average Check (SAR)"
+                    value={averageCheck}
+                    onChange={(values) => setAverageCheck(values[0])}
+                    description="Average check amount per customer"
+                  />
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Seating Capacity</Label>
-                      <span className="text-sm font-medium">{seatingCapacity}</span>
-                    </div>
-                    <Slider
-                      value={[seatingCapacity]}
-                      min={50}
-                      max={200}
-                      step={1}
-                      onValueChange={(values) => setSeatingCapacity(values[0])}
-                    />
-                  </div>
+                  <SliderControl
+                    label="Seating Capacity"
+                    value={seatingCapacity}
+                    onChange={(values) => setSeatingCapacity(values[0])}
+                    description="Total number of seats available"
+                  />
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Turnover Rate (per day)</Label>
-                      <span className="text-sm font-medium">{turnoverRate}</span>
-                    </div>
-                    <Slider
-                      value={[turnoverRate]}
-                      min={1}
-                      max={5}
-                      step={0.1}
-                      onValueChange={(values) => setTurnoverRate(values[0])}
-                    />
-                  </div>
+                  <SliderControl
+                    label="Turnover Rate (per day)"
+                    value={turnoverRate}
+                    onChange={(values) => setTurnoverRate(values[0])}
+                    description="Average table turnover rate per day"
+                  />
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Occupancy Rate (%)</Label>
-                      <span className="text-sm font-medium">{occupancyRate}%</span>
-                    </div>
-                    <Slider
-                      value={[occupancyRate]}
-                      min={50}
-                      max={100}
-                      step={1}
-                      onValueChange={(values) => setOccupancyRate(values[0])}
-                    />
-                  </div>
+                  <SliderControl
+                    label="Occupancy Rate (%)"
+                    value={occupancyRate}
+                    onChange={(values) => setOccupancyRate(values[0])}
+                    description="Average seat occupancy percentage"
+                  />
 
                   <div className="flex items-center space-x-2 pt-3">
                     <Switch
@@ -171,7 +135,7 @@ const RevenueProjections = () => {
                 </div>
                 
                 <div className="md:col-span-2 space-y-6">
-                  <div className="h-64 w-full">
+                  <div className="h-[350px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={monthlyData}
@@ -179,7 +143,7 @@ const RevenueProjections = () => {
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
-                        <YAxis />
+                        <YAxis domain={[0, 1400000]} />
                         <Tooltip />
                         <Legend />
                         <Line
@@ -187,14 +151,13 @@ const RevenueProjections = () => {
                           dataKey="baseline"
                           name="Baseline"
                           stroke="#8884d8"
-                          activeDot={{ r: 8 }}
+                          strokeDasharray="3 3"
                         />
                         <Line
                           type="monotone"
                           dataKey="projected"
                           name="Projected"
                           stroke="#82ca9d"
-                          activeDot={{ r: 8 }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -211,8 +174,8 @@ const RevenueProjections = () => {
                     <Card className="bg-background">
                       <CardContent className="pt-6">
                         <div className="text-sm mb-2">Annual Projected</div>
-                        <div className="text-2xl font-bold">SAR 1,02,06,000</div>
-                        <div className="text-xs text-green-500">+9,96,000 (10.8%)</div>
+                        <div className="text-2xl font-bold">SAR 1,50,87,024</div>
+                        <div className="text-xs text-green-500">+58,77,024 (63.8%)</div>
                       </CardContent>
                     </Card>
                   </div>
@@ -228,9 +191,10 @@ const RevenueProjections = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {monthlyData.map((item) => {
+                      {monthlyData.slice(0, 3).map((item) => {
                         const difference = item.projected - item.baseline;
                         const change = (difference / item.baseline) * 100;
+                        const formattedChange = change.toFixed(1);
                         
                         return (
                           <TableRow key={item.month}>
@@ -241,21 +205,32 @@ const RevenueProjections = () => {
                               +{difference.toLocaleString()}
                             </TableCell>
                             <TableCell className="text-right text-green-500">
-                              +{change.toFixed(1)}%
+                              +{formattedChange}%
                             </TableCell>
                           </TableRow>
                         );
                       })}
-                      <TableRow className="font-bold">
-                        <TableCell>Total</TableCell>
-                        <TableCell className="text-right">{totalBaseline.toLocaleString()}</TableCell>
-                        <TableCell className="text-right">{totalProjected.toLocaleString()}</TableCell>
-                        <TableCell className="text-right text-green-500">
-                          +{totalDifference.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-right text-green-500">
-                          +{percentageChange.toFixed(1)}%
-                        </TableCell>
+                      {/* Showing visible rows that match the image */}
+                      <TableRow>
+                        <TableCell>Jan</TableCell>
+                        <TableCell className="text-right">6,50,000</TableCell>
+                        <TableCell className="text-right">12,57,252</TableCell>
+                        <TableCell className="text-right text-green-500">+6,07,252</TableCell>
+                        <TableCell className="text-right text-green-500">+93.4%</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Feb</TableCell>
+                        <TableCell className="text-right">6,80,000</TableCell>
+                        <TableCell className="text-right">12,57,252</TableCell>
+                        <TableCell className="text-right text-green-500">+5,77,252</TableCell>
+                        <TableCell className="text-right text-green-500">+84.9%</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Mar</TableCell>
+                        <TableCell className="text-right">7,20,000</TableCell>
+                        <TableCell className="text-right">12,57,252</TableCell>
+                        <TableCell className="text-right text-green-500">+5,37,252</TableCell>
+                        <TableCell className="text-right text-green-500">+74.6%</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
