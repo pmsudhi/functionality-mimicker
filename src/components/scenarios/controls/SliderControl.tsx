@@ -51,7 +51,7 @@ const SliderControl = ({
     <div className="space-y-2">
       <div className="flex justify-between">
         <label className="text-sm font-medium">{label}</label>
-        <span className="text-sm font-medium">
+        <span className="text-sm font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-md">
           {label.includes("Rate (%)") || label.includes("Rate (") || label.includes("%")
             ? `${displayValue}%` 
             : displayValue}

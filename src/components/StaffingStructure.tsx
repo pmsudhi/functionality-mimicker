@@ -5,9 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { FileText, FileSpreadsheet, Printer } from "lucide-react";
+import { 
+  FileText, 
+  FileSpreadsheet, 
+  Printer, 
+  Users, 
+  ChefHat, 
+  Coffee, 
+  BarChart4, 
+  DollarSign, 
+  BadgePercent, 
+  Building2 
+} from "lucide-react";
 
 // Sample data for staffing structure
 const staffDistributionData = [
@@ -47,7 +59,17 @@ const staffPositionsData = {
   ]
 };
 
-const COLORS = ["#22c55e", "#3b82f6", "#8b5cf6", "#a855f7", "#ec4899"];
+// Custom tooltip formatter for the pie chart
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-background/95 backdrop-blur-sm p-2 border rounded-lg shadow-md">
+        <p className="font-medium text-sm">{`${payload[0].name}: ${payload[0].value}%`}</p>
+      </div>
+    );
+  }
+  return null;
+};
 
 const StaffingStructure = () => {
   const [selectedTab, setSelectedTab] = useState("overview");
@@ -73,7 +95,10 @@ const StaffingStructure = () => {
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Staffing Structure</h1>
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">Staffing Structure</h1>
+          <p className="text-sm text-muted-foreground">Manage and analyze your staff distribution across departments</p>
+        </div>
         <div className="flex gap-4">
           <Select value={selectedBrand} onValueChange={setSelectedBrand}>
             <SelectTrigger className="w-[180px]">
@@ -101,12 +126,17 @@ const StaffingStructure = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Staff
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Staff
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalStaff}</div>
@@ -116,11 +146,16 @@ const StaffingStructure = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              FOH/BOH Ratio
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-green-500/10">
+                <Building2 className="h-4 w-4 text-green-500" />
+              </div>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                FOH/BOH Ratio
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{fohBohRatio}</div>
@@ -130,11 +165,16 @@ const StaffingStructure = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Monthly Labor Cost
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-blue-500/10">
+                <DollarSign className="h-4 w-4 text-blue-500" />
+              </div>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Monthly Labor Cost
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">SAR {(totalLaborCost / 1000).toFixed(2)}k</div>
@@ -143,22 +183,48 @@ const StaffingStructure = () => {
             </p>
           </CardContent>
         </Card>
+        
+        <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-purple-500/10">
+                <BadgePercent className="h-4 w-4 text-purple-500" />
+              </div>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Labor Cost Percentage
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24.3%</div>
+            <p className="text-xs text-muted-foreground">
+              Of monthly revenue
+            </p>
+          </CardContent>
+        </Card>
       </div>
       
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="bg-muted/40 mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="positions">Positions</TabsTrigger>
           <TabsTrigger value="cost-analysis">Cost Analysis</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview">
-          <Card>
-            <CardHeader>
-              <CardTitle>Staff Distribution by Department</CardTitle>
-              <CardDescription>Breakdown by department</CardDescription>
+          <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm">
+            <CardHeader className="pb-2 border-b border-border/30">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-primary/10">
+                  <BarChart4 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-semibold tracking-tight">Staff Distribution by Department</CardTitle>
+                  <CardDescription>Breakdown of staff allocation across departments</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -167,24 +233,41 @@ const StaffingStructure = () => {
                         data={staffDistributionData}
                         cx="50%"
                         cy="50%"
-                        labelLine={true}
-                        outerRadius={80}
+                        labelLine={false}
+                        outerRadius={120}
+                        innerRadius={60}
                         fill="#8884d8"
                         dataKey="value"
                         label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        paddingAngle={2}
                       >
                         {staffDistributionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.color} 
+                            stroke="transparent"
+                            className="hover:opacity-80 transition-opacity"
+                          />
                         ))}
                       </Pie>
-                      <Tooltip />
-                      <Legend />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend 
+                        layout="horizontal" 
+                        verticalAlign="bottom" 
+                        align="center"
+                        formatter={(value) => <span className="text-sm font-medium">{value}</span>}
+                        iconType="circle"
+                        iconSize={10}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Department Summary</h3>
+                  <Badge variant="outline" className="mb-4 font-medium bg-primary/5">
+                    <BadgePercent className="h-3.5 w-3.5 mr-1 text-primary" />
+                    Department Summary
+                  </Badge>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -203,13 +286,17 @@ const StaffingStructure = () => {
                             </div>
                           </TableCell>
                           <TableCell>{Math.round(totalStaff * dept.value / 100)}</TableCell>
-                          <TableCell>{dept.value}%</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="font-medium">{dept.value}%</Badge>
+                          </TableCell>
                         </TableRow>
                       ))}
                       <TableRow className="font-bold">
                         <TableCell>Total</TableCell>
                         <TableCell>{totalStaff}</TableCell>
-                        <TableCell>100%</TableCell>
+                        <TableCell>
+                          <Badge variant="default" className="font-medium">100%</Badge>
+                        </TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -217,51 +304,76 @@ const StaffingStructure = () => {
               </div>
               
               <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Staff Breakdown by Position</h3>
+                <Badge variant="outline" className="mb-4 font-medium bg-primary/5">
+                  <Users className="h-3.5 w-3.5 mr-1 text-primary" />
+                  Staff Breakdown by Position
+                </Badge>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="font-medium mb-2">Front of House (FOH)</h4>
-                    <div className="space-y-2">
+                  <div className="bg-card/40 backdrop-blur-sm p-4 rounded-lg border border-border/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-md bg-blue-500/10">
+                        <Coffee className="h-4 w-4 text-blue-500" />
+                      </div>
+                      <h4 className="font-semibold text-base">Front of House</h4>
+                    </div>
+                    <div className="space-y-2.5">
                       {staffPositionsData.foh.map((position) => (
-                        <div key={position.position} className="flex justify-between">
-                          <span>{position.position}</span>
-                          <span className="font-medium">{position.count}</span>
+                        <div key={position.position} className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">{position.position}</span>
+                          <span className="font-medium text-sm bg-blue-500/10 text-blue-600 px-2 py-0.5 rounded-md">{position.count}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between font-bold border-t pt-2">
-                        <span>Total FOH</span>
-                        <span>{totalFOH}</span>
+                      <div className="flex justify-between font-semibold border-t border-border/40 pt-2 mt-3">
+                        <span className="text-sm">Total FOH</span>
+                        <span className="bg-blue-500/20 text-blue-700 px-2.5 py-0.5 rounded-md">{totalFOH}</span>
                       </div>
                     </div>
                   </div>
                   
-                  <div>
-                    <h4 className="font-medium mb-2">Back of House (BOH)</h4>
-                    <div className="space-y-2">
+                  <div className="bg-card/40 backdrop-blur-sm p-4 rounded-lg border border-border/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-md bg-green-500/10">
+                        <ChefHat className="h-4 w-4 text-green-500" />
+                      </div>
+                      <h4 className="font-semibold text-base">Back of House</h4>
+                    </div>
+                    <div className="space-y-2.5">
                       {staffPositionsData.boh.map((position) => (
-                        <div key={position.position} className="flex justify-between">
-                          <span>{position.position}</span>
-                          <span className="font-medium">{position.count}</span>
+                        <div key={position.position} className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">{position.position}</span>
+                          <span className="font-medium text-sm bg-green-500/10 text-green-600 px-2 py-0.5 rounded-md">{position.count}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between font-bold border-t pt-2">
-                        <span>Total BOH</span>
-                        <span>{totalBOH}</span>
+                      <div className="flex justify-between font-semibold border-t border-border/40 pt-2 mt-3">
+                        <span className="text-sm">Total BOH</span>
+                        <span className="bg-green-500/20 text-green-700 px-2.5 py-0.5 rounded-md">{totalBOH}</span>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              
+              <div className="mt-6 flex justify-between items-center p-3 bg-muted/30 rounded-lg border border-border/30">
+                <span className="font-medium">Total Staff</span>
+                <span className="font-bold text-lg">{totalStaff}</span>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="positions">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+          <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/30">
               <div>
-                <CardTitle>Position Breakdown</CardTitle>
-                <CardDescription>Detailed staff positions and costs</CardDescription>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md bg-primary/10">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-semibold tracking-tight">Position Breakdown</CardTitle>
+                    <CardDescription>Detailed staff positions and costs</CardDescription>
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="icon" onClick={() => handleExport("pdf")}>
@@ -275,66 +387,93 @@ const StaffingStructure = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Front of House (FOH)</h3>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Position</TableHead>
-                        <TableHead className="text-right">Count</TableHead>
-                        <TableHead className="text-right">Avg. Salary (SAR)</TableHead>
-                        <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {staffPositionsData.foh.map((position) => (
-                        <TableRow key={position.position}>
-                          <TableCell>{position.position}</TableCell>
-                          <TableCell className="text-right">{position.count}</TableCell>
-                          <TableCell className="text-right">{position.salary.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">{position.cost.toLocaleString()}</TableCell>
+                  <Badge variant="outline" className="mb-4 font-medium bg-blue-500/5">
+                    <Coffee className="h-3.5 w-3.5 mr-1 text-blue-500" />
+                    Front of House (FOH)
+                  </Badge>
+                  <div className="rounded-lg border border-border/30 overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Position</TableHead>
+                          <TableHead className="text-right">Count</TableHead>
+                          <TableHead className="text-right">Avg. Salary (SAR)</TableHead>
+                          <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
                         </TableRow>
-                      ))}
-                      <TableRow className="font-bold">
-                        <TableCell>Total FOH</TableCell>
-                        <TableCell className="text-right">{totalFOH}</TableCell>
-                        <TableCell className="text-right">{Math.round(staffPositionsData.foh.reduce((sum, staff) => sum + staff.cost, 0) / totalFOH).toLocaleString()}</TableCell>
-                        <TableCell className="text-right">{staffPositionsData.foh.reduce((sum, staff) => sum + staff.cost, 0).toLocaleString()}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {staffPositionsData.foh.map((position) => (
+                          <TableRow key={position.position}>
+                            <TableCell className="font-medium">{position.position}</TableCell>
+                            <TableCell className="text-right">{position.count}</TableCell>
+                            <TableCell className="text-right">{position.salary.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{position.cost.toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-muted/20">
+                          <TableCell className="font-bold">Total FOH</TableCell>
+                          <TableCell className="text-right font-bold">{totalFOH}</TableCell>
+                          <TableCell className="text-right font-bold">{Math.round(staffPositionsData.foh.reduce((sum, staff) => sum + staff.cost, 0) / totalFOH).toLocaleString()}</TableCell>
+                          <TableCell className="text-right font-bold">{staffPositionsData.foh.reduce((sum, staff) => sum + staff.cost, 0).toLocaleString()}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Back of House (BOH)</h3>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Position</TableHead>
-                        <TableHead className="text-right">Count</TableHead>
-                        <TableHead className="text-right">Avg. Salary (SAR)</TableHead>
-                        <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {staffPositionsData.boh.map((position) => (
-                        <TableRow key={position.position}>
-                          <TableCell>{position.position}</TableCell>
-                          <TableCell className="text-right">{position.count}</TableCell>
-                          <TableCell className="text-right">{position.salary.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">{position.cost.toLocaleString()}</TableCell>
+                  <Badge variant="outline" className="mb-4 font-medium bg-green-500/5">
+                    <ChefHat className="h-3.5 w-3.5 mr-1 text-green-500" />
+                    Back of House (BOH)
+                  </Badge>
+                  <div className="rounded-lg border border-border/30 overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Position</TableHead>
+                          <TableHead className="text-right">Count</TableHead>
+                          <TableHead className="text-right">Avg. Salary (SAR)</TableHead>
+                          <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
                         </TableRow>
-                      ))}
-                      <TableRow className="font-bold">
-                        <TableCell>Total BOH</TableCell>
-                        <TableCell className="text-right">{totalBOH}</TableCell>
-                        <TableCell className="text-right">{Math.round(staffPositionsData.boh.reduce((sum, staff) => sum + staff.cost, 0) / totalBOH).toLocaleString()}</TableCell>
-                        <TableCell className="text-right">{staffPositionsData.boh.reduce((sum, staff) => sum + staff.cost, 0).toLocaleString()}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {staffPositionsData.boh.map((position) => (
+                          <TableRow key={position.position}>
+                            <TableCell className="font-medium">{position.position}</TableCell>
+                            <TableCell className="text-right">{position.count}</TableCell>
+                            <TableCell className="text-right">{position.salary.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{position.cost.toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-muted/20">
+                          <TableCell className="font-bold">Total BOH</TableCell>
+                          <TableCell className="text-right font-bold">{totalBOH}</TableCell>
+                          <TableCell className="text-right font-bold">{Math.round(staffPositionsData.boh.reduce((sum, staff) => sum + staff.cost, 0) / totalBOH).toLocaleString()}</TableCell>
+                          <TableCell className="text-right font-bold">{staffPositionsData.boh.reduce((sum, staff) => sum + staff.cost, 0).toLocaleString()}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-muted/20 rounded-lg border border-border/30">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-sm text-muted-foreground">Total Staff</span>
+                      <p className="text-lg font-bold">{totalStaff}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-muted-foreground">Total Monthly Cost</span>
+                      <p className="text-lg font-bold">SAR {totalLaborCost.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-muted-foreground">Average Cost per Employee</span>
+                      <p className="text-lg font-bold">SAR {averageCostPerEmployee.toLocaleString()}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -342,55 +481,108 @@ const StaffingStructure = () => {
         </TabsContent>
         
         <TabsContent value="cost-analysis">
-          <Card>
-            <CardHeader>
-              <CardTitle>Labor Cost Analysis</CardTitle>
-              <CardDescription>Cost breakdown by department</CardDescription>
+          <Card className="overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm">
+            <CardHeader className="pb-2 border-b border-border/30">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-primary/10">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-semibold tracking-tight">Labor Cost Analysis</CardTitle>
+                  <CardDescription>Cost breakdown by department</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="h-80 mb-8">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={costAnalysisData}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                     <XAxis dataKey="department" />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ background: "var(--background)", borderColor: "var(--border)", borderRadius: "0.5rem" }}
+                    />
                     <Legend />
-                    <Bar dataKey="cost" name="Monthly Cost (SAR)" fill="#3b82f6" />
+                    <Bar dataKey="cost" name="Monthly Cost (SAR)" fill="var(--primary)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
               
               <div>
-                <h3 className="text-lg font-medium mb-4">Cost Summary</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Department</TableHead>
-                      <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
-                      <TableHead className="text-right">% of Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {costAnalysisData.map((dept) => (
-                      <TableRow key={dept.department}>
-                        <TableCell>{dept.department}</TableCell>
-                        <TableCell className="text-right">{dept.cost.toLocaleString()}</TableCell>
-                        <TableCell className="text-right">{dept.percentage}%</TableCell>
+                <Badge variant="outline" className="mb-4 font-medium bg-primary/5">
+                  <BadgePercent className="h-3.5 w-3.5 mr-1 text-primary" />
+                  Cost Summary
+                </Badge>
+                <div className="rounded-lg border border-border/30 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Department</TableHead>
+                        <TableHead className="text-right">Monthly Cost (SAR)</TableHead>
+                        <TableHead className="text-right">% of Total</TableHead>
                       </TableRow>
-                    ))}
-                    <TableRow className="font-bold">
-                      <TableCell>Total</TableCell>
-                      <TableCell className="text-right">
-                        {costAnalysisData.reduce((sum, dept) => sum + dept.cost, 0).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right">100%</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {costAnalysisData.map((dept) => (
+                        <TableRow key={dept.department}>
+                          <TableCell className="font-medium">{dept.department}</TableCell>
+                          <TableCell className="text-right">{dept.cost.toLocaleString()}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{dept.percentage}%</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow className="bg-muted/20">
+                        <TableCell className="font-bold">Total</TableCell>
+                        <TableCell className="text-right font-bold">
+                          {costAnalysisData.reduce((sum, dept) => sum + dept.cost, 0).toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge>100%</Badge>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+                
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-card/40 backdrop-blur-sm border border-border/30 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 rounded-md bg-primary/10">
+                        <DollarSign className="h-4 w-4 text-primary" />
+                      </div>
+                      <h4 className="font-medium text-sm">Labor Cost %</h4>
+                    </div>
+                    <p className="text-2xl font-bold">24.3%</p>
+                    <p className="text-xs text-muted-foreground">Of total revenue</p>
+                  </Card>
+                  
+                  <Card className="bg-card/40 backdrop-blur-sm border border-border/30 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 rounded-md bg-green-500/10">
+                        <Users className="h-4 w-4 text-green-500" />
+                      </div>
+                      <h4 className="font-medium text-sm">Staff Efficiency</h4>
+                    </div>
+                    <p className="text-2xl font-bold">4.7</p>
+                    <p className="text-xs text-muted-foreground">Covers per labor hour</p>
+                  </Card>
+                  
+                  <Card className="bg-card/40 backdrop-blur-sm border border-border/30 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 rounded-md bg-blue-500/10">
+                        <Building2 className="h-4 w-4 text-blue-500" />
+                      </div>
+                      <h4 className="font-medium text-sm">Space Efficiency</h4>
+                    </div>
+                    <p className="text-2xl font-bold">SAR 4,250</p>
+                    <p className="text-xs text-muted-foreground">Revenue per sqm</p>
+                  </Card>
+                </div>
               </div>
             </CardContent>
           </Card>
