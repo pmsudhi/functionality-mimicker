@@ -64,15 +64,21 @@ const PeakHourAnalysisContent = () => {
   
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div>
+        <p className="text-base text-muted-foreground mb-6">
+          This tab provides tools to analyze how staffing requirements change during peak operating hours.
+        </p>
+      </div>
+      
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <div>
-          <h2 className="text-xl font-bold">Peak Hour Staffing Analysis</h2>
+          <h3 className="text-xl font-bold">Peak Hour Staffing Analysis</h3>
           <p className="text-muted-foreground">Analyze and optimize staffing levels throughout the day</p>
         </div>
         
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={selectedDay} onValueChange={setSelectedDay}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Select day" />
             </SelectTrigger>
             <SelectContent>
@@ -87,7 +93,7 @@ const PeakHourAnalysisContent = () => {
           </Select>
           
           <Select value={selectedView} onValueChange={setSelectedView}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Select view" />
             </SelectTrigger>
             <SelectContent>
@@ -113,7 +119,7 @@ const PeakHourAnalysisContent = () => {
       </div>
       
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-2">
           <CardTitle>
             {selectedView === "heatmap" 
               ? `Staffing Heatmap - ${selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}` 
@@ -129,12 +135,12 @@ const PeakHourAnalysisContent = () => {
           {selectedView === "heatmap" ? (
             <>
               <div className="overflow-x-auto">
-                <Table>
+                <Table className="w-full border-collapse">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Hour</TableHead>
+                      <TableHead className="w-[150px] bg-muted/20">Hour</TableHead>
                       {heatmapData.hours.map((hour) => (
-                        <TableHead key={hour} className="text-center">{hour}</TableHead>
+                        <TableHead key={hour} className="text-center bg-muted/20 p-2 min-w-[60px]">{hour}</TableHead>
                       ))}
                     </TableRow>
                   </TableHeader>
@@ -145,7 +151,7 @@ const PeakHourAnalysisContent = () => {
                           <TableRow key={position}>
                             <TableCell className="font-medium">{position}</TableCell>
                             {positionBreakdownData.data[posIndex].map((count, hourIndex) => (
-                              <TableCell key={hourIndex} className={`text-center ${getCellColor(count)}`}>
+                              <TableCell key={hourIndex} className={`text-center ${getCellColor(count)} p-2 h-10`}>
                                 {count}
                               </TableCell>
                             ))}
@@ -154,7 +160,7 @@ const PeakHourAnalysisContent = () => {
                         <TableRow className="font-bold border-t-2">
                           <TableCell>Total Staff</TableCell>
                           {heatmapData.totalStaff.map((count, index) => (
-                            <TableCell key={index} className={`text-center ${getCellColor(count)}`}>
+                            <TableCell key={index} className={`text-center ${getCellColor(count)} p-2 h-12 font-bold`}>
                               {count}
                             </TableCell>
                           ))}
@@ -164,8 +170,8 @@ const PeakHourAnalysisContent = () => {
                       <TableRow>
                         <TableCell className="font-medium">Total Staff</TableCell>
                         {heatmapData.totalStaff.map((count, index) => (
-                          <TableCell key={index} className={`text-center ${getCellColor(count)}`}>
-                            {count}
+                          <TableCell key={index} className={`text-center ${getCellColor(count)} p-2 h-16`}>
+                            <div className="text-lg font-semibold">{count}</div>
                           </TableCell>
                         ))}
                       </TableRow>
@@ -174,17 +180,19 @@ const PeakHourAnalysisContent = () => {
                 </Table>
               </div>
               
-              <div className="flex flex-wrap items-center gap-2 mt-4">
-                <div className="text-sm">Legend:</div>
-                <Badge variant="outline" className="bg-gray-100">0</Badge>
-                <Badge variant="outline" className="bg-green-100">1-5</Badge>
-                <Badge variant="outline" className="bg-green-200">6-10</Badge>
-                <Badge variant="outline" className="bg-yellow-100">11-15</Badge>
-                <Badge variant="outline" className="bg-yellow-200">16-20</Badge>
-                <Badge variant="outline" className="bg-orange-100">21-25</Badge>
-                <Badge variant="outline" className="bg-orange-200">26+</Badge>
+              <div className="flex flex-wrap items-center gap-2 mt-4 justify-between">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm">Legend:</span>
+                  <Badge variant="outline" className="bg-gray-100">0</Badge>
+                  <Badge variant="outline" className="bg-green-100">1-5</Badge>
+                  <Badge variant="outline" className="bg-green-200">6-10</Badge>
+                  <Badge variant="outline" className="bg-yellow-100">11-15</Badge>
+                  <Badge variant="outline" className="bg-yellow-200">16-20</Badge>
+                  <Badge variant="outline" className="bg-orange-100">21-25</Badge>
+                  <Badge variant="outline" className="bg-orange-200">26+</Badge>
+                </div>
                 
-                <div className="ml-auto text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   Peak staffing: {Math.max(...heatmapData.totalStaff)} staff at {heatmapData.hours[heatmapData.totalStaff.indexOf(Math.max(...heatmapData.totalStaff))]}
                 </div>
               </div>
@@ -194,9 +202,9 @@ const PeakHourAnalysisContent = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Position</TableHead>
+                    <TableHead className="bg-muted/20">Position</TableHead>
                     {positionBreakdownData.hours.map((hour) => (
-                      <TableHead key={hour} className="text-center">{hour}</TableHead>
+                      <TableHead key={hour} className="text-center bg-muted/20 p-2 min-w-[60px]">{hour}</TableHead>
                     ))}
                   </TableRow>
                 </TableHeader>
@@ -205,7 +213,7 @@ const PeakHourAnalysisContent = () => {
                     <TableRow key={position}>
                       <TableCell className="font-medium">{position}</TableCell>
                       {positionBreakdownData.data[posIndex].map((count, hourIndex) => (
-                        <TableCell key={hourIndex} className={`text-center ${getCellColor(count)}`}>
+                        <TableCell key={hourIndex} className={`text-center ${getCellColor(count)} p-2`}>
                           {count}
                         </TableCell>
                       ))}
@@ -214,7 +222,7 @@ const PeakHourAnalysisContent = () => {
                   <TableRow className="font-bold">
                     <TableCell>Total</TableCell>
                     {positionBreakdownData.hours.map((_, hourIndex) => (
-                      <TableCell key={hourIndex} className={`text-center ${getCellColor(totalForHour(hourIndex))}`}>
+                      <TableCell key={hourIndex} className={`text-center ${getCellColor(totalForHour(hourIndex))} p-2`}>
                         {totalForHour(hourIndex)}
                       </TableCell>
                     ))}

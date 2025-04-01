@@ -9,7 +9,7 @@ const PeakHourAnalysis = () => {
       <p className="text-muted-foreground mb-6">
         Analyze staffing requirements during peak hours to optimize operations and service levels.
       </p>
-      <div>
+      <div className="max-w-[1200px]">
         <PeakHourAnalysisContent />
       </div>
     </div>
