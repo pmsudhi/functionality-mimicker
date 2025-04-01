@@ -133,10 +133,23 @@ const ScenarioManager = () => {
   
   const comparison = compareScenario1 && compareScenario2 ? getComparisonData() : null;
   
+  // Safe access to comparison data with null checks
   const comparisonChartData = comparison ? [
-    { name: "Total Staff", base: comparison.scenario1.totalStaff, comparison: comparison.scenario2.totalStaff },
-    { name: "Labor Cost", base: comparison.scenario1.laborCost, comparison: comparison.scenario2.laborCost },
-    { name: "Labor %", base: comparison.scenario1.laborPercentage, comparison: comparison.scenario2.laborPercentage }
+    { 
+      name: "Total Staff", 
+      base: comparison.scenario1.totalStaff || 0, 
+      comparison: comparison.scenario2.totalStaff || 0 
+    },
+    { 
+      name: "Labor Cost", 
+      base: comparison.scenario1.laborCost || 0, 
+      comparison: comparison.scenario2.laborCost || 0 
+    },
+    { 
+      name: "Labor %", 
+      base: comparison.scenario1.laborPercentage || 0, 
+      comparison: comparison.scenario2.laborPercentage || 0 
+    }
   ] : [
     { name: "Total Staff", base: 33, comparison: 29 },
     { name: "Labor Cost", base: 165500, comparison: 148000 },
@@ -261,9 +274,9 @@ const ScenarioManager = () => {
                         <TableCell className="font-medium">{scenario.name}</TableCell>
                         <TableCell>{currentBrand?.name}</TableCell>
                         <TableCell>{currentOutlet?.name}</TableCell>
-                        <TableCell>{scenario.calculations.totalStaff.toFixed(1)}</TableCell>
-                        <TableCell>${scenario.calculations.laborCost.toLocaleString()}</TableCell>
-                        <TableCell>{scenario.calculations.laborPercentage.toFixed(1)}%</TableCell>
+                        <TableCell>{scenario.calculations?.totalStaff?.toFixed(1) || "N/A"}</TableCell>
+                        <TableCell>{scenario.calculations?.laborCost ? `$${scenario.calculations.laborCost.toLocaleString()}` : "N/A"}</TableCell>
+                        <TableCell>{scenario.calculations?.laborPercentage?.toFixed(1) || "N/A"}%</TableCell>
                         <TableCell>{scenario.createdAt.toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -340,12 +353,19 @@ const ScenarioManager = () => {
                       </CardHeader>
                       <CardContent>
                         <ul className="space-y-2">
-                          {comparison.highlights.map((highlight, index) => (
-                            <li key={index} className="flex items-start gap-2">
+                          {comparison.highlights && comparison.highlights.length > 0 ? (
+                            comparison.highlights.map((highlight, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <ArrowRightLeft className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                <span>{highlight}</span>
+                              </li>
+                            ))
+                          ) : (
+                            <li className="flex items-start gap-2">
                               <ArrowRightLeft className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                              <span>{highlight}</span>
+                              <span>No significant differences found between scenarios</span>
                             </li>
-                          ))}
+                          )}
                         </ul>
                       </CardContent>
                     </Card>
@@ -361,8 +381,8 @@ const ScenarioManager = () => {
                           <YAxis />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="base" name={comparison.scenario1.name} fill="#8884d8" />
-                          <Bar dataKey="comparison" name={comparison.scenario2.name} fill="#82ca9d" />
+                          <Bar dataKey="base" name={comparison.scenario1.name || "Baseline"} fill="#8884d8" />
+                          <Bar dataKey="comparison" name={comparison.scenario2.name || "Comparison"} fill="#82ca9d" />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
