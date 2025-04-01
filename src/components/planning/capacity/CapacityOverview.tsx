@@ -15,13 +15,36 @@ const CapacityOverview = ({ data }: CapacityOverviewProps) => {
     >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--secondary-300))" />
+          <XAxis 
+            dataKey="month" 
+            tick={{ fill: 'hsl(var(--foreground))' }}
+            axisLine={{ stroke: 'hsl(var(--secondary-300))' }}
+          />
+          <YAxis 
+            tick={{ fill: 'hsl(var(--foreground))' }}
+            axisLine={{ stroke: 'hsl(var(--secondary-300))' }}
+          />
+          <Tooltip 
+            contentStyle={{ 
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--card-foreground))'
+            }}
+          />
           <Legend />
-          <Bar dataKey="capacity" fill="#4f46e5" name="Capacity" />
-          <Bar dataKey="demand" fill="#ef4444" name="Demand" />
+          <Bar 
+            dataKey="capacity" 
+            fill="hsl(var(--primary-500))" 
+            name="Capacity" 
+            radius={[4, 4, 0, 0]}
+          />
+          <Bar 
+            dataKey="demand" 
+            fill="hsl(var(--destructive-500))" 
+            name="Demand" 
+            radius={[4, 4, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </ChartContainer>
