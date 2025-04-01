@@ -6,16 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface Parameter {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  disabled?: boolean;
-  unit?: string;
-}
+import { Parameter } from './types';
 
 interface ParameterBlockProps {
   color: 'blue' | 'green' | 'yellow' | 'purple' | 'orange';

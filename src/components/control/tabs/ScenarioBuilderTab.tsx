@@ -10,7 +10,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import ActionButtons from '../scenario-builder/ActionButtons';
-import ParameterBlocksList, { Block } from '../scenario-builder/ParameterBlocksList';
+import ParameterBlocksList from '../scenario-builder/ParameterBlocksList';
+import { Block } from '../scenario-builder/types';
 import { toast } from 'sonner';
 
 const ScenarioBuilderTab = () => {
