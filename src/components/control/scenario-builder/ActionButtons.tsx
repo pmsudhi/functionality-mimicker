@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface ActionButtonsProps {
   buttonLabels: string[];
@@ -11,9 +10,6 @@ interface ActionButtonsProps {
 
 const ActionButtons = ({ buttonLabels, onAddBlock }: ActionButtonsProps) => {
   const handleButtonClick = (label: string) => {
-    toast.info(`Adding ${label} block`, {
-      position: 'bottom-right',
-    });
     onAddBlock(label);
   };
 
