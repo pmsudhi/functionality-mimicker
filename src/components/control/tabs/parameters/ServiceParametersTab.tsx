@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { HelpIcon } from '@/components/ui/help-icon';
+import { CALCULATION_RULES } from '@/constants/calculationRules';
 
 const ServiceParametersTab = () => {
   const [coversPerWaiter, setCoversPerWaiter] = useState(16);
@@ -18,10 +19,18 @@ const ServiceParametersTab = () => {
   const totalFOHStaff = waitersNeeded + runnersNeeded + 2; // +2 for host and manager
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="space-y-6">
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold">Service Parameters</h3>
+        <HelpIcon content={CALCULATION_RULES.service.rules} />
+      </div>
+
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Covers per Waiter</Label>
+          <div className="flex items-center gap-2">
+            <Label>Covers per Waiter</Label>
+            <HelpIcon content="Number of guests a single waiter can serve efficiently. Higher numbers indicate more efficient service but may impact quality." />
+          </div>
           <Select 
             value={coversPerWaiter.toString()} 
             onValueChange={(value) => setCoversPerWaiter(parseInt(value))}
@@ -39,7 +48,10 @@ const ServiceParametersTab = () => {
         </div>
         
         <div className="space-y-2">
-          <Label>Runner to Waiter Ratio (%)</Label>
+          <div className="flex items-center gap-2">
+            <Label>Runner to Waiter Ratio</Label>
+            <HelpIcon content="Ratio of runners to waiters. Higher ratios provide better support but increase labor costs." />
+          </div>
           <Select 
             value={runnerToWaiterRatio.toString()} 
             onValueChange={(value) => setRunnerToWaiterRatio(parseInt(value))}
@@ -57,35 +69,30 @@ const ServiceParametersTab = () => {
         </div>
         
         <div className="space-y-2">
-          <div className="flex justify-between">
+          <div className="flex items-center gap-2">
             <Label>Kitchen Stations</Label>
-            <Input 
-              value={kitchenStations}
-              onChange={e => setKitchenStations(Number(e.target.value) || 0)}
-              className="w-20 text-right"
-            />
+            <HelpIcon content="Number of distinct cooking stations in the kitchen. Each station requires specific staffing." />
           </div>
-          <Slider 
-            value={[kitchenStations]} 
-            min={2} 
-            max={12} 
-            step={1}
-            onValueChange={(value) => setKitchenStations(value[0])}
+          <Input 
+            value={kitchenStations}
+            onChange={e => setKitchenStations(Number(e.target.value) || 0)}
+            className="w-20 text-right"
           />
         </div>
         
         <div className="space-y-2">
-          <Label>Service Style</Label>
-          <Select defaultValue="casual-dining">
-            <SelectTrigger>
-              <SelectValue placeholder="Select service style" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="fast-casual">Fast Casual</SelectItem>
-              <SelectItem value="casual-dining">Casual Dining</SelectItem>
-              <SelectItem value="premium-dining">Premium Dining</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Label>Staff per Station</Label>
+            <HelpIcon content="Average number of staff members required per kitchen station based on service style." />
+          </div>
+          <Input
+            type="number"
+            value={staffPerStation}
+            onChange={(e) => setStaffPerStation(Number(e.target.value))}
+            min={1}
+            max={3}
+            step={0.5}
+          />
         </div>
       </div>
       
