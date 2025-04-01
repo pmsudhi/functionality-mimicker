@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -70,11 +69,12 @@ const pAndLData = [
 
 const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8", "#ef4444"];
 
-const getBarColor = (data: any) => {
-  if (data.department?.includes("FOH Management")) return COLORS[0];
-  if (data.department?.includes("FOH Service")) return COLORS[1];
-  if (data.department?.includes("BOH Management")) return COLORS[2];
-  if (data.department?.includes("BOH Kitchen")) return COLORS[3];
+// Define a proper function to get bar color
+const getBarColor = (entry: any) => {
+  if (entry.department?.includes("FOH Management")) return COLORS[0];
+  if (entry.department?.includes("FOH Service")) return COLORS[1];
+  if (entry.department?.includes("BOH Management")) return COLORS[2];
+  if (entry.department?.includes("BOH Kitchen")) return COLORS[3];
   return COLORS[4];
 };
 
@@ -263,7 +263,8 @@ const FinancialImpact = () => {
                     <Bar 
                       dataKey="cost" 
                       name="Monthly Cost (SAR)" 
-                      fill={getBarColor}
+                      fill="#3b82f6"
+                      stroke="#3b82f6"
                     />
                   </BarChart>
                 </ResponsiveContainer>

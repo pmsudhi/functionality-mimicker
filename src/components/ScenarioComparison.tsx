@@ -1,8 +1,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 const ScenarioComparison = () => {
+  const [baseScenario, setBaseScenario] = useState("base");
+  const [comparisonScenario, setComparisonScenario] = useState("expansion");
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -12,7 +16,7 @@ const ScenarioComparison = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="text-sm font-medium mb-2 block">Baseline Scenario</label>
-          <Select defaultValue="base">
+          <Select value={baseScenario} onValueChange={setBaseScenario}>
             <SelectTrigger>
               <SelectValue placeholder="Select a scenario" />
             </SelectTrigger>
@@ -26,7 +30,7 @@ const ScenarioComparison = () => {
         
         <div>
           <label className="text-sm font-medium mb-2 block">Comparison Scenario</label>
-          <Select defaultValue="expansion">
+          <Select value={comparisonScenario} onValueChange={setComparisonScenario}>
             <SelectTrigger>
               <SelectValue placeholder="Select a scenario" />
             </SelectTrigger>
