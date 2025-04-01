@@ -36,17 +36,8 @@ const SliderControl = ({
   const handleValueChange = (vals: number[]) => {
     setLocalValue(vals[0]);
     
-    // If instantUpdate is true, update parent state immediately
-    if (instantUpdate) {
-      onChange(vals);
-    }
-  };
-
-  // If not instant update, update parent when dragging ends
-  const handleValueCommit = () => {
-    if (!instantUpdate) {
-      onChange([localValue]);
-    }
+    // Always update parent state immediately for better user experience
+    onChange(vals);
   };
 
   const displayValue = label.includes("Rate") && !label.includes("Check") 
@@ -69,7 +60,6 @@ const SliderControl = ({
         max={max} 
         step={label.includes("Turnover") ? 0.1 : step} 
         onValueChange={handleValueChange}
-        onValueCommit={handleValueCommit}
         disabled={disabled}
         className="my-1"
       />

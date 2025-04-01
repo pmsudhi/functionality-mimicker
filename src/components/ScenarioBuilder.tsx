@@ -519,15 +519,6 @@ const ScenarioBuilder = () => {
                   <CardContent className="space-y-4">
                     {block.parameters.map((param) => (
                       <div key={param.id} className="space-y-2">
-                        <div className="flex justify-between">
-                          <Label>{param.label}</Label>
-                          <span className="font-medium">
-                            {paramValues[param.id]?.toFixed(
-                              param.step && param.step < 1 ? 1 : 0
-                            )}
-                            {param.unit}
-                          </span>
-                        </div>
                         <SliderControl
                           label={param.label}
                           value={paramValues[param.id] || param.value}
