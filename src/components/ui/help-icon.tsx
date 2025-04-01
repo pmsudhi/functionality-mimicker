@@ -51,7 +51,7 @@ function formatTooltipContent(content: string): string {
     '<h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">Formulas:</h4>'
   );
   
-  // Format variable names in formulas
+  // Format variable names in formulas (escaping special characters to avoid rendering issues)
   formatted = formatted.replace(
     /(FOH Area|Internal Seating|Total Seating|Total Restaurant Area|FOH%|Area per Cover|External Seating)(?=\s*[=\+\-\*\/])/g,
     '<span class="font-medium text-primary-600 dark:text-primary-400">$1</span>'
