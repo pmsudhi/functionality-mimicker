@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,12 @@ import {
   BadgePercent, 
   Building2 
 } from "lucide-react";
-import { Chart, ChartContainer, ChartTooltipContent, ChartLegendContent } from "@/components/ui/chart";
+import { 
+  ChartContainer, 
+  ChartTooltipContent, 
+  ChartLegendContent,
+  type ChartConfig
+} from "@/components/ui/chart";
 
 const staffDistributionData = [
   { name: "Kitchen Staff", value: 40, color: "#22c55e" },
