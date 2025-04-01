@@ -24,52 +24,47 @@ const Dashboard = () => {
 
   return (
     <PageLayout>
-      <FilterBar
-        title="F&B Manpower Planning Dashboard"
-      >
+      <div className="container mx-auto">
         <DashboardHeader 
           selectedOutlet={selectedOutlet} 
           setSelectedOutlet={setSelectedOutlet} 
         />
-      </FilterBar>
+        
+        {currentOutlet && currentBrand && currentLocation && (
+          <>
+            <div className="pb-6">
+              <MetricCards />
+              
+              <Tabs value={selectedSection} onValueChange={setSelectedSection} className="mt-6">
+                <TabsList className="bg-muted/40 mb-6">
+                  <TabsTrigger value="staffing">Staffing Structure</TabsTrigger>
+                  <TabsTrigger value="labor">Labor Cost</TabsTrigger>
+                  <TabsTrigger value="efficiency">Efficiency Metrics</TabsTrigger>
+                  <TabsTrigger value="revenue">Revenue Projections</TabsTrigger>
+                </TabsList>
 
-      {currentOutlet && currentBrand && currentLocation && (
-        <>
-          <div className="p-6 pt-4">
-            <h1 className="text-2xl font-semibold mb-2">Operational Dashboard</h1>
-            <p className="text-sm text-muted-foreground mb-6">Overview of your F&B operations and staffing metrics</p>
-            
-            <MetricCards />
-            
-            <Tabs value={selectedSection} onValueChange={setSelectedSection} className="mt-6">
-              <TabsList className="bg-muted/40 mb-6">
-                <TabsTrigger value="staffing">Staffing Structure</TabsTrigger>
-                <TabsTrigger value="labor">Labor Cost</TabsTrigger>
-                <TabsTrigger value="efficiency">Efficiency Metrics</TabsTrigger>
-                <TabsTrigger value="revenue">Revenue Projections</TabsTrigger>
-              </TabsList>
+                <TabsContent value="staffing" className="space-y-6">
+                  <StaffingTab />
+                </TabsContent>
 
-              <TabsContent value="staffing" className="space-y-6">
-                <StaffingTab />
-              </TabsContent>
+                <TabsContent value="labor" className="space-y-6">
+                  <LaborCostTab />
+                </TabsContent>
 
-              <TabsContent value="labor" className="space-y-6">
-                <LaborCostTab />
-              </TabsContent>
+                <TabsContent value="efficiency" className="space-y-6">
+                  <EfficiencyTab />
+                </TabsContent>
 
-              <TabsContent value="efficiency" className="space-y-6">
-                <EfficiencyTab />
-              </TabsContent>
+                <TabsContent value="revenue" className="space-y-6">
+                  <RevenueTab />
+                </TabsContent>
+              </Tabs>
+            </div>
 
-              <TabsContent value="revenue" className="space-y-6">
-                <RevenueTab />
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <DashboardFooter />
-        </>
-      )}
+            <DashboardFooter />
+          </>
+        )}
+      </div>
     </PageLayout>
   );
 };

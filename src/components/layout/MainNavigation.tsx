@@ -7,7 +7,8 @@ import {
   Users, 
   FileText, 
   Calculator,
-  BarChart4
+  BarChart4,
+  Settings
 } from 'lucide-react';
 
 import {
@@ -19,6 +20,13 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const MainNavigation = () => {
   const location = useLocation();
@@ -35,15 +43,15 @@ const MainNavigation = () => {
   return (
     <nav className="w-full border-b bg-background shadow-sm">
       <div className="container mx-auto">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
+        <div className="flex h-16 items-center">
+          <div className="flex items-center mr-8">
             <Link to="/" className="flex items-center">
               <BarChart4 className="h-6 w-6 mr-2 text-primary" />
               <span className="text-xl font-bold">F&B Manpower</span>
             </Link>
           </div>
           
-          <div className="hidden md:flex">
+          <div className="hidden md:flex flex-1">
             <NavigationMenu>
               <NavigationMenuList>
                 {navItems.map((item) => (
@@ -63,6 +71,23 @@ const MainNavigation = () => {
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
+          </div>
+
+          <div className="flex items-center ml-auto">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm text-foreground/80 hover:text-foreground hover:bg-accent/50 rounded-md">
+                White Robata - Mall of Dhahran
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>White Robata - Mall of Dhahran</DropdownMenuItem>
+                <DropdownMenuItem>Burger Joint - Al Khobar</DropdownMenuItem>
+                <DropdownMenuItem>Pizza Palace - Riyadh</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <button className="ml-2 p-2 rounded-md hover:bg-accent/50">
+              <Settings className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </div>

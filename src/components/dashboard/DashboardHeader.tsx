@@ -1,8 +1,7 @@
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import { Settings } from "lucide-react";
-import { mockOutlets } from "@/services/mockData";
+import { Button } from "@/components/ui/button";
 
 interface DashboardHeaderProps {
   selectedOutlet: string;
@@ -14,24 +13,10 @@ export const DashboardHeader = ({
   setSelectedOutlet 
 }: DashboardHeaderProps) => {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <h1 className="text-2xl font-semibold">Operational Dashboard</h1>
-      <div className="flex gap-2">
-        <Select value={selectedOutlet} onValueChange={setSelectedOutlet}>
-          <SelectTrigger className="w-[250px]">
-            <SelectValue placeholder="Select an outlet" />
-          </SelectTrigger>
-          <SelectContent>
-            {mockOutlets.map(outlet => (
-              <SelectItem key={outlet.id} value={outlet.id}>
-                {outlet.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button variant="outline" size="icon">
-          <Settings className="h-4 w-4" />
-        </Button>
+    <div className="pt-8 pb-4">
+      <h1 className="text-3xl font-bold tracking-tight">F&B Manpower Planning Dashboard</h1>
+      <div className="mt-4 flex justify-between items-center">
+        <h2 className="text-2xl font-semibold">Operational Dashboard</h2>
       </div>
     </div>
   );
