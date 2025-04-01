@@ -37,7 +37,7 @@ const SliderControl = ({
     const newValue = vals[0];
     setLocalValue(newValue);
     
-    // Always update parent state immediately for better user experience
+    // Call the onChange callback with the new value
     onChange(vals);
   };
 
@@ -59,7 +59,7 @@ const SliderControl = ({
         value={[localValue]} 
         min={min} 
         max={max} 
-        step={label.includes("Turnover") ? 0.1 : step} 
+        step={label.includes("Turnover") ? 0.1 : step}
         onValueChange={handleValueChange}
         disabled={disabled}
         className="my-1"

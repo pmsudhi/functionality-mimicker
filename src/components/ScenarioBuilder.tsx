@@ -224,15 +224,16 @@ const ScenarioBuilder = () => {
         };
     }
     
-    // Initialize parameter values
+    // Initialize parameter values for the new block
     const newParamValues = { ...paramValues };
     newBlock.parameters.forEach(param => {
       newParamValues[param.id] = param.value;
     });
     
+    // Add the new block and update parameter values
     setParamValues(newParamValues);
-    setBlocks([...blocks, newBlock]);
-    setNextBlockId(nextBlockId + 1);
+    setBlocks(prevBlocks => [...prevBlocks, newBlock]);
+    setNextBlockId(prevId => prevId + 1);
     
     toast({
       title: "Section Added",
@@ -243,7 +244,7 @@ const ScenarioBuilder = () => {
   // Remove a parameter block
   const removeBlock = (blockId: string) => {
     // Filter out the block to remove
-    const updatedBlocks = blocks.filter(block => block.id !== blockId);
+    setBlocks(prevBlocks => prevBlocks.filter(block => block.id !== blockId));
     
     // Also remove its parameter values
     const updatedParamValues = { ...paramValues };
@@ -253,7 +254,6 @@ const ScenarioBuilder = () => {
       }
     });
     
-    setBlocks(updatedBlocks);
     setParamValues(updatedParamValues);
     
     toast({
@@ -264,33 +264,33 @@ const ScenarioBuilder = () => {
   
   // Add a new parameter to a block
   const addParameter = (blockId: string) => {
-    const updatedBlocks = blocks.map(block => {
-      if (block.id === blockId) {
-        const newParamId = `${blockId}-custom-${block.parameters.length + 1}`;
-        const newParam = {
-          id: newParamId,
-          label: `Custom Parameter ${block.parameters.length + 1}`,
-          value: 50,
-          min: 0,
-          max: 100,
-          step: 5
-        };
-        
-        // Update param values
-        setParamValues({
-          ...paramValues,
-          [newParamId]: newParam.value
-        });
-        
-        return {
-          ...block,
-          parameters: [...block.parameters, newParam]
-        };
-      }
-      return block;
+    setBlocks(prevBlocks => {
+      return prevBlocks.map(block => {
+        if (block.id === blockId) {
+          const newParamId = `${blockId}-custom-${block.parameters.length + 1}`;
+          const newParam = {
+            id: newParamId,
+            label: `Custom Parameter ${block.parameters.length + 1}`,
+            value: 50,
+            min: 0,
+            max: 100,
+            step: 5
+          };
+          
+          // Update param values
+          setParamValues(prev => ({
+            ...prev,
+            [newParamId]: newParam.value
+          }));
+          
+          return {
+            ...block,
+            parameters: [...block.parameters, newParam]
+          };
+        }
+        return block;
+      });
     });
-    
-    setBlocks(updatedBlocks);
     
     toast({
       title: "Parameter Added",
@@ -302,24 +302,26 @@ const ScenarioBuilder = () => {
   const updateParameterValue = (paramId: string, values: number[]) => {
     const newValue = values[0];
     
-    // Update parameter values
+    // Create a copy of parameter values and update
     const newParamValues = { ...paramValues, [paramId]: newValue };
-    setParamValues(newParamValues);
     
     // Recalculate any dependent parameters
+    const finalParamValues = { ...newParamValues };
     blocks.forEach(block => {
       block.parameters.forEach(param => {
         if (param.isCalculated && param.calculation) {
-          newParamValues[param.id] = param.calculation(newParamValues);
+          finalParamValues[param.id] = param.calculation(newParamValues);
         }
       });
     });
     
-    setParamValues(newParamValues);
+    setParamValues(finalParamValues);
   };
   
-  // Calculate values for any parameters with calculations
+  // Calculate values for any parameters with calculations whenever blocks or parameter values change
   useEffect(() => {
+    if (blocks.length === 0) return;
+    
     const calculatedParams = { ...paramValues };
     let hasUpdates = false;
     
@@ -375,6 +377,10 @@ const ScenarioBuilder = () => {
       description: "All parameters have been reset to default values."
     });
   };
+  
+  // Debug info
+  console.log("Blocks:", blocks);
+  console.log("Parameter values:", paramValues);
   
   return (
     <div className="p-6">
