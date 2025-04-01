@@ -21,7 +21,9 @@ const PeakHourAnalysisTab = () => {
       </CardHeader>
       <CardContent>
         <PeakHourDescription />
-        <PeakHourAnalysisContent />
+        <div className="mt-6">
+          <PeakHourAnalysisContent />
+        </div>
       </CardContent>
     </Card>
   );
