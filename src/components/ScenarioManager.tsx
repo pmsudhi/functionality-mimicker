@@ -1,13 +1,15 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockScenarios, mockOutlets, mockBrands } from "@/services/mockData";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { compareScenarios } from "@/services/calculationService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExtendedScenario } from "@/types/extraTypes";
+import { PageLayout } from "@/components/ui/page-layout";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatComparison } from "@/components/ui/stat-comparison";
 
 const ScenarioManager = () => {
   const [selectedOutletId, setSelectedOutletId] = useState<string | null>(null);
@@ -69,37 +71,35 @@ const ScenarioManager = () => {
   };
   
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Scenario Manager</h1>
-        <div className="flex gap-4">
-          <Select value={selectedBrandId ? selectedBrandId : "all"} onValueChange={handleBrandChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All Brands" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Brands</SelectItem>
-              {availableBrands.map(brand => (
-                <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Select value={selectedOutletId ? selectedOutletId : "all"} onValueChange={handleOutletChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All Outlets" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Outlets</SelectItem>
-              {availableOutlets.map(outlet => (
-                <SelectItem key={outlet.id} value={outlet.id}>{outlet.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Button>Create New Scenario</Button>
-        </div>
-      </div>
+    <PageLayout>
+      <FilterBar 
+        title="Scenario Manager"
+        actions={<Button>Create New Scenario</Button>}
+      >
+        <Select value={selectedBrandId ? selectedBrandId : "all"} onValueChange={handleBrandChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Brands" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Brands</SelectItem>
+            {availableBrands.map(brand => (
+              <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select value={selectedOutletId ? selectedOutletId : "all"} onValueChange={handleOutletChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Outlets" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Outlets</SelectItem>
+            {availableOutlets.map(outlet => (
+              <SelectItem key={outlet.id} value={outlet.id}>{outlet.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FilterBar>
       
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-6">
@@ -114,7 +114,7 @@ const ScenarioManager = () => {
           <CardHeader>
             <CardTitle>Scenario List</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -170,60 +170,69 @@ const ScenarioManager = () => {
                 <div>
                   <h3 className="text-sm font-medium mb-2">Baseline: {comparison.scenario1.name}</h3>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Staff Count</span>
-                      <span className="font-medium">{Math.ceil(comparison.scenario1.totalStaff)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor Cost</span>
-                      <span className="font-medium">{comparison.scenario1.laborCost.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor %</span>
-                      <span className="font-medium">{comparison.scenario1.laborPercentage.toFixed(1)}%</span>
-                    </div>
+                    <StatComparison 
+                      label="Staff Count"
+                      value1={Math.ceil(comparison.scenario1.totalStaff)}
+                      value2=""
+                    />
+                    <StatComparison 
+                      label="Labor Cost"
+                      value1={comparison.scenario1.laborCost.toLocaleString()}
+                      value2=""
+                    />
+                    <StatComparison 
+                      label="Labor %"
+                      value1={`${comparison.scenario1.laborPercentage.toFixed(1)}%`}
+                      value2=""
+                    />
                   </div>
                 </div>
                 
                 <div>
                   <h3 className="text-sm font-medium mb-2">Comparison: {comparison.scenario2.name}</h3>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Staff Count</span>
-                      <span className="font-medium">{Math.ceil(comparison.scenario2.totalStaff)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor Cost</span>
-                      <span className="font-medium">{comparison.scenario2.laborCost.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor %</span>
-                      <span className="font-medium">{comparison.scenario2.laborPercentage.toFixed(1)}%</span>
-                    </div>
+                    <StatComparison 
+                      label="Staff Count"
+                      value1={Math.ceil(comparison.scenario2.totalStaff)}
+                      value2=""
+                    />
+                    <StatComparison 
+                      label="Labor Cost"
+                      value1={comparison.scenario2.laborCost.toLocaleString()}
+                      value2=""
+                    />
+                    <StatComparison 
+                      label="Labor %"
+                      value1={`${comparison.scenario2.laborPercentage.toFixed(1)}%`}
+                      value2=""
+                    />
                   </div>
                 </div>
                 
                 <div>
                   <h3 className="text-sm font-medium mb-2">Difference</h3>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Staff Count</span>
-                      <span className={`font-medium ${comparison.staffDiff > 0 ? 'text-red-500' : comparison.staffDiff < 0 ? 'text-green-500' : ''}`}>
-                        {comparison.staffDiff > 0 ? '+' : ''}{comparison.staffDiff.toFixed(1)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor Cost</span>
-                      <span className={`font-medium ${comparison.costDiff > 0 ? 'text-red-500' : comparison.costDiff < 0 ? 'text-green-500' : ''}`}>
-                        {comparison.costDiff > 0 ? '+' : ''}{comparison.costDiff.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor %</span>
-                      <span className={`font-medium ${comparison.laborPercentageDiff > 0 ? 'text-red-500' : comparison.laborPercentageDiff < 0 ? 'text-green-500' : ''}`}>
-                        {comparison.laborPercentageDiff > 0 ? '+' : ''}{comparison.laborPercentageDiff.toFixed(1)}%
-                      </span>
-                    </div>
+                    <StatComparison 
+                      label="Staff Count"
+                      value1=""
+                      value2=""
+                      difference={comparison.staffDiff}
+                      positiveIsBetter={false}
+                    />
+                    <StatComparison 
+                      label="Labor Cost"
+                      value1=""
+                      value2=""
+                      difference={comparison.costDiff}
+                      positiveIsBetter={false}
+                    />
+                    <StatComparison 
+                      label="Labor %"
+                      value1=""
+                      value2=""
+                      difference={comparison.laborPercentageDiff}
+                      positiveIsBetter={false}
+                    />
                   </div>
                 </div>
               </div>
@@ -240,7 +249,7 @@ const ScenarioManager = () => {
           </Card>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 };
 
