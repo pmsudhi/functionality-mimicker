@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { DollarSign, BadgePercent, Building2, Users } from "lucide-react";
 import { useBrandOutletFilter } from "@/hooks/useBrandOutletFilter";
@@ -14,6 +13,7 @@ import CostBreakdownTab from "./tabs/CostBreakdownTab";
 import RevenueProjectionsTab from "./tabs/RevenueProjectionsTab";
 import PLIntegrationTab from "./tabs/PLIntegrationTab";
 import { formatIndianStyle } from "./utils";
+import { PageLayout } from "@/components/ui/page-layout";
 
 const FinancialImpact = () => {
   const [selectedTab, setSelectedTab] = useState("revenue-vs-labor");
@@ -44,7 +44,7 @@ const FinancialImpact = () => {
   });
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <PageLayout>
       <FilterBar
         title="Financial Impact"
         className="mb-6"
@@ -183,7 +183,7 @@ const FinancialImpact = () => {
           />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageLayout>
   );
 };
 

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Scenario } from "@/types/modelTypes";
 import ControlPanel from "@/components/scenarios/what-if/ControlPanel";
 import ResultsPanel from "@/components/scenarios/what-if/ResultsPanel";
+import { Sparkles } from "lucide-react";
 
 interface WhatIfAnalysisTabProps {
   baseScenario: string;
@@ -43,7 +44,10 @@ const WhatIfAnalysisTab = ({
   return (
     <Card className="border shadow-sm">
       <CardHeader>
-        <CardTitle>What-If Analysis</CardTitle>
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-primary" />
+          <CardTitle>What-If Analysis</CardTitle>
+        </div>
         <CardDescription>
           Adjust parameters to see how changes would impact your staffing and financial metrics
         </CardDescription>

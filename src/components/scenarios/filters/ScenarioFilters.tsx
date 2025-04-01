@@ -1,6 +1,7 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { Brand, Outlet } from "@/types/extraTypes";
 
 interface ScenarioFiltersProps {
@@ -10,6 +11,7 @@ interface ScenarioFiltersProps {
   availableOutlets: Outlet[];
   handleBrandChange: (value: string) => void;
   handleOutletChange: (value: string) => void;
+  onCreateNew?: () => void;
 }
 
 const ScenarioFilters = ({
@@ -18,11 +20,12 @@ const ScenarioFilters = ({
   availableBrands,
   availableOutlets,
   handleBrandChange,
-  handleOutletChange
+  handleOutletChange,
+  onCreateNew
 }: ScenarioFiltersProps) => {
   return (
-    <div className="flex justify-between items-center mb-6">
-      <div className="flex space-x-4">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <Select value={selectedBrandId ? selectedBrandId : "all"} onValueChange={handleBrandChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="All Brands" />
@@ -48,7 +51,10 @@ const ScenarioFilters = ({
         </Select>
       </div>
       
-      <Button>Create New Scenario</Button>
+      <Button onClick={onCreateNew} className="ml-auto">
+        <Plus className="mr-2 h-4 w-4" />
+        Create New Scenario
+      </Button>
     </div>
   );
 };
