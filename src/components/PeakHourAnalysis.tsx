@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Sample data for peak hour analysis
 const heatmapData = {
@@ -62,10 +63,10 @@ const PeakHourAnalysis = () => {
   };
   
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Peak Hour Staffing Analysis</h1>
+          <h1 className="text-2xl font-bold">Peak Hour Staffing Analysis</h1>
           <p className="text-muted-foreground">Analyze and optimize staffing levels throughout the day</p>
         </div>
         
@@ -95,7 +96,7 @@ const PeakHourAnalysis = () => {
             </SelectContent>
           </Select>
           
-          <Button>
+          <Button className="bg-black text-white hover:bg-gray-800">
             Optimize Staffing
           </Button>
         </div>

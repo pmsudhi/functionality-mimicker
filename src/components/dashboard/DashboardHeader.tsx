@@ -14,9 +14,15 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   return (
     <div className="pt-8 pb-4">
-      <h1 className="text-3xl font-bold tracking-tight">F&B Manpower Planning Dashboard</h1>
+      <h1 className="text-3xl font-bold tracking-tight">F&B Manpower Dashboard</h1>
       <div className="mt-4 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Operational Dashboard</h2>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <Settings className="h-4 w-4 mr-2" />
+            Dashboard Settings
+          </Button>
+        </div>
       </div>
     </div>
   );
