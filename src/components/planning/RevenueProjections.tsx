@@ -8,6 +8,10 @@ const RevenueProjections = () => {
       <p className="text-muted-foreground">
         This is a placeholder for the Revenue Projections component in the planning section.
       </p>
+      
+      <div className="h-60 bg-muted/20 rounded-md flex items-center justify-center mt-6">
+        <p className="text-muted-foreground">Revenue projection charts will be displayed here</p>
+      </div>
     </div>
   );
 };

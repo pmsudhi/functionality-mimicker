@@ -20,13 +20,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import ScenarioBuilder from "./ScenarioBuilder";
-import StaffingModeler from "./StaffingModeler";
-import FinancialImpact from "./FinancialImpact";
-import ScenarioComparison from "./ScenarioComparison";
-import PeakHourAnalysis from "./PeakHourAnalysis";
-import EfficiencyMetrics from "./EfficiencyMetrics";
-import RevenueProjections from "./RevenueProjections";
+import ScenarioBuilder from "@/components/planning/ScenarioBuilder";
+import StaffingModeler from "@/components/planning/StaffingModeler";
+import FinancialImpact from "@/components/planning/FinancialImpact";
+import ScenarioComparison from "@/components/planning/ScenarioComparison";
+import PeakHourAnalysis from "@/components/planning/PeakHourAnalysis";
+import EfficiencyMetrics from "@/components/planning/EfficiencyMetrics";
+import RevenueProjections from "@/components/planning/RevenueProjections";
 
 const PlanningBoard = () => {
   const [planningView, setPlanningView] = useState("scenarios");

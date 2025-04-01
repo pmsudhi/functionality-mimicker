@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SavedScenariosTab from './tabs/SavedScenariosTab';
 import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
 

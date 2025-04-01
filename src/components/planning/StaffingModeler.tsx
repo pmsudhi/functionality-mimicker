@@ -8,6 +8,10 @@ const StaffingModeler = () => {
       <p className="text-muted-foreground">
         This is a placeholder for the Staffing Modeler component in the planning section.
       </p>
+      
+      <div className="h-60 bg-muted/20 rounded-md flex items-center justify-center mt-6">
+        <p className="text-muted-foreground">Staffing model visualization will be displayed here</p>
+      </div>
     </div>
   );
 };
