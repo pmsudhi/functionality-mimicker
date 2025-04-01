@@ -55,18 +55,8 @@ const ScenarioBuilder = () => {
   // Parameter values state
   const [paramValues, setParamValues] = useState<Record<string, number>>({});
   
-  // Debug logging for state changes
-  useEffect(() => {
-    console.log("Blocks state updated:", blocks);
-  }, [blocks]);
-  
-  useEffect(() => {
-    console.log("Parameter values updated:", paramValues);
-  }, [paramValues]);
-  
   // Add a new parameter block
   const addBlock = useCallback((type: BlockType) => {
-    console.log("Adding block of type:", type);
     const id = `block-${nextBlockId}`;
     let newBlock: ParameterBlock;
     
@@ -249,14 +239,10 @@ const ScenarioBuilder = () => {
       title: "Section Added",
       description: `${newBlock.title} has been added to your scenario.`,
     });
-    
-    console.log("Block added:", newBlock);
   }, [nextBlockId, paramValues, toast]);
   
   // Remove a parameter block
   const removeBlock = useCallback((blockId: string) => {
-    console.log("Removing block with ID:", blockId);
-    
     // Filter out the block to remove
     setBlocks(prevBlocks => prevBlocks.filter(block => block.id !== blockId));
     
@@ -279,8 +265,6 @@ const ScenarioBuilder = () => {
   
   // Add a new parameter to a block
   const addParameter = useCallback((blockId: string) => {
-    console.log("Adding parameter to block:", blockId);
-    
     setBlocks(prevBlocks => {
       return prevBlocks.map(block => {
         if (block.id === blockId) {
@@ -317,7 +301,6 @@ const ScenarioBuilder = () => {
   
   // Update parameter value - this is the key function that needs to work correctly
   const updateParameterValue = useCallback((paramId: string, values: number[]) => {
-    console.log("Updating parameter:", paramId, "with values:", values);
     const newValue = values[0];
     
     // First update the specific parameter that changed
@@ -325,7 +308,7 @@ const ScenarioBuilder = () => {
       // Create a copy with the updated value
       const newValues = { ...prev, [paramId]: newValue };
       
-      // Recalculate any dependent parameters after the one that changed directly
+      // Recalculate any dependent parameters
       blocks.forEach(block => {
         block.parameters.forEach(param => {
           if (param.isCalculated && param.calculation) {
@@ -358,13 +341,11 @@ const ScenarioBuilder = () => {
     });
     
     if (hasUpdates) {
-      console.log("Updating calculated values:", updatedValues);
       setParamValues(updatedValues);
     }
   }, [blocks, paramValues]);
   
   const handleSaveScenario = useCallback(() => {
-    console.log("Saving scenario:", scenarioName);
     toast({
       title: "Scenario Saved",
       description: `"${scenarioName}" has been saved successfully.`
@@ -372,7 +353,6 @@ const ScenarioBuilder = () => {
   }, [scenarioName, toast]);
   
   const handleReset = useCallback(() => {
-    console.log("Resetting parameters");
     // Reset to default parameter values for each block
     const resetValues = { ...paramValues };
     
@@ -401,19 +381,11 @@ const ScenarioBuilder = () => {
     });
   }, [blocks, paramValues, toast]);
   
-  // React to input events
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Input changing:", e.target.id, e.target.value);
-    setScenarioName(e.target.value);
-  };
-  
-  console.log("Rendering ScenarioBuilder with state:", { 
-    blocks, 
-    paramValues, 
-    scenarioName, 
-    selectedBrand, 
-    selectedOutlet 
-  });
+  // For debugging
+  useEffect(() => {
+    console.log("Blocks updated:", blocks);
+    console.log("Parameter values:", paramValues);
+  }, [blocks, paramValues]);
   
   return (
     <div className="p-6">
@@ -429,7 +401,7 @@ const ScenarioBuilder = () => {
               <Input 
                 id="scenario-name" 
                 value={scenarioName}
-                onChange={handleInputChange}
+                onChange={(e) => setScenarioName(e.target.value)}
               />
             </div>
             

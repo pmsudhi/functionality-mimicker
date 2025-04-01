@@ -35,7 +35,6 @@ const SliderControl = ({
 
   // Handle value change from slider
   const handleValueChange = (vals: number[]) => {
-    console.log("Slider value changing:", vals);
     const newValue = vals[0];
     setLocalValue(newValue); // Update local state for immediate UI feedback
     
@@ -47,9 +46,6 @@ const SliderControl = ({
   const displayValue = label.includes("Rate") && !label.includes("Check") 
     ? localValue.toFixed(1) 
     : Math.round(localValue);
-
-  // Debug logging
-  console.log(`SliderControl [${label}]:`, { value, localValue, min, max, step, disabled });
 
   return (
     <div className="space-y-2">
