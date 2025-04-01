@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 
 interface SliderControlProps {
@@ -23,6 +23,11 @@ const SliderControl = ({
 }: SliderControlProps) => {
   // Local state to enable dragging experience
   const [localValue, setLocalValue] = useState(value);
+  
+  // Update local value when prop value changes
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
   const handleValueChange = (vals: number[]) => {
     setLocalValue(vals[0]);

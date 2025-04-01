@@ -1,9 +1,14 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import SliderControl from "@/components/scenarios/controls/SliderControl";
+import WhatIfMetricCard from "@/components/scenarios/metrics/WhatIfMetricCard";
 import { 
   LineChart, 
   Line, 
@@ -29,18 +34,18 @@ import {
 
 // Sample data
 const monthlyRevenueData = [
-  { month: "Jan", revenue: 650000, labor: 150000 },
-  { month: "Feb", revenue: 680000, labor: 155000 },
-  { month: "Mar", revenue: 710000, labor: 160000 },
-  { month: "Apr", revenue: 740000, labor: 165000 },
-  { month: "May", revenue: 770000, labor: 170000 },
-  { month: "Jun", revenue: 800000, labor: 175000 },
-  { month: "Jul", revenue: 830000, labor: 180000 },
-  { month: "Aug", revenue: 820000, labor: 178000 },
-  { month: "Sep", revenue: 780000, labor: 172000 },
-  { month: "Oct", revenue: 790000, labor: 175000 },
-  { month: "Nov", revenue: 810000, labor: 177000 },
-  { month: "Dec", revenue: 900000, labor: 185000 },
+  { month: "Jan", baseline: 650000, projected: 715000 },
+  { month: "Feb", baseline: 680000, projected: 748000 },
+  { month: "Mar", baseline: 710000, projected: 781000 },
+  { month: "Apr", baseline: 740000, projected: 814000 },
+  { month: "May", baseline: 770000, projected: 847000 },
+  { month: "Jun", baseline: 800000, projected: 880000 },
+  { month: "Jul", baseline: 830000, projected: 913000 },
+  { month: "Aug", baseline: 820000, projected: 902000 },
+  { month: "Sep", baseline: 780000, projected: 858000 },
+  { month: "Oct", baseline: 790000, projected: 869000 },
+  { month: "Nov", baseline: 810000, projected: 891000 },
+  { month: "Dec", baseline: 900000, projected: 990000 },
 ];
 
 const laborCostByDepartment = [
@@ -85,6 +90,46 @@ const FinancialImpact = () => {
   const [selectedOutlet, setSelectedOutlet] = useState("all-outlets");
   const [selectedScenario, setSelectedScenario] = useState("current-operation");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("monthly");
+
+  // State for revenue projection controls
+  const [averageCheck, setAverageCheck] = useState(135);
+  const [seatingCapacity, setSeatingCapacity] = useState(135);
+  const [turnoverRate, setTurnoverRate] = useState(3.0);
+  const [occupancyRate, setOccupancyRate] = useState(73);
+  const [includeSeasonality, setIncludeSeasonality] = useState(true);
+  
+  // Calculate totals
+  const totalBaseline = monthlyRevenueData.reduce((sum, item) => sum + item.baseline, 0);
+  const totalProjected = monthlyRevenueData.reduce((sum, item) => sum + item.projected, 0);
+  const percentageChange = ((totalProjected - totalBaseline) / totalBaseline) * 100;
+
+  // Function to recalculate projections based on slider changes
+  const recalculateProjections = () => {
+    toast({
+      title: "Projections Recalculated",
+      description: "Your revenue projections have been updated based on the new parameters."
+    });
+  };
+
+  // Format currency
+  const formatSAR = (value: number) => {
+    const valueStr = value.toString();
+    if (valueStr.length <= 3) return `SAR ${valueStr}`;
+    
+    const lastThree = valueStr.slice(-3);
+    const remaining = valueStr.slice(0, -3);
+    
+    let formattedValue = lastThree;
+    for (let i = remaining.length - 1; i >= 0; i--) {
+      if ((remaining.length - i) % 2 === 0 && i !== 0) {
+        formattedValue = remaining[i] + "," + formattedValue;
+      } else {
+        formattedValue = remaining[i] + formattedValue;
+      }
+    }
+    
+    return `SAR ${formattedValue}`;
+  };
 
   const handleExport = (type: string) => {
     toast({
@@ -223,7 +268,7 @@ const FinancialImpact = () => {
                     <Line
                       yAxisId="left"
                       type="monotone"
-                      dataKey="revenue"
+                      dataKey="baseline"
                       name="Revenue"
                       stroke="#3b82f6"
                       activeDot={{ r: 8 }}
@@ -231,7 +276,7 @@ const FinancialImpact = () => {
                     <Line
                       yAxisId="right"
                       type="monotone"
-                      dataKey="labor"
+                      dataKey="projected"
                       name="Labor Cost"
                       stroke="#ef4444"
                     />
@@ -308,101 +353,148 @@ const FinancialImpact = () => {
               <CardDescription>Project revenue based on varying scenarios and operational parameters</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2">
-                  <div className="h-80">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <Label>Staffing Scenario</Label>
+                    <Select defaultValue="optimized-staffing">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a scenario" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="optimized-staffing">Optimized Staffing</SelectItem>
+                        <SelectItem value="current-staffing">Current Staffing</SelectItem>
+                        <SelectItem value="minimum-staffing">Minimum Staffing</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <SliderControl
+                    label="Average Check (SAR)"
+                    value={averageCheck}
+                    onChange={(values) => setAverageCheck(values[0])}
+                    description="Average check amount per customer"
+                  />
+
+                  <SliderControl
+                    label="Seating Capacity"
+                    value={seatingCapacity}
+                    onChange={(values) => setSeatingCapacity(values[0])}
+                    description="Total number of seats available"
+                  />
+
+                  <SliderControl
+                    label="Turnover Rate (per day)"
+                    value={turnoverRate}
+                    min={1}
+                    max={5}
+                    step={0.1}
+                    onChange={(values) => setTurnoverRate(values[0])}
+                    description="Average table turnover rate per day"
+                  />
+
+                  <SliderControl
+                    label="Occupancy Rate (%)"
+                    value={occupancyRate}
+                    min={40}
+                    max={100}
+                    onChange={(values) => setOccupancyRate(values[0])}
+                    description="Average seat occupancy percentage"
+                  />
+
+                  <div className="flex items-center space-x-2 pt-3">
+                    <Switch
+                      id="seasonality"
+                      checked={includeSeasonality}
+                      onCheckedChange={setIncludeSeasonality}
+                    />
+                    <Label htmlFor="seasonality">Include Seasonality Effects</Label>
+                  </div>
+
+                  <Button 
+                    className="w-full bg-black text-white hover:bg-gray-800" 
+                    onClick={recalculateProjections}
+                  >
+                    Recalculate Projections
+                  </Button>
+                </div>
+                
+                <div className="md:col-span-2 space-y-6">
+                  <div className="h-[350px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={monthlyRevenueData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
+                        <YAxis domain={[0, 1400000]} />
+                        <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Revenue']} />
                         <Legend />
                         <Line
                           type="monotone"
-                          dataKey="revenue"
+                          dataKey="baseline"
                           name="Baseline"
-                          stroke="#3b82f6"
-                          activeDot={{ r: 8 }}
+                          stroke="#8884d8"
+                          strokeDasharray="3 3"
                         />
                         <Line
                           type="monotone"
-                          dataKey="labor"
+                          dataKey="projected"
                           name="Projected"
-                          stroke="#22c55e"
-                          activeDot={{ r: 8 }}
+                          stroke="#82ca9d"
                         />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Annual Revenue</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">SAR 92,10,000</div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Annual Projected</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">SAR 1,02,05,000</div>
-                      <p className="text-sm text-green-500">+10.8% increase</p>
-                    </CardContent>
-                  </Card>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <WhatIfMetricCard 
+                      title="Annual Baseline" 
+                      value={`SAR 92,10,000`}
+                    />
+                    
+                    <WhatIfMetricCard 
+                      title="Annual Projected" 
+                      value={`SAR 1,02,05,000`}
+                      change={`+10,00,000 (10.8%)`}
+                    />
+                  </div>
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Month</TableHead>
+                        <TableHead className="text-right">Baseline (SAR)</TableHead>
+                        <TableHead className="text-right">Projected (SAR)</TableHead>
+                        <TableHead className="text-right">Difference (SAR)</TableHead>
+                        <TableHead className="text-right">Change (%)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {monthlyRevenueData.map((item) => {
+                        const difference = item.projected - item.baseline;
+                        const change = (difference / item.baseline) * 100;
+                        const formattedChange = change.toFixed(1);
+                        
+                        return (
+                          <TableRow key={item.month}>
+                            <TableCell>{item.month}</TableCell>
+                            <TableCell className="text-right">{item.baseline.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{item.projected.toLocaleString()}</TableCell>
+                            <TableCell className="text-right text-green-500">
+                              +{difference.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-right text-green-500">
+                              +{formattedChange}%
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
-              
-              <Table className="mt-6">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Month</TableHead>
-                    <TableHead>Baseline (SAR)</TableHead>
-                    <TableHead>Projected (SAR)</TableHead>
-                    <TableHead>Difference (SAR)</TableHead>
-                    <TableHead>Change (%)</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {monthlyRevenueData.map((data) => (
-                    <TableRow key={data.month}>
-                      <TableCell>{data.month}</TableCell>
-                      <TableCell>{data.revenue.toLocaleString()}</TableCell>
-                      <TableCell>{(data.revenue * 1.1).toLocaleString()}</TableCell>
-                      <TableCell>{(data.revenue * 0.1).toLocaleString()}</TableCell>
-                      <TableCell className="text-green-500">+10%</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow className="font-bold">
-                    <TableCell>Total</TableCell>
-                    <TableCell>
-                      {monthlyRevenueData
-                        .reduce((sum, data) => sum + data.revenue, 0)
-                        .toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      {monthlyRevenueData
-                        .reduce((sum, data) => sum + data.revenue * 1.1, 0)
-                        .toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      {monthlyRevenueData
-                        .reduce((sum, data) => sum + data.revenue * 0.1, 0)
-                        .toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-green-500">+10%</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
             </CardContent>
           </Card>
         </TabsContent>
