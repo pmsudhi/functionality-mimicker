@@ -10,6 +10,16 @@ import {
   BarChart4
 } from 'lucide-react';
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
 const MainNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -23,36 +33,36 @@ const MainNavigation = () => {
   ];
 
   return (
-    <nav className="w-full border-b bg-background">
-      <div className="container mx-auto px-4">
+    <nav className="w-full border-b bg-background shadow-sm">
+      <div className="container mx-auto">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <BarChart4 className="h-6 w-6 mr-2 text-primary" />
-              <span className="text-xl font-bold">F&B Manpower Modeling Solution</span>
+              <span className="text-xl font-bold">F&B Manpower</span>
             </Link>
-            <p className="ml-4 text-sm text-muted-foreground hidden md:block">
-              Optimize staffing requirements, costs, and operational efficiency across your multi-brand F&B chain
-            </p>
           </div>
           
           <div className="hidden md:flex">
-            <div className="flex space-x-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors
-                    ${currentPath === item.path
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-foreground/60 hover:text-foreground hover:bg-accent'
-                    }`}
-                >
-                  {item.icon}
-                  <span className="ml-2">{item.name}</span>
-                </Link>
-              ))}
-            </div>
+            <NavigationMenu>
+              <NavigationMenuList>
+                {navItems.map((item) => (
+                  <NavigationMenuItem key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors
+                        ${currentPath === item.path
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-foreground/60 hover:text-foreground hover:bg-accent'
+                        }`}
+                    >
+                      {item.icon}
+                      <span className="ml-2">{item.name}</span>
+                    </Link>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
         </div>
       </div>
