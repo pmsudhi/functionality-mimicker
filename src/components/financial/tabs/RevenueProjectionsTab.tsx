@@ -101,6 +101,25 @@ const RevenueProjectionsTab = ({
     });
   };
 
+  const handleSliderChange = (param: string, values: number[]) => {
+    const value = values[0];
+    
+    switch(param) {
+      case 'averageCheck':
+        setAverageCheck(value);
+        break;
+      case 'seatingCapacity':
+        setSeatingCapacity(value);
+        break;
+      case 'turnoverRate':
+        setTurnoverRate(value);
+        break;
+      case 'occupancyRate':
+        setOccupancyRate(value);
+        break;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -127,7 +146,7 @@ const RevenueProjectionsTab = ({
             <SliderControl
               label="Average Check (SAR)"
               value={averageCheck}
-              onChange={(values) => setAverageCheck(values[0])}
+              onChange={(values) => handleSliderChange('averageCheck', values)}
               description="Average check amount per customer"
               min={80}
               max={200}
@@ -136,7 +155,7 @@ const RevenueProjectionsTab = ({
             <SliderControl
               label="Seating Capacity"
               value={seatingCapacity}
-              onChange={(values) => setSeatingCapacity(values[0])}
+              onChange={(values) => handleSliderChange('seatingCapacity', values)}
               description="Total number of seats available"
               min={60}
               max={200}
@@ -148,7 +167,7 @@ const RevenueProjectionsTab = ({
               min={1}
               max={5}
               step={0.1}
-              onChange={(values) => setTurnoverRate(values[0])}
+              onChange={(values) => handleSliderChange('turnoverRate', values)}
               description="Average table turnover rate per day"
             />
 
@@ -157,7 +176,7 @@ const RevenueProjectionsTab = ({
               value={occupancyRate}
               min={40}
               max={100}
-              onChange={(values) => setOccupancyRate(values[0])}
+              onChange={(values) => handleSliderChange('occupancyRate', values)}
               description="Average seat occupancy percentage"
             />
 

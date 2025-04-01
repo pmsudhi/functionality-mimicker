@@ -62,6 +62,31 @@ const WhatIfAnalysisTab = ({
   const formatCurrency = (value: number) => `SAR ${Math.round(value).toLocaleString()}`;
   const formatChange = (value: number) => `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 
+  const handleSliderChange = (param: string, values: number[]) => {
+    const value = values[0];
+    
+    switch(param) {
+      case 'staffingLevel':
+        setStaffingLevel(value);
+        break;
+      case 'averageWage':
+        setAverageWage(value);
+        break;
+      case 'operatingHours':
+        setOperatingHours(value);
+        break;
+      case 'serviceEfficiency':
+        setServiceEfficiency(value);
+        break;
+      case 'customerVolume':
+        setCustomerVolume(value);
+        break;
+      case 'averageCheck':
+        setAverageCheck(value);
+        break;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -89,42 +114,42 @@ const WhatIfAnalysisTab = ({
               <SliderControl 
                 label="Staffing Level (%)"
                 value={staffingLevel}
-                onChange={(vals) => setStaffingLevel(vals[0])}
+                onChange={(vals) => handleSliderChange('staffingLevel', vals)}
                 description="Adjust the total number of staff compared to the base scenario"
               />
               
               <SliderControl 
                 label="Average Wage (%)"
                 value={averageWage}
-                onChange={(vals) => setAverageWage(vals[0])}
+                onChange={(vals) => handleSliderChange('averageWage', vals)}
                 description="Adjust the average wage compared to the base scenario"
               />
               
               <SliderControl 
                 label="Operating Hours (%)"
                 value={operatingHours}
-                onChange={(vals) => setOperatingHours(vals[0])}
+                onChange={(vals) => handleSliderChange('operatingHours', vals)}
                 description="Adjust the operating hours compared to the base scenario"
               />
               
               <SliderControl 
                 label="Service Efficiency (%)"
                 value={serviceEfficiency}
-                onChange={(vals) => setServiceEfficiency(vals[0])}
+                onChange={(vals) => handleSliderChange('serviceEfficiency', vals)}
                 description="Adjust the service efficiency compared to the base scenario"
               />
               
               <SliderControl 
                 label="Customer Volume (%)"
                 value={customerVolume}
-                onChange={(vals) => setCustomerVolume(vals[0])}
+                onChange={(vals) => handleSliderChange('customerVolume', vals)}
                 description="Adjust the customer volume compared to the base scenario"
               />
               
               <SliderControl 
                 label="Average Check (%)"
                 value={averageCheck}
-                onChange={(vals) => setAverageCheck(vals[0])}
+                onChange={(vals) => handleSliderChange('averageCheck', vals)}
                 description="Adjust the average check amount compared to the base scenario"
               />
             </div>

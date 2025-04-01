@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +56,7 @@ const ScenarioBuilder = () => {
   const [paramValues, setParamValues] = useState<Record<string, number>>({});
   
   // Add a new parameter block
-  const addBlock = (type: BlockType) => {
+  const addBlock = useCallback((type: BlockType) => {
     const id = `block-${nextBlockId}`;
     let newBlock: ParameterBlock;
     
@@ -239,31 +239,32 @@ const ScenarioBuilder = () => {
       title: "Section Added",
       description: `${newBlock.title} has been added to your scenario.`,
     });
-  };
+  }, [nextBlockId, paramValues, toast]);
   
   // Remove a parameter block
-  const removeBlock = (blockId: string) => {
+  const removeBlock = useCallback((blockId: string) => {
     // Filter out the block to remove
     setBlocks(prevBlocks => prevBlocks.filter(block => block.id !== blockId));
     
     // Also remove its parameter values
-    const updatedParamValues = { ...paramValues };
-    Object.keys(updatedParamValues).forEach(key => {
-      if (key.startsWith(blockId)) {
-        delete updatedParamValues[key];
-      }
+    setParamValues(prev => {
+      const updatedValues = { ...prev };
+      Object.keys(updatedValues).forEach(key => {
+        if (key.startsWith(blockId)) {
+          delete updatedValues[key];
+        }
+      });
+      return updatedValues;
     });
-    
-    setParamValues(updatedParamValues);
     
     toast({
       title: "Section Removed",
       description: "The section has been removed from your scenario.",
     });
-  };
+  }, [toast]);
   
   // Add a new parameter to a block
-  const addParameter = (blockId: string) => {
+  const addParameter = useCallback((blockId: string) => {
     setBlocks(prevBlocks => {
       return prevBlocks.map(block => {
         if (block.id === blockId) {
@@ -296,41 +297,43 @@ const ScenarioBuilder = () => {
       title: "Parameter Added",
       description: "A new parameter has been added to the section.",
     });
-  };
+  }, [toast]);
   
-  // Update parameter value
-  const updateParameterValue = (paramId: string, values: number[]) => {
+  // Update parameter value - this is the key function that needs to work correctly
+  const updateParameterValue = useCallback((paramId: string, values: number[]) => {
     const newValue = values[0];
     
-    // Create a copy of parameter values and update
-    const newParamValues = { ...paramValues, [paramId]: newValue };
-    
-    // Recalculate any dependent parameters
-    const finalParamValues = { ...newParamValues };
-    blocks.forEach(block => {
-      block.parameters.forEach(param => {
-        if (param.isCalculated && param.calculation) {
-          finalParamValues[param.id] = param.calculation(newParamValues);
-        }
+    // First update the specific parameter that changed
+    setParamValues(prev => {
+      // Create a copy with the updated value
+      const newValues = { ...prev, [paramId]: newValue };
+      
+      // Recalculate any dependent parameters
+      blocks.forEach(block => {
+        block.parameters.forEach(param => {
+          if (param.isCalculated && param.calculation) {
+            newValues[param.id] = param.calculation(newValues);
+          }
+        });
       });
+      
+      return newValues;
     });
-    
-    setParamValues(finalParamValues);
-  };
+  }, [blocks]);
   
-  // Calculate values for any parameters with calculations whenever blocks or parameter values change
+  // Recalculate dependent values whenever blocks or params change
   useEffect(() => {
     if (blocks.length === 0) return;
     
-    const calculatedParams = { ...paramValues };
     let hasUpdates = false;
+    const updatedValues = { ...paramValues };
     
     blocks.forEach(block => {
       block.parameters.forEach(param => {
         if (param.isCalculated && param.calculation) {
-          const calculated = param.calculation(paramValues);
-          if (calculatedParams[param.id] !== calculated) {
-            calculatedParams[param.id] = calculated;
+          const calculatedValue = param.calculation(paramValues);
+          if (updatedValues[param.id] !== calculatedValue) {
+            updatedValues[param.id] = calculatedValue;
             hasUpdates = true;
           }
         }
@@ -338,25 +341,25 @@ const ScenarioBuilder = () => {
     });
     
     if (hasUpdates) {
-      setParamValues(calculatedParams);
+      setParamValues(updatedValues);
     }
   }, [blocks, paramValues]);
   
-  const handleSaveScenario = () => {
+  const handleSaveScenario = useCallback(() => {
     toast({
       title: "Scenario Saved",
       description: `"${scenarioName}" has been saved successfully.`
     });
-  };
+  }, [scenarioName, toast]);
   
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     // Reset to default parameter values for each block
     const resetValues = { ...paramValues };
     
     blocks.forEach(block => {
       block.parameters.forEach(param => {
         if (!param.isCalculated) {
-          resetValues[param.id] = param.value;
+          resetValues[param.id] = param.value; // Reset to original default
         }
       });
     });
@@ -376,11 +379,13 @@ const ScenarioBuilder = () => {
       title: "Parameters Reset",
       description: "All parameters have been reset to default values."
     });
-  };
+  }, [blocks, paramValues, toast]);
   
-  // Debug info
-  console.log("Blocks:", blocks);
-  console.log("Parameter values:", paramValues);
+  // For debugging
+  useEffect(() => {
+    console.log("Blocks updated:", blocks);
+    console.log("Parameter values:", paramValues);
+  }, [blocks, paramValues]);
   
   return (
     <div className="p-6">

@@ -25,22 +25,24 @@ const SliderControl = ({
   disabled = false,
   instantUpdate = true
 }: SliderControlProps) => {
-  // Local state to enable dragging experience
+  // Local state to track current slider value during dragging
   const [localValue, setLocalValue] = useState(value);
   
-  // Update local value when prop value changes
+  // Sync local state with prop value when it changes externally
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
 
+  // Handle value change from slider
   const handleValueChange = (vals: number[]) => {
     const newValue = vals[0];
-    setLocalValue(newValue);
+    setLocalValue(newValue); // Update local state for immediate UI feedback
     
-    // Call the onChange callback with the new value
+    // Pass the new value up to parent
     onChange(vals);
   };
 
+  // Format displayed value according to type of parameter
   const displayValue = label.includes("Rate") && !label.includes("Check") 
     ? localValue.toFixed(1) 
     : Math.round(localValue);
@@ -50,7 +52,7 @@ const SliderControl = ({
       <div className="flex justify-between">
         <label className="text-sm font-medium">{label}</label>
         <span className="text-sm font-medium">
-          {label.includes("Rate (%)") || label.includes("Rate (") 
+          {label.includes("Rate (%)") || label.includes("Rate (") || label.includes("%")
             ? `${displayValue}%` 
             : displayValue}
         </span>
@@ -59,7 +61,7 @@ const SliderControl = ({
         value={[localValue]} 
         min={min} 
         max={max} 
-        step={label.includes("Turnover") ? 0.1 : step}
+        step={label.includes("Turnover") || label.toLowerCase().includes("factor") ? 0.1 : step}
         onValueChange={handleValueChange}
         disabled={disabled}
         className="my-1"
