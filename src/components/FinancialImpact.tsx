@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,7 @@ import {
   FileSpreadsheet
 } from "lucide-react";
 
-// Sample data
-const monthlyRevenueData = [
+const initialMonthlyRevenueData = [
   { month: "Jan", baseline: 650000, projected: 715000 },
   { month: "Feb", baseline: 680000, projected: 748000 },
   { month: "Mar", baseline: 710000, projected: 781000 },
@@ -74,13 +72,35 @@ const pAndLData = [
 
 const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8", "#ef4444"];
 
-// Define a proper function to get bar color
 const getBarColor = (entry: any) => {
   if (entry.department?.includes("FOH Management")) return COLORS[0];
   if (entry.department?.includes("FOH Service")) return COLORS[1];
   if (entry.department?.includes("BOH Management")) return COLORS[2];
   if (entry.department?.includes("BOH Kitchen")) return COLORS[3];
   return COLORS[4];
+};
+
+const formatIndianStyle = (value: number): string => {
+  if (value < 1000) return value.toString();
+  
+  let result = "";
+  let str = Math.floor(value).toString();
+  
+  const lastThree = str.substring(str.length - 3);
+  const remaining = str.substring(0, str.length - 3);
+  
+  result = lastThree;
+  
+  if (remaining.length > 0) {
+    let i = remaining.length;
+    while (i > 0) {
+      const segment = remaining.substring(Math.max(0, i - 2), i);
+      result = segment + (result.length > 0 ? "," + result : result);
+      i -= 2;
+    }
+  }
+  
+  return result;
 };
 
 const FinancialImpact = () => {
@@ -91,19 +111,59 @@ const FinancialImpact = () => {
   const [selectedScenario, setSelectedScenario] = useState("current-operation");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("monthly");
 
-  // State for revenue projection controls
   const [averageCheck, setAverageCheck] = useState(135);
   const [seatingCapacity, setSeatingCapacity] = useState(135);
   const [turnoverRate, setTurnoverRate] = useState(3.0);
   const [occupancyRate, setOccupancyRate] = useState(73);
   const [includeSeasonality, setIncludeSeasonality] = useState(true);
-  
-  // Calculate totals
-  const totalBaseline = monthlyRevenueData.reduce((sum, item) => sum + item.baseline, 0);
-  const totalProjected = monthlyRevenueData.reduce((sum, item) => sum + item.projected, 0);
-  const percentageChange = ((totalProjected - totalBaseline) / totalBaseline) * 100;
 
-  // Function to recalculate projections based on slider changes
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState(initialMonthlyRevenueData);
+  const [totalBaseline, setTotalBaseline] = useState(0);
+  const [totalProjected, setTotalProjected] = useState(0);
+  const [percentageChange, setPercentageChange] = useState(0);
+
+  useEffect(() => {
+    const newData = initialMonthlyRevenueData.map(item => {
+      const capacityFactor = seatingCapacity / 135;
+      const turnoverFactor = turnoverRate / 3.0;
+      const occupancyFactor = occupancyRate / 73;
+      const checkFactor = averageCheck / 135;
+      const seasonalityFactor = includeSeasonality
+        ? getSeasonalFactor(item.month)
+        : 1.0;
+      
+      let projected = item.baseline * capacityFactor * turnoverFactor * 
+                      occupancyFactor * checkFactor * seasonalityFactor;
+      
+      projected = Math.round(projected / 1000) * 1000;
+      
+      return {
+        ...item,
+        projected
+      };
+    });
+    
+    setMonthlyRevenueData(newData);
+    
+    const newBaseline = newData.reduce((sum, item) => sum + item.baseline, 0);
+    const newProjected = newData.reduce((sum, item) => sum + item.projected, 0);
+    const newPercentageChange = ((newProjected - newBaseline) / newBaseline) * 100;
+    
+    setTotalBaseline(newBaseline);
+    setTotalProjected(newProjected);
+    setPercentageChange(newPercentageChange);
+  }, [averageCheck, seatingCapacity, turnoverRate, occupancyRate, includeSeasonality]);
+
+  const getSeasonalFactor = (month: string): number => {
+    const seasonalFactors: Record<string, number> = {
+      'Jan': 0.95, 'Feb': 0.97, 'Mar': 1.0, 'Apr': 1.02,
+      'May': 1.03, 'Jun': 1.05, 'Jul': 1.07, 'Aug': 1.05,
+      'Sep': 1.0, 'Oct': 0.98, 'Nov': 1.02, 'Dec': 1.1
+    };
+    
+    return seasonalFactors[month] || 1.0;
+  };
+
   const recalculateProjections = () => {
     toast({
       title: "Projections Recalculated",
@@ -111,24 +171,8 @@ const FinancialImpact = () => {
     });
   };
 
-  // Format currency
   const formatSAR = (value: number) => {
-    const valueStr = value.toString();
-    if (valueStr.length <= 3) return `SAR ${valueStr}`;
-    
-    const lastThree = valueStr.slice(-3);
-    const remaining = valueStr.slice(0, -3);
-    
-    let formattedValue = lastThree;
-    for (let i = remaining.length - 1; i >= 0; i--) {
-      if ((remaining.length - i) % 2 === 0 && i !== 0) {
-        formattedValue = remaining[i] + "," + formattedValue;
-      } else {
-        formattedValue = remaining[i] + formattedValue;
-      }
-    }
-    
-    return `SAR ${formattedValue}`;
+    return `SAR ${formatIndianStyle(value)}`;
   };
 
   const handleExport = (type: string) => {
@@ -188,7 +232,7 @@ const FinancialImpact = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">SAR 92,10,000</div>
+            <div className="text-2xl font-bold">{formatSAR(totalBaseline)}</div>
             <p className="text-xs text-muted-foreground">
               Based on 12-month projection
             </p>
@@ -202,7 +246,7 @@ const FinancialImpact = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">SAR 21,90,400</div>
+            <div className="text-2xl font-bold">{formatSAR(totalBaseline * 0.238)}</div>
             <p className="text-xs text-muted-foreground">
               Total staff cost for 12 months
             </p>
@@ -230,9 +274,9 @@ const FinancialImpact = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">SAR 1521</div>
+            <div className="text-2xl font-bold">SAR {Math.round((totalBaseline * 0.238 / 12) / seatingCapacity).toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              Based on 120 seats
+              Based on {seatingCapacity} seats
             </p>
           </CardContent>
         </Card>
@@ -374,6 +418,8 @@ const FinancialImpact = () => {
                     value={averageCheck}
                     onChange={(values) => setAverageCheck(values[0])}
                     description="Average check amount per customer"
+                    min={80}
+                    max={200}
                   />
 
                   <SliderControl
@@ -381,6 +427,8 @@ const FinancialImpact = () => {
                     value={seatingCapacity}
                     onChange={(values) => setSeatingCapacity(values[0])}
                     description="Total number of seats available"
+                    min={60}
+                    max={200}
                   />
 
                   <SliderControl
@@ -429,7 +477,7 @@ const FinancialImpact = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis domain={[0, 1400000]} />
-                        <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Revenue']} />
+                        <Tooltip formatter={(value) => [`${(value as number).toLocaleString()}`, 'Revenue']} />
                         <Legend />
                         <Line
                           type="monotone"
@@ -451,13 +499,13 @@ const FinancialImpact = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <WhatIfMetricCard 
                       title="Annual Baseline" 
-                      value={`SAR 92,10,000`}
+                      value={formatSAR(totalBaseline)}
                     />
                     
                     <WhatIfMetricCard 
                       title="Annual Projected" 
-                      value={`SAR 1,02,05,000`}
-                      change={`+10,00,000 (10.8%)`}
+                      value={formatSAR(totalProjected)}
+                      change={`+${formatIndianStyle(totalProjected - totalBaseline)} (${percentageChange.toFixed(1)}%)`}
                     />
                   </div>
 

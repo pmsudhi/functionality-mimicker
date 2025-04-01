@@ -34,11 +34,15 @@ const SliderControl = ({
     onChange(vals);
   };
 
+  const displayValue = label.includes("Rate") && !label.includes("Check") 
+    ? localValue.toFixed(1) 
+    : Math.round(localValue);
+
   return (
     <div className="space-y-2">
       <div className="flex justify-between">
         <label className="text-sm font-medium">{label}</label>
-        <span className="text-sm font-medium">{label.includes("Rate (%)") ? `${localValue}%` : localValue}</span>
+        <span className="text-sm font-medium">{label.includes("Rate (%)") || label.includes("Rate (") ? `${displayValue}%` : displayValue}</span>
       </div>
       <Slider 
         value={[localValue]} 
