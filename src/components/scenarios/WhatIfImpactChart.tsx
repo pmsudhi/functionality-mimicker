@@ -9,7 +9,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine
+  ReferenceLine,
+  LabelList
 } from "recharts";
 import { ChartContainer } from "@/components/ui/chart-container";
 import { Scenario } from "@/types/modelTypes";

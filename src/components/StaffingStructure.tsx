@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList, ReferenceLine } from "recharts";
 import { 
   FileText, 
   FileSpreadsheet, 
@@ -505,56 +505,76 @@ const StaffingStructure = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-6">
-              <CustomChartContainer 
-                title="Monthly Cost by Department" 
-                description="Breakdown of monthly labor costs across different departments"
-                className="h-[400px] mb-8"
-                contentClassName="pt-4"
-              >
-                <ChartContainer config={chartConfig} className="w-full h-full">
+              <div className="mb-8 space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold">Monthly Cost by Department</h3>
+                  <p className="text-sm text-muted-foreground">Breakdown of monthly labor costs across different departments</p>
+                </div>
+                
+                <div className="h-[450px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={costAnalysisData}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                      barSize={60}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
+                      barSize={80}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
+                      <defs>
+                        <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9}/>
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid 
+                        strokeDasharray="3 3" 
+                        vertical={false} 
+                        stroke="#e5e7eb" 
+                        opacity={0.4} 
+                      />
                       <XAxis 
                         dataKey="department" 
-                        tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
-                        tickLine={{ stroke: 'var(--border)' }}
-                        axisLine={{ stroke: 'var(--border)' }}
+                        tick={{ fill: '#6b7280', fontSize: 12 }}
+                        tickLine={false}
+                        axisLine={{ stroke: '#e5e7eb' }}
+                        height={60}
                       />
                       <YAxis 
-                        tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
-                        tickLine={{ stroke: 'var(--border)' }}
-                        axisLine={{ stroke: 'var(--border)' }}
-                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
-                      />
-                      <Tooltip 
-                        content={<ChartTooltipContent />}
-                        cursor={{ fill: 'var(--muted)', opacity: 0.1 }}
+                        tick={{ fill: '#6b7280', fontSize: 12 }}
+                        tickLine={false}
+                        axisLine={{ stroke: '#e5e7eb' }}
+                        tickFormatter={(value) => `${value.toLocaleString()}`}
+                        domain={[0, 360000]}
+                        ticks={[0, 90000, 180000, 270000, 360000]}
+                        tickCount={5}
+                        label={{ 
+                          value: '', 
+                          angle: -90, 
+                          position: 'insideLeft',
+                          style: { textAnchor: 'middle', fill: '#6b7280', fontSize: 12 }
+                        }}
                       />
                       <Bar 
                         dataKey="cost" 
-                        name="Monthly Cost (SAR)" 
-                        fill="var(--color-monthly_cost)"
-                        radius={[6, 6, 0, 0]}
-                        animationDuration={800}
+                        name="Monthly Cost" 
+                        fill="url(#colorCost)"
+                        radius={[4, 4, 0, 0]}
+                        animationDuration={1000}
+                        animationEasing="ease-out"
+                        isAnimationActive={true}
                       >
                         <LabelList 
                           dataKey="percentage" 
-                          position="top" 
+                          position="top"
                           content={(props: any) => {
                             const { x, y, width, value } = props;
                             return (
                               <g>
                                 <text
                                   x={x + width / 2}
-                                  y={y - 10}
-                                  fill="var(--muted-foreground)"
+                                  y={y - 15}
+                                  fill="#6b7280"
                                   textAnchor="middle"
-                                  fontSize={12}
+                                  fontWeight="500"
+                                  fontSize={13}
                                 >
                                   {`${value}%`}
                                 </text>
@@ -563,11 +583,10 @@ const StaffingStructure = () => {
                           }}
                         />
                       </Bar>
-                      <ChartLegendContent />
                     </BarChart>
                   </ResponsiveContainer>
-                </ChartContainer>
-              </CustomChartContainer>
+                </div>
+              </div>
               
               <div>
                 <Badge variant="outline" className="mb-4 font-medium bg-primary/5">
