@@ -59,30 +59,38 @@ const ScenarioManager = () => {
   };
   
   const comparison = getComparisonData();
+
+  const handleBrandChange = (value: string) => {
+    setSelectedBrandId(value === "all" ? null : value);
+  };
+
+  const handleOutletChange = (value: string) => {
+    setSelectedOutletId(value === "all" ? null : value);
+  };
   
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Scenario Manager</h1>
         <div className="flex gap-4">
-          <Select value={selectedBrandId || ""} onValueChange={value => setSelectedBrandId(value || null)}>
+          <Select value={selectedBrandId ? selectedBrandId : "all"} onValueChange={handleBrandChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Brands" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Brands</SelectItem>
+              <SelectItem value="all">All Brands</SelectItem>
               {availableBrands.map(brand => (
                 <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
           
-          <Select value={selectedOutletId || ""} onValueChange={value => setSelectedOutletId(value || null)}>
+          <Select value={selectedOutletId ? selectedOutletId : "all"} onValueChange={handleOutletChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Outlets" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Outlets</SelectItem>
+              <SelectItem value="all">All Outlets</SelectItem>
               {availableOutlets.map(outlet => (
                 <SelectItem key={outlet.id} value={outlet.id}>{outlet.name}</SelectItem>
               ))}

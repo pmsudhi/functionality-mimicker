@@ -21,8 +21,8 @@ import { useToast } from "@/hooks/use-toast";
 const ScenarioBuilder = () => {
   const { toast } = useToast();
   const [scenarioName, setScenarioName] = useState("New Scenario");
-  const [selectedBrand, setSelectedBrand] = useState("");
-  const [selectedOutlet, setSelectedOutlet] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("white-robata");
+  const [selectedOutlet, setSelectedOutlet] = useState("mall-of-dhahran");
   const [ramadanAdjustment, setRamadanAdjustment] = useState(false);
   
   // Space parameters

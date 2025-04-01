@@ -19,7 +19,7 @@ import { compareScenarios } from "@/services/calculationService";
 
 const ScenarioComparison = () => {
   const [baseScenarioId, setBaseScenarioId] = useState(mockScenarios[0].id);
-  const [compareScenarioId, setCompareScenarioId] = useState(mockScenarios[1] ? mockScenarios[1].id : "");
+  const [compareScenarioId, setCompareScenarioId] = useState(mockScenarios[1] ? mockScenarios[1].id : mockScenarios[0].id);
   
   // Find the selected scenarios
   const baseScenario = mockScenarios.find(s => s.id === baseScenarioId);
@@ -101,14 +101,20 @@ const ScenarioComparison = () => {
               <SelectValue placeholder="Select comparison scenario" />
             </SelectTrigger>
             <SelectContent>
-              {mockScenarios.filter(s => s.id !== baseScenarioId).map(scenario => {
-                const outlet = mockOutlets.find(o => o.id === scenario.outletId);
-                return (
-                  <SelectItem key={scenario.id} value={scenario.id}>
-                    {scenario.name} ({outlet?.name})
-                  </SelectItem>
-                );
-              })}
+              {mockScenarios.filter(s => s.id !== baseScenarioId).length > 0 ? (
+                mockScenarios.filter(s => s.id !== baseScenarioId).map(scenario => {
+                  const outlet = mockOutlets.find(o => o.id === scenario.outletId);
+                  return (
+                    <SelectItem key={scenario.id} value={scenario.id}>
+                      {scenario.name} ({outlet?.name})
+                    </SelectItem>
+                  );
+                })
+              ) : (
+                <SelectItem value={mockScenarios[0]?.id || "fallback"}>
+                  No other scenarios available
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
