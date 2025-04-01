@@ -47,14 +47,14 @@ export const revenueByOutlet = [
 ];
 
 export const laborCostByPosition = [
-  { position: "Servers", cost: 120000 },
-  { position: "Chefs", cost: 90000 },
-  { position: "Line Cooks", cost: 100000 },
-  { position: "Managers", cost: 70000 },
-  { position: "Hosts", cost: 50000 },
-  { position: "Bartenders", cost: 40000 },
-  { position: "Dishwashers", cost: 60000 },
-  { position: "Others", cost: 70000 }
+  { position: "Servers", cost: 120000, color: "#10b981" },
+  { position: "Chefs", cost: 90000, color: "#3b82f6" },
+  { position: "Line Cooks", cost: 100000, color: "#8b5cf6" },
+  { position: "Managers", cost: 70000, color: "#6366f1" },
+  { position: "Hosts", cost: 50000, color: "#ec4899" },
+  { position: "Bartenders", cost: 40000, color: "#f59e0b" },
+  { position: "Dishwashers", cost: 60000, color: "#ef4444" },
+  { position: "Others", cost: 70000, color: "#64748b" }
 ];
 
 export const benchmarkData = [
@@ -84,17 +84,40 @@ export const outletComparison = [
 
 export const staffBreakdown = {
   foh: [
-    { position: "Servers", count: 42 },
-    { position: "Hosts/Hostesses", count: 12 },
-    { position: "Bartenders", count: 8 },
-    { position: "Cashiers", count: 10 },
-    { position: "Managers", count: 8 }
+    { position: "Servers", count: 42, color: "#10b981" },
+    { position: "Hosts/Hostesses", count: 12, color: "#3b82f6" },
+    { position: "Bartenders", count: 8, color: "#8b5cf6" },
+    { position: "Cashiers", count: 10, color: "#6366f1" },
+    { position: "Managers", count: 8, color: "#ec4899" }
   ],
   boh: [
-    { position: "Chefs", count: 18 },
-    { position: "Line Cooks", count: 36 },
-    { position: "Prep Cooks", count: 24 },
-    { position: "Dishwashers", count: 20 },
-    { position: "Kitchen Managers", count: 10 }
+    { position: "Chefs", count: 18, color: "#f59e0b" },
+    { position: "Line Cooks", count: 36, color: "#ef4444" },
+    { position: "Prep Cooks", count: 24, color: "#64748b" },
+    { position: "Dishwashers", count: 20, color: "#14b8a6" },
+    { position: "Kitchen Managers", count: 10, color: "#5eead4" }
   ]
 };
+
+export const monthlyLaborCostData = [
+  { month: "Jan", laborCost: 215000, target: 200000 },
+  { month: "Feb", laborCost: 225000, target: 205000 },
+  { month: "Mar", laborCost: 230000, target: 210000 },
+  { month: "Apr", laborCost: 240000, target: 215000 },
+  { month: "May", laborCost: 245000, target: 220000 },
+  { month: "Jun", laborCost: 250000, target: 225000 },
+  { month: "Jul", laborCost: 255000, target: 230000 },
+  { month: "Aug", laborCost: 245000, target: 235000 },
+  { month: "Sep", laborCost: 235000, target: 230000 },
+  { month: "Oct", laborCost: 240000, target: 220000 },
+  { month: "Nov", laborCost: 248000, target: 225000 },
+  { month: "Dec", laborCost: 260000, target: 240000 }
+];
+
+export const efficiencyScoresByOutlet = [
+  { name: "Mall of Dhahran", score: 87 },
+  { name: "Riyadh Park", score: 82 },
+  { name: "Jeddah Corniche", score: 79 },
+  { name: "Al Nakheel Mall", score: 75 },
+  { name: "Red Sea Mall", score: 81 }
+];
