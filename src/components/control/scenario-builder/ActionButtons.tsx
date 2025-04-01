@@ -19,11 +19,11 @@ const ActionButtons = ({ buttonLabels, onAddBlock }: ActionButtonsProps) => {
         <Button 
           key={index} 
           variant="outline" 
-          className="flex items-center justify-start w-full text-sm font-normal px-4 py-2 border-border hover:bg-accent"
+          className="flex items-center justify-start w-full text-sm font-normal px-3 h-10 border-border hover:bg-accent truncate"
           onClick={() => handleButtonClick(label)}
         >
-          <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
-          {label}
+          <Plus className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="truncate">{label}</span>
         </Button>
       ))}
     </div>
