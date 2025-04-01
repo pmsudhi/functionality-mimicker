@@ -3,6 +3,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { useBrandOutletFilter } from "@/hooks/useBrandOutletFilter";
+import { useScenarioSelection } from "@/hooks/useScenarioSelection";
 import MetricCards from "./MetricCards";
 import RevenueVsLaborTab from "./tabs/RevenueVsLaborTab";
 import CostBreakdownTab from "./tabs/CostBreakdownTab";
@@ -12,56 +16,78 @@ import { formatIndianStyle } from "./utils";
 
 const FinancialImpact = () => {
   const [selectedTab, setSelectedTab] = useState("revenue-vs-labor");
-  const [selectedBrand, setSelectedBrand] = useState("all-brands");
-  const [selectedOutlet, setSelectedOutlet] = useState("all-outlets");
-  const [selectedScenario, setSelectedScenario] = useState("current-operation");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("monthly");
   
   const [seatingCapacity, setSeatingCapacity] = useState(135);
   const [laborPercentage] = useState(23.8);
   const [totalBaseline, setTotalBaseline] = useState(9280000);
 
+  // Use the filter hook for brand and outlet selection
+  const {
+    selectedBrandId,
+    selectedOutletId,
+    availableBrands,
+    availableOutlets,
+    handleBrandChange,
+    handleOutletChange
+  } = useBrandOutletFilter();
+
+  // Use the scenario selection hook
+  const { 
+    selectedScenarioId, 
+    setSelectedScenarioId,
+    availableScenarios
+  } = useScenarioSelection({ 
+    brandId: selectedBrandId, 
+    outletId: selectedOutletId 
+  });
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Financial Impact</h1>
-        <div className="flex gap-4">
-          <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Brand" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-brands">All Brands</SelectItem>
-              <SelectItem value="white-robata">White Robata</SelectItem>
-              <SelectItem value="lazy-cat">Lazy Cat</SelectItem>
-              <SelectItem value="burger-boutique">Burger Boutique</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select value={selectedOutlet} onValueChange={setSelectedOutlet}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Outlet" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-outlets">All Outlets</SelectItem>
-              <SelectItem value="mall-of-dhahran">Mall of Dhahran</SelectItem>
-              <SelectItem value="riyadh-park">Riyadh Park</SelectItem>
-              <SelectItem value="red-sea-mall">Red Sea Mall</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select value={selectedScenario} onValueChange={setSelectedScenario}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Scenario" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="current-operation">Current Operation</SelectItem>
-              <SelectItem value="optimized-staffing">Optimized Staffing</SelectItem>
-              <SelectItem value="ramadan-schedule">Ramadan Schedule</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <FilterBar
+        title="Financial Impact"
+        className="mb-6"
+      >
+        <Select value={selectedBrandId || "all"} onValueChange={handleBrandChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Brands" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Brands</SelectItem>
+            {availableBrands.map(brand => (
+              <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select value={selectedOutletId || "all"} onValueChange={handleOutletChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Outlets" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Outlets</SelectItem>
+            {availableOutlets.map(outlet => (
+              <SelectItem key={outlet.id} value={outlet.id}>{outlet.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select 
+          value={selectedScenarioId} 
+          onValueChange={setSelectedScenarioId}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Scenario" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableScenarios.map(scenario => (
+              <SelectItem key={scenario.id} value={scenario.id}>
+                {scenario.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FilterBar>
       
       <MetricCards 
         totalBaseline={totalBaseline} 

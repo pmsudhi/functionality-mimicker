@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -8,7 +8,8 @@ import {
   FileText, 
   Calculator,
   BarChart4,
-  Settings
+  Settings,
+  ChevronDown
 } from 'lucide-react';
 
 import {
@@ -28,9 +29,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Button } from "@/components/ui/button";
+
 const MainNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [selectedBrand, setSelectedBrand] = useState("White Robata");
+  const [selectedOutlet, setSelectedOutlet] = useState("Mall of Dhahran");
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -73,17 +78,50 @@ const MainNavigation = () => {
             </NavigationMenu>
           </div>
 
-          <div className="flex items-center ml-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="px-3 py-2 text-sm text-foreground/80 hover:text-foreground hover:bg-accent/50 rounded-md">
-                White Robata - Mall of Dhahran
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>White Robata - Mall of Dhahran</DropdownMenuItem>
-                <DropdownMenuItem>Burger Joint - Al Khobar</DropdownMenuItem>
-                <DropdownMenuItem>Pizza Palace - Riyadh</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex items-center ml-auto gap-2">
+            <div className="flex gap-2">
+              {/* Brand Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-1">
+                    {selectedBrand}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px] bg-background">
+                  <DropdownMenuItem onClick={() => setSelectedBrand("White Robata")}>
+                    White Robata
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedBrand("Burger Joint")}>
+                    Burger Joint
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedBrand("Pizza Palace")}>
+                    Pizza Palace
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Outlet Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-1">
+                    {selectedOutlet}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px] bg-background">
+                  <DropdownMenuItem onClick={() => setSelectedOutlet("Mall of Dhahran")}>
+                    Mall of Dhahran
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedOutlet("Al Khobar")}>
+                    Al Khobar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedOutlet("Riyadh")}>
+                    Riyadh
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             
             <button className="ml-2 p-2 rounded-md hover:bg-accent/50">
               <Settings className="h-5 w-5" />
