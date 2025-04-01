@@ -7,7 +7,7 @@ import Dashboard from '@/components/Dashboard';
 import ControlPanel from '@/components/ControlPanel';
 import StaffingStructure from '@/components/StaffingStructure';
 import ScenarioManager from '@/components/ScenarioManager';
-import FinancialImpact from '@/components/FinancialImpact';
+import FinancialImpact from '@/components/financial';
 import PeakHourAnalysis from '@/components/PeakHourAnalysis';
 import ScenarioBuilder from '@/components/ScenarioBuilder';
 
