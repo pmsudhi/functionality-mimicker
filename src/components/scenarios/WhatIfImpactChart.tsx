@@ -88,7 +88,7 @@ const WhatIfImpactChart = ({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-background border border-border rounded-md p-3 shadow-md">
+        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-md p-3 shadow-md">
           <p className="font-medium">{label}</p>
           <div className="mt-2 space-y-1">
             <p className="text-sm">
@@ -123,16 +123,22 @@ const WhatIfImpactChart = ({
             left: 20,
             bottom: 5,
           }}
+          barSize={40}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="name" tick={{ fill: '#6b7280' }} />
+          <YAxis tick={{ fill: '#6b7280' }} />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend 
+            wrapperStyle={{ paddingTop: 10 }}
+            formatter={(value) => <span className="text-sm font-medium">{value}</span>}
+          />
           <ReferenceLine y={0} stroke="#000" />
-          <Bar dataKey="base" name="Base" fill="#8884d8" />
-          <Bar dataKey="adjusted" name="Adjusted" fill="#82ca9d" />
-          <Bar dataKey="diff" name="Difference" fill="#ffc658" />
+          <Bar dataKey="base" name="Base" fill="#8884d8" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="adjusted" name="Adjusted" fill="#82ca9d" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="diff" name="Difference" fill="#ffc658" radius={[4, 4, 0, 0]}>
+            <LabelList dataKey="diff" position="top" formatter={(value: number) => value >= 0 ? `+${value.toFixed(1)}` : value.toFixed(1)} />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

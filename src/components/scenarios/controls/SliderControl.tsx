@@ -50,7 +50,7 @@ const SliderControl = ({
   return (
     <div className="space-y-2">
       <div className="flex justify-between">
-        <label className="text-sm font-medium">{label}</label>
+        <label className="text-sm font-medium text-foreground">{label}</label>
         <span className="text-sm font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-md">
           {label.includes("Rate (%)") || label.includes("Rate (") || label.includes("%")
             ? `${displayValue}%` 
@@ -66,7 +66,7 @@ const SliderControl = ({
         disabled={disabled}
         className="my-1"
       />
-      {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 };

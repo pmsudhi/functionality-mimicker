@@ -3,6 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChartContainer } from "@/components/ui/chart-container";
+import { DollarSign, TrendingUp, BadgePercent, Calculator } from "lucide-react";
 import { mockScenarios } from "@/services/mockData";
 import { Scenario } from "@/types/modelTypes";
 import WhatIfImpactChart from "./WhatIfImpactChart";
@@ -88,7 +90,7 @@ const WhatIfAnalysisTab = ({
   };
 
   return (
-    <Card>
+    <Card className="border shadow-sm">
       <CardHeader>
         <CardTitle>What-If Analysis</CardTitle>
         <p className="text-sm text-muted-foreground">Adjust parameters to see how changes would impact your staffing and financial metrics</p>
@@ -110,7 +112,7 @@ const WhatIfAnalysisTab = ({
               </Select>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 bg-muted/10 p-4 rounded-lg border">
               <SliderControl 
                 label="Staffing Level (%)"
                 value={staffingLevel}
@@ -156,7 +158,7 @@ const WhatIfAnalysisTab = ({
           </div>
           
           <div className="space-y-6">
-            <div className="h-60 rounded-md">
+            <ChartContainer title="Impact Analysis" className="h-60 mb-4">
               <WhatIfImpactChart
                 selectedBaseScenario={selectedBaseScenario}
                 staffingLevel={staffingLevel}
@@ -166,36 +168,42 @@ const WhatIfAnalysisTab = ({
                 customerVolume={customerVolume}
                 averageCheck={averageCheck}
               />
-            </div>
+            </ChartContainer>
             
             <div className="grid grid-cols-2 gap-4">
               <WhatIfMetricCard 
                 title="Impact on Labor Cost"
                 value={formatCurrency(adjustedLaborCost)}
                 change={formatChange((laborCostDiff / baseLaborCost) * 100)}
+                className="bg-gradient-to-br from-card to-muted/5"
               />
               
               <WhatIfMetricCard 
                 title="Impact on Revenue"
                 value={formatCurrency(adjustedRevenue)}
                 change={formatChange((adjustedRevenue / baseRevenue - 1) * 100)}
+                className="bg-gradient-to-br from-card to-muted/5"
               />
               
               <WhatIfMetricCard 
                 title="Labor Percentage"
                 value={`${newPercentage.toFixed(1)}%`}
                 change={formatChange(newPercentage - basePercentage)}
+                isGreen={newPercentage <= basePercentage}
+                className="bg-gradient-to-br from-card to-muted/5"
               />
               
               <WhatIfMetricCard 
                 title="Profit Impact"
                 value={formatCurrency((adjustedRevenue - adjustedLaborCost) - (baseRevenue - baseLaborCost))}
                 change={laborCostDiff < 0 && adjustedRevenue >= baseRevenue ? "Positive impact on profit" : "Negative impact on profit"}
+                isGreen={laborCostDiff < 0 && adjustedRevenue >= baseRevenue}
+                className="bg-gradient-to-br from-card to-muted/5"
               />
             </div>
             
             <div className="flex justify-end">
-              <Button className="bg-black text-white hover:bg-gray-800">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                 Save What-If Scenario
               </Button>
             </div>
