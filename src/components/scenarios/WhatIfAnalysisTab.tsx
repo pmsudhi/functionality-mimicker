@@ -3,10 +3,11 @@ import { Dispatch, SetStateAction } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { mockScenarios } from "@/services/mockData";
 import { Scenario } from "@/types/modelTypes";
 import WhatIfImpactChart from "./WhatIfImpactChart";
+import SliderControl from "./controls/SliderControl";
+import WhatIfMetricCard from "./metrics/WhatIfMetricCard";
 
 interface WhatIfAnalysisTabProps {
   baseScenario: string;
@@ -143,25 +144,25 @@ const WhatIfAnalysisTab = ({
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <MetricCard 
+              <WhatIfMetricCard 
                 title="Impact on Labor Cost"
                 value={formatCurrency(adjustedLaborCost)}
                 change={formatChange((laborCostDiff / baseLaborCost) * 100)}
               />
               
-              <MetricCard 
+              <WhatIfMetricCard 
                 title="Impact on Revenue"
                 value={formatCurrency(adjustedRevenue)}
                 change={formatChange((adjustedRevenue / baseRevenue - 1) * 100)}
               />
               
-              <MetricCard 
+              <WhatIfMetricCard 
                 title="Labor Percentage"
                 value={`${newPercentage.toFixed(1)}%`}
                 change={formatChange(newPercentage - basePercentage)}
               />
               
-              <MetricCard 
+              <WhatIfMetricCard 
                 title="Profit Impact"
                 value={formatCurrency((adjustedRevenue - adjustedLaborCost) - (baseRevenue - baseLaborCost))}
                 change={laborCostDiff < 0 && adjustedRevenue >= baseRevenue ? "Positive impact on profit" : "Negative impact on profit"}
@@ -179,45 +180,5 @@ const WhatIfAnalysisTab = ({
     </Card>
   );
 };
-
-interface SliderControlProps {
-  label: string;
-  value: number;
-  onChange: (vals: number[]) => void;
-  description: string;
-}
-
-const SliderControl = ({ label, value, onChange, description }: SliderControlProps) => (
-  <div className="space-y-2">
-    <div className="flex justify-between">
-      <label className="text-sm font-medium">{label}</label>
-      <span className="text-sm font-medium">{value}%</span>
-    </div>
-    <Slider 
-      value={[value]} 
-      min={50} 
-      max={150} 
-      step={1} 
-      onValueChange={onChange} 
-    />
-    <p className="text-xs text-muted-foreground">{description}</p>
-  </div>
-);
-
-interface MetricCardProps {
-  title: string;
-  value: string;
-  change: string;
-}
-
-const MetricCard = ({ title, value, change }: MetricCardProps) => (
-  <Card>
-    <CardContent className="p-4">
-      <h3 className="text-sm font-medium mb-1">{title}</h3>
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{change}</p>
-    </CardContent>
-  </Card>
-);
 
 export default WhatIfAnalysisTab;
