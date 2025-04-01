@@ -40,12 +40,17 @@ const WhatIfComparisonChart = ({
   // Get base values from selected scenario
   const baseStaff = selectedBaseScenario.calculations.totalStaff || 0;
   const baseRevenue = selectedBaseScenario.calculations.monthlyRevenue || 0;
-  const baseServiceTime = selectedBaseScenario.calculations.averageServiceTime || 0;
+  
+  // Use coversPerLaborHour as a proxy for service time since averageServiceTime is not available
+  const baseServiceTime = selectedBaseScenario.calculations.coversPerLaborHour || 0;
 
   // Calculate adjusted values based on slider settings
   const adjustedStaff = baseStaff * (staffingLevel / 100);
   const adjustedRevenue = baseRevenue * (customerVolume / 100) * (averageCheck / 100);
-  const adjustedServiceTime = baseServiceTime * (100 / (staffingLevel / 100)); // Service time increases when staff decreases
+  
+  // For service efficiency, lower staffing means lower efficiency (higher time)
+  // So we invert the relationship for the service time indicator
+  const adjustedServiceTime = baseServiceTime * (100 / (staffingLevel / 100)); 
 
   // Format data for the chart
   const chartData = [
@@ -60,7 +65,7 @@ const WhatIfComparisonChart = ({
       adjusted: adjustedRevenue / 1000, // Convert to thousands
     },
     {
-      name: "Service Time (min)",
+      name: "Covers/Labor Hour",
       base: baseServiceTime,
       adjusted: adjustedServiceTime,
     },
