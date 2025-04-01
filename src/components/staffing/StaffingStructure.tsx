@@ -1,138 +1,93 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { PageLayout } from '@/components/ui/page-layout';
-import { Users, UserPlus, Building2, Briefcase } from 'lucide-react';
+import { FileText, FileSpreadsheet, Printer } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { StaffingOverviewTab } from './tabs/StaffingOverviewTab';
+import { PositionsTab } from './tabs/PositionsTab';
+import { CostAnalysisTab } from './tabs/CostAnalysisTab';
+import { StaffingMetricCards } from './components/StaffingMetricCards';
 
 const StaffingStructure = () => {
+  const [selectedTab, setSelectedTab] = useState("overview");
+  const [selectedBrand, setSelectedBrand] = useState("all-brands");
+  const [selectedOutlet, setSelectedOutlet] = useState("all-outlets");
+
+  const handleExport = (format: string) => {
+    console.log(`Exporting as ${format}`);
+  };
+
   return (
     <PageLayout>
       <div className="container mx-auto p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">Staffing Structure</h1>
-          <p className="text-muted-foreground">Configure and manage your staffing organization</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Staffing Structure</h1>
+            <p className="text-muted-foreground">Detailed breakdown of staff positions and costs</p>
+          </div>
+          
+          <div className="flex gap-3 self-start">
+            <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="All Brands" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-brands">All Brands</SelectItem>
+                <SelectItem value="white-robata">White Robata</SelectItem>
+                <SelectItem value="lazy-cat">Lazy Cat</SelectItem>
+                <SelectItem value="burger-boutique">Burger Boutique</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={selectedOutlet} onValueChange={setSelectedOutlet}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="All Outlets" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-outlets">All Outlets</SelectItem>
+                <SelectItem value="mall-of-dhahran">Mall of Dhahran</SelectItem>
+                <SelectItem value="riyadh-park">Riyadh Park</SelectItem>
+                <SelectItem value="red-sea-mall">Red Sea Mall</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
-        <Tabs defaultValue="organization">
-          <TabsList className="bg-muted/40 mb-6">
-            <TabsTrigger value="organization">Organization</TabsTrigger>
+        <StaffingMetricCards />
+        
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mt-6">
+          <TabsList className="bg-muted/40 grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="positions">Positions</TabsTrigger>
-            <TabsTrigger value="employees">Employees</TabsTrigger>
+            <TabsTrigger value="cost-analysis">Cost Analysis</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="organization" className="space-y-6">
-            <Card className="border shadow-sm">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-primary" />
-                  <CardTitle>Organizational Structure</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="border rounded-md p-4">
-                    <h3 className="font-medium mb-2">Departments</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Manage your organizational departments</p>
-                    <ul className="space-y-2">
-                      <li className="flex items-center justify-between p-2 border-b">
-                        <span>Front of House</span>
-                        <span className="text-sm text-muted-foreground">12 positions</span>
-                      </li>
-                      <li className="flex items-center justify-between p-2 border-b">
-                        <span>Back of House</span>
-                        <span className="text-sm text-muted-foreground">8 positions</span>
-                      </li>
-                      <li className="flex items-center justify-between p-2 border-b">
-                        <span>Management</span>
-                        <span className="text-sm text-muted-foreground">4 positions</span>
-                      </li>
-                      <li className="flex items-center justify-between p-2">
-                        <span>Support</span>
-                        <span className="text-sm text-muted-foreground">3 positions</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className="border rounded-md p-4">
-                    <h3 className="font-medium mb-2">Locations</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Manage your physical business locations</p>
-                    <ul className="space-y-2">
-                      <li className="flex items-center justify-between p-2 border-b">
-                        <span>Mall of Dhahran</span>
-                        <span className="text-sm text-muted-foreground">15 staff</span>
-                      </li>
-                      <li className="flex items-center justify-between p-2 border-b">
-                        <span>Al Khobar</span>
-                        <span className="text-sm text-muted-foreground">12 staff</span>
-                      </li>
-                      <li className="flex items-center justify-between p-2">
-                        <span>Riyadh</span>
-                        <span className="text-sm text-muted-foreground">18 staff</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="overview" className="space-y-6">
+            <StaffingOverviewTab />
           </TabsContent>
           
           <TabsContent value="positions" className="space-y-6">
-            <Card className="border shadow-sm">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-primary" />
-                  <CardTitle>Position Management</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-4">Configure and manage position types and requirements</p>
-                <div className="border rounded-md p-4">
-                  <h3 className="font-medium mb-2">Position Types</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Manage your staff positions</p>
-                  <ul className="space-y-2">
-                    <li className="flex items-center justify-between p-2 border-b">
-                      <span>Server</span>
-                      <span className="text-sm text-muted-foreground">8 positions</span>
-                    </li>
-                    <li className="flex items-center justify-between p-2 border-b">
-                      <span>Chef</span>
-                      <span className="text-sm text-muted-foreground">5 positions</span>
-                    </li>
-                    <li className="flex items-center justify-between p-2 border-b">
-                      <span>Manager</span>
-                      <span className="text-sm text-muted-foreground">3 positions</span>
-                    </li>
-                    <li className="flex items-center justify-between p-2">
-                      <span>Host/Hostess</span>
-                      <span className="text-sm text-muted-foreground">4 positions</span>
-                    </li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex justify-end mb-3 gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
+                <FileText className="h-4 w-4 mr-2" />
+                PDF
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('print')}>
+                <Printer className="h-4 w-4 mr-2" />
+                Print
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Excel
+              </Button>
+            </div>
+            <PositionsTab />
           </TabsContent>
           
-          <TabsContent value="employees" className="space-y-6">
-            <Card className="border shadow-sm">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <UserPlus className="h-5 w-5 text-primary" />
-                  <CardTitle>Employee Management</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-4">Manage employee records and assignments</p>
-                <div className="border rounded-md p-4">
-                  <h3 className="font-medium mb-2">Staff Directory</h3>
-                  <p className="text-sm text-muted-foreground mb-4">View and manage your employees</p>
-                  <div className="text-center p-6 border border-dashed rounded-md">
-                    <Users className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                    <p>Employee data will be displayed here</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="cost-analysis" className="space-y-6">
+            <CostAnalysisTab />
           </TabsContent>
         </Tabs>
       </div>
