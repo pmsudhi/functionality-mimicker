@@ -14,6 +14,11 @@ interface ScenarioTableProps {
   onScenarioSelection: (id: string, isSelected: boolean) => void;
 }
 
+// Extended Scenario type to include baseline property
+interface ExtendedScenario extends Scenario {
+  isBaseline?: boolean;
+}
+
 const ScenarioTable = ({ scenarios, selectedScenarios, onScenarioSelection }: ScenarioTableProps) => {
   return (
     <div className="rounded-md border overflow-hidden">
@@ -33,6 +38,7 @@ const ScenarioTable = ({ scenarios, selectedScenarios, onScenarioSelection }: Sc
         </TableHeader>
         <TableBody>
           {scenarios.map(scenario => {
+            const extendedScenario = scenario as ExtendedScenario;
             const outlet = mockOutlets.find(o => o.id === scenario.outletId);
             const brand = outlet ? mockBrands.find(b => b.id === outlet.brandId) : null;
             const isSelected = selectedScenarios.includes(scenario.id);
@@ -48,7 +54,7 @@ const ScenarioTable = ({ scenarios, selectedScenarios, onScenarioSelection }: Sc
                 </TableCell>
                 <TableCell className="font-medium">
                   {scenario.name}
-                  {scenario.isBaseline && (
+                  {extendedScenario.isBaseline && (
                     <Badge variant="outline" className="ml-2 text-xs bg-blue-500/10 text-blue-700 hover:bg-blue-500/10 border-blue-200">
                       Baseline
                     </Badge>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { FileText, Compare } from 'lucide-react';
+import { FileText, ArrowLeftRight } from 'lucide-react';
 import ScenarioTable from '../saved/ScenarioTable';
 import { mockScenarios } from '@/services/mockData';
 import { ScenarioComparison } from '@/types/extraTypes';
@@ -29,18 +29,18 @@ const SavedScenariosTab = () => {
       if (scenario1 && scenario2) {
         setComparison({
           scenario1: {
-            id: scenario1.id,
             name: scenario1.name,
             totalStaff: scenario1.calculations.totalStaff || 0,
             laborCost: scenario1.calculations.laborCost || 0,
-            laborPercentage: scenario1.calculations.laborPercentage || 0
+            laborPercentage: scenario1.calculations.laborPercentage || 0,
+            fohBohRatio: scenario1.calculations.fohBohRatio || 0
           },
           scenario2: {
-            id: scenario2.id,
             name: scenario2.name,
             totalStaff: scenario2.calculations.totalStaff || 0,
             laborCost: scenario2.calculations.laborCost || 0,
-            laborPercentage: scenario2.calculations.laborPercentage || 0
+            laborPercentage: scenario2.calculations.laborPercentage || 0,
+            fohBohRatio: scenario2.calculations.fohBohRatio || 0
           },
           staffDiff: ((scenario2.calculations.totalStaff || 0) - (scenario1.calculations.totalStaff || 0)),
           costDiff: ((scenario2.calculations.laborCost || 0) - (scenario1.calculations.laborCost || 0)),
@@ -81,7 +81,7 @@ const SavedScenariosTab = () => {
               onClick={handleCompareScenarios}
               disabled={selectedScenarios.length !== 2}
             >
-              <Compare className="h-4 w-4" />
+              <ArrowLeftRight className="h-4 w-4" />
               Compare Selected
             </Button>
           </div>
@@ -100,7 +100,7 @@ const SavedScenariosTab = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <div className="bg-primary/10 p-2 rounded-md">
-                <Compare className="h-5 w-5 text-primary" />
+                <ArrowLeftRight className="h-5 w-5 text-primary" />
               </div>
               <CardTitle>Scenario Comparison</CardTitle>
             </div>

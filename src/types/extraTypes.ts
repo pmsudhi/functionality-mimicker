@@ -1,4 +1,3 @@
-
 import { 
   ScenarioCalculations, 
   Scenario, 
@@ -86,10 +85,6 @@ export interface ScenarioComparison {
   staffDiff: number;
   costDiff: number;
   laborPercentageDiff: number;
-  staffingDifference: Record<string, number>;
-  costDifference: number;
-  costPercentageDifference: number;
-  efficiencyDifference: number;
   scenario1: {
     name: string;
     totalStaff: number;
@@ -105,4 +100,8 @@ export interface ScenarioComparison {
     fohBohRatio: number;
   };
   highlights: string[];
+  staffingDifference?: Record<string, number>;
+  costDifference?: number;
+  costPercentageDifference?: number;
+  efficiencyDifference?: number;
 }
