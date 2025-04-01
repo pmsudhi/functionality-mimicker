@@ -26,5 +26,5 @@ hr {
 
 /* Override the default Radix tooltip styling */
 [data-radix-tooltip-content] {
-  @apply max-w-[350px] bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground !important;
+  @apply max-w-[350px] bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground p-3 !important;
 }
