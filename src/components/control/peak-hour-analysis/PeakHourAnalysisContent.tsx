@@ -56,6 +56,7 @@ const getCellColor = (count: number) => {
 const PeakHourAnalysisContent = () => {
   const [selectedDay, setSelectedDay] = useState("friday");
   const [selectedView, setSelectedView] = useState("heatmap");
+  const [showBreakdown, setShowBreakdown] = useState(false);
   
   const totalForHour = (hourIndex: number) => {
     return positionBreakdownData.data.reduce((sum, position) => sum + position[hourIndex], 0);
@@ -69,7 +70,7 @@ const PeakHourAnalysisContent = () => {
           <p className="text-muted-foreground">Analyze and optimize staffing levels throughout the day</p>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Select value={selectedDay} onValueChange={setSelectedDay}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select day" />
@@ -94,6 +95,16 @@ const PeakHourAnalysisContent = () => {
               <SelectItem value="position">Position Breakdown</SelectItem>
             </SelectContent>
           </Select>
+
+          {selectedView === "heatmap" && (
+            <Button 
+              variant="outline" 
+              onClick={() => setShowBreakdown(!showBreakdown)}
+              className="border-border"
+            >
+              {showBreakdown ? "Hide Position Breakdown" : "Show Position Breakdown"}
+            </Button>
+          )}
           
           <Button className="bg-black text-white hover:bg-gray-800">
             Optimize Staffing
@@ -110,7 +121,7 @@ const PeakHourAnalysisContent = () => {
           </CardTitle>
           <CardDescription>
             {selectedView === "heatmap" 
-              ? "Visual representation of staffing needs throughout the day" 
+              ? `Visual representation of staffing needs throughout the day${showBreakdown ? ' with position breakdown' : ''}` 
               : "Detailed staffing by position throughout the day"}
           </CardDescription>
         </CardHeader>
@@ -128,14 +139,37 @@ const PeakHourAnalysisContent = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">Total Staff</TableCell>
-                      {heatmapData.totalStaff.map((count, index) => (
-                        <TableCell key={index} className={`text-center ${getCellColor(count)}`}>
-                          {count}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                    {showBreakdown ? (
+                      <>
+                        {positionBreakdownData.positions.map((position, posIndex) => (
+                          <TableRow key={position}>
+                            <TableCell className="font-medium">{position}</TableCell>
+                            {positionBreakdownData.data[posIndex].map((count, hourIndex) => (
+                              <TableCell key={hourIndex} className={`text-center ${getCellColor(count)}`}>
+                                {count}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                        <TableRow className="font-bold border-t-2">
+                          <TableCell>Total Staff</TableCell>
+                          {heatmapData.totalStaff.map((count, index) => (
+                            <TableCell key={index} className={`text-center ${getCellColor(count)}`}>
+                              {count}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </>
+                    ) : (
+                      <TableRow>
+                        <TableCell className="font-medium">Total Staff</TableCell>
+                        {heatmapData.totalStaff.map((count, index) => (
+                          <TableCell key={index} className={`text-center ${getCellColor(count)}`}>
+                            {count}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </div>
