@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,8 @@ import {
   Pie,
   Cell,
   AreaChart,
-  Area
+  Area,
+  TooltipProps
 } from "recharts";
 import { Download, Calendar, TrendingUp, Users, DollarSign } from "lucide-react";
 
@@ -83,6 +83,22 @@ const departmentData = [
 
 // Colors for pie charts
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+// Custom formatter function for tooltips
+const formatTooltipValue = (value: any) => {
+  if (typeof value === 'number') {
+    return value.toFixed(0);
+  }
+  return value;
+};
+
+// Custom tooltip formatter for cost values
+const costFormatter = (value: any) => {
+  if (typeof value === 'number') {
+    return `$${(value/1000).toFixed(0)}K`;
+  }
+  return value;
+};
 
 const Analytics = () => {
   const [analyticsView, setAnalyticsView] = useState("utilization");
@@ -347,7 +363,12 @@ const Analytics = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => {
+                          if (typeof percent === 'number') {
+                            return `${name} ${(percent * 100).toFixed(0)}%`;
+                          }
+                          return name;
+                        }}
                       >
                         {departmentData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -405,7 +426,7 @@ const Analytics = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip formatter={(value) => `$${(value/1000).toFixed(0)}K`} />
+                      <Tooltip formatter={costFormatter} />
                       <Legend />
                       <Area 
                         type="monotone" 
@@ -458,13 +479,18 @@ const Analytics = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => {
+                          if (typeof percent === 'number') {
+                            return `${name} ${(percent * 100).toFixed(0)}%`;
+                          }
+                          return name;
+                        }}
                       >
                         {departmentData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value) => `$${(value/1000).toFixed(0)}K`} />
+                      <Tooltip formatter={costFormatter} />
                     </PieChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -476,18 +502,24 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={costData.map(item => ({
-                      month: item.month,
-                      total: item.salary + item.benefits + item.contractors,
-                      perEmployee: (item.salary + item.benefits) / headcountData.find(h => h.month === item.month)?.actual
-                    }))}>
+                    <LineChart data={costData.map(item => {
+                      const headcount = headcountData.find(h => h.month === item.month)?.actual || 1;
+                      return {
+                        month: item.month,
+                        total: item.salary + item.benefits + item.contractors,
+                        perEmployee: (item.salary + item.benefits) / headcount
+                      };
+                    })}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis yAxisId="left" orientation="left" />
                       <YAxis yAxisId="right" orientation="right" />
-                      <Tooltip formatter={(value, name) => 
-                        name === "total" ? `$${(value/1000).toFixed(0)}K` : `$${value.toFixed(0)}`
-                      } />
+                      <Tooltip formatter={(value, name) => {
+                        if (typeof value === 'number') {
+                          return name === "total" ? `$${(value/1000).toFixed(0)}K` : `$${value.toFixed(0)}`;
+                        }
+                        return value;
+                      }} />
                       <Legend />
                       <Line 
                         yAxisId="left" 
@@ -528,7 +560,12 @@ const Analytics = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => {
+                          if (typeof percent === 'number') {
+                            return `${name} ${(percent * 100).toFixed(0)}%`;
+                          }
+                          return name;
+                        }}
                       >
                         {departmentData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -560,7 +597,12 @@ const Analytics = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => {
+                          if (typeof percent === 'number') {
+                            return `${name} ${(percent * 100).toFixed(0)}%`;
+                          }
+                          return name;
+                        }}
                       >
                         {[
                           { name: 'New York', value: 45 },
@@ -629,7 +671,12 @@ const Analytics = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => {
+                          if (typeof percent === 'number') {
+                            return `${name} ${(percent * 100).toFixed(0)}%`;
+                          }
+                          return name;
+                        }}
                       >
                         {[
                           { name: 'Full-time', value: 135 },

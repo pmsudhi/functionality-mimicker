@@ -110,13 +110,13 @@ const projectsData = [
 
 // Sample available resources
 const availableResources = [
-  { id: 201, name: "Olivia Martinez", role: "UX Designer", department: "Design", availability: 50 },
-  { id: 202, name: "Robert Johnson", role: "Frontend Developer", department: "Engineering", availability: 100 },
-  { id: 203, name: "Sophia Wilson", role: "Junior Developer", department: "Engineering", availability: 25 },
-  { id: 204, name: "William Taylor", role: "Backend Developer", department: "Engineering", availability: 50 },
-  { id: 205, name: "Emma Davis", role: "Frontend Developer", department: "Engineering", availability: 25 },
-  { id: 206, name: "Jessica Lee", role: "Database Engineer", department: "Engineering", availability: 25 },
-  { id: 207, name: "Chris Evans", role: "Product Manager", department: "Product", availability: 50 },
+  { id: 201, name: "Olivia Martinez", role: "UX Designer", department: "Design", availability: 50, avatarUrl: "" },
+  { id: 202, name: "Robert Johnson", role: "Frontend Developer", department: "Engineering", availability: 100, avatarUrl: "" },
+  { id: 203, name: "Sophia Wilson", role: "Junior Developer", department: "Engineering", availability: 25, avatarUrl: "" },
+  { id: 204, name: "William Taylor", role: "Backend Developer", department: "Engineering", availability: 50, avatarUrl: "" },
+  { id: 205, name: "Emma Davis", role: "Frontend Developer", department: "Engineering", availability: 25, avatarUrl: "" },
+  { id: 206, name: "Jessica Lee", role: "Database Engineer", department: "Engineering", availability: 25, avatarUrl: "" },
+  { id: 207, name: "Chris Evans", role: "Product Manager", department: "Product", availability: 50, avatarUrl: "" },
 ];
 
 const ResourceAllocation = () => {
@@ -384,7 +384,7 @@ const ResourceAllocation = () => {
                           <div key={resource.id} className="flex justify-between items-center py-2 border-b">
                             <div className="flex items-center space-x-2">
                               <Avatar className="h-6 w-6">
-                                <AvatarImage src={resource.avatar} alt={resource.name} />
+                                <AvatarImage src={resource.avatarUrl} alt={resource.name} />
                                 <AvatarFallback>{resource.name.charAt(0)}</AvatarFallback>
                               </Avatar>
                               <div>
@@ -454,7 +454,7 @@ const ResourceAllocation = () => {
                       <Badge variant="outline" className="mr-1">Website Redesign</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="success" className="bg-green-500 text-white">
+                      <Badge variant="default" className="bg-green-500 text-white">
                         <Check className="h-3 w-3 mr-1" /> Fully Allocated
                       </Badge>
                     </TableCell>
@@ -573,7 +573,7 @@ const ResourceAllocation = () => {
                       <Badge variant="outline">Mobile App</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="success" className="bg-green-500 text-white">
+                      <Badge variant="default" className="bg-green-500 text-white">
                         <Check className="h-3 w-3 mr-1" /> Fully Allocated
                       </Badge>
                     </TableCell>

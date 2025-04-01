@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Users, Calendar, BarChart3, Clock, 
-  PlusCircle, DragHorizontal, Filter 
+  PlusCircle, GripHorizontal, Filter 
 } from "lucide-react";
 import GanttView from "@/components/planning/GanttView";
 import TeamView from "@/components/planning/TeamView";
