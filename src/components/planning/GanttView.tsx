@@ -1,15 +1,14 @@
 
 import { useState, useRef } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, GripVertical, Plus } from "lucide-react";
+import { ResourceAllocation, Week } from "./gantt/types";
+import { GanttHeader } from "./gantt/GanttHeader";
+import { GanttTableHeader } from "./gantt/GanttTableHeader";
+import { ResourceRow } from "./gantt/ResourceRow";
 
 // Mock data for the Gantt chart
-const resourceData = [
+const resourceData: ResourceAllocation[] = [
   {
     id: 1,
     name: "John Smith",
@@ -71,7 +70,7 @@ const resourceData = [
 ];
 
 // Generate weeks for the chart
-const weeks = Array.from({ length: 12 }, (_, i) => {
+const weeks: Week[] = Array.from({ length: 12 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() + i * 7);
   return {
@@ -136,118 +135,29 @@ const GanttView = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="p-2 border-b flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-1" />
-            Add Resource
-          </Button>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" onClick={() => setCurrentRange({ 
-            start: Math.max(0, currentRange.start - 4), 
-            end: Math.max(4, currentRange.end - 4)
-          })}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm">Weeks {currentRange.start + 1}-{currentRange.end}</span>
-          <Button variant="outline" size="icon" onClick={() => setCurrentRange({ 
-            start: Math.min(8, currentRange.start + 4), 
-            end: Math.min(16, currentRange.end + 4)
-          })}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <GanttHeader 
+        currentRange={currentRange} 
+        onRangeChange={setCurrentRange} 
+      />
       
       <ScrollArea className="flex-1" ref={tableRef}>
         <div className="min-w-[800px]">
           <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
-              <TableRow>
-                <TableHead className="w-60">Resource</TableHead>
-                {weeks.slice(currentRange.start, currentRange.end).map(week => (
-                  <TableHead key={week.week} className="w-24 text-center">
-                    <div>{week.label}</div>
-                    <div className="text-xs text-muted-foreground">{week.month}</div>
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
+            <GanttTableHeader 
+              weeks={weeks} 
+              currentRange={currentRange} 
+            />
             <TableBody>
               {resources.map(resource => (
-                <TableRow key={resource.id}>
-                  <TableCell className="align-top font-medium">
-                    <div className="flex items-center space-x-2">
-                      <GripVertical className="h-4 w-4 text-muted-foreground drag-handle" />
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src={resource.avatar} alt={resource.name} />
-                        <AvatarFallback>{resource.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{resource.name}</div>
-                        <div className="text-xs text-muted-foreground">{resource.role}</div>
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {weeks.slice(currentRange.start, currentRange.end).map(week => (
-                    <TableCell 
-                      key={week.week} 
-                      className="p-0 relative h-16"
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={() => handleDrop(resource.id, week.week)}
-                    >
-                      {resource.allocations
-                        .filter(allocation => 
-                          allocation.startWeek <= week.week && allocation.endWeek >= week.week
-                        )
-                        .map(allocation => {
-                          const isStart = allocation.startWeek === week.week;
-                          const isEnd = allocation.endWeek === week.week;
-                          const spanWeeks = allocation.endWeek - allocation.startWeek + 1;
-                          
-                          // Only render at the start week
-                          if (!isStart) return null;
-                          
-                          return (
-                            <div
-                              key={allocation.id}
-                              className={`absolute top-2 h-10 ${
-                                allocation.utilization >= 75 ? 'bg-blue-500' :
-                                allocation.utilization >= 50 ? 'bg-blue-400' : 'bg-blue-300'
-                              } text-white rounded-md p-1 overflow-hidden text-xs cursor-grab`}
-                              style={{
-                                left: '4px',
-                                width: `calc(${spanWeeks * 100}% - 8px)`,
-                                zIndex: 5,
-                              }}
-                              draggable
-                              onDragStart={() => handleDragStart(resource.id, allocation.id)}
-                              onDragEnd={handleDragEnd}
-                            >
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="truncate">
-                                      {allocation.project}
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <div className="text-xs">
-                                      <div className="font-bold">{allocation.project}</div>
-                                      <div>Utilization: {allocation.utilization}%</div>
-                                      <div>Weeks: {allocation.startWeek}-{allocation.endWeek}</div>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-                          );
-                        })}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <ResourceRow
+                  key={resource.id}
+                  resource={resource}
+                  weeks={weeks}
+                  currentRange={currentRange}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  onDrop={handleDrop}
+                />
               ))}
             </TableBody>
           </Table>
