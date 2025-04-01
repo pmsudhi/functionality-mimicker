@@ -84,6 +84,15 @@ const FinancialImpact = () => {
   const totalCosts = laborCost + foodCost + rentCost + utilitiesCost + marketingCost + otherCost;
   const profit = monthlyRevenue - totalCosts;
   const profitPercentage = (profit / monthlyRevenue) * 100;
+
+  // Define a color map for different benchmarks
+  const getBenchmarkColor = (value: number) => {
+    if (value < 22) return "#22c55e"; // green-500
+    if (value < 25) return "#f59e0b"; // amber-500
+    if (value < 28) return "#3b82f6"; // blue-500
+    if (value < 32) return "#94a3b8"; // slate-400
+    return "#ef4444"; // red-500
+  };
   
   return (
     <div className="h-full flex flex-col p-6 overflow-auto">

@@ -1,12 +1,12 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import PlanningBoard from '@/components/PlanningBoard';
 import Dashboard from '@/components/Dashboard';
 import ControlPanel from '@/components/ControlPanel';
 import StaffingStructure from '@/components/StaffingStructure';
 import ScenarioManager from '@/components/ScenarioManager';
-import FinancialImpact from '@/components/FinancialImpact';
+import FinancialImpact from '@/components/planning/FinancialImpact';
 
 function App() {
   return (
@@ -19,6 +19,7 @@ function App() {
           <Route path="/staffing" element={<StaffingStructure />} />
           <Route path="/scenarios" element={<ScenarioManager />} />
           <Route path="/financial" element={<FinancialImpact />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
       </div>

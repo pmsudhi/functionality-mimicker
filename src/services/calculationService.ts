@@ -28,7 +28,8 @@ export const calculateSeatingCapacity = (params: SpaceParameters): number => {
 // Calculate Number of Servers Required
 export const calculateServersRequired = (
   spaceParams: SpaceParameters, 
-  serviceParams: ServiceParameters
+  serviceParams: ServiceParameters,
+  serviceStyle: ServiceStyle
 ): number => {
   const totalCapacity = calculateSeatingCapacity(spaceParams);
   return Math.ceil(totalCapacity / serviceParams.coversPerWaiter);
@@ -42,21 +43,140 @@ export const calculateRunnersRequired = (
   return Math.ceil(serversCount * (serviceParams.runnerToWaiterRatio / 100));
 };
 
+// Calculate Number of Hosts/Hostesses Required
+export const calculateHostsRequired = (
+  spaceParams: SpaceParameters,
+  serviceStyle: ServiceStyle
+): number => {
+  const totalCapacity = calculateSeatingCapacity(spaceParams);
+  
+  // As per the calculation logic document
+  if (serviceStyle === "Premium Dining") {
+    return Math.max(1, Math.ceil(totalCapacity / 60));
+  } else if (serviceStyle === "Casual Dining") {
+    return Math.max(1, Math.ceil(totalCapacity / 80));
+  } else { // Fast Casual
+    return 0; // Self-seating
+  }
+};
+
+// Calculate Number of Managers Required
+export const calculateManagersRequired = (
+  serversCount: number,
+  serviceStyle: ServiceStyle
+): number => {
+  // As per the calculation logic document
+  if (serviceStyle === "Premium Dining") {
+    return Math.max(1, Math.ceil(serversCount / 8));
+  } else if (serviceStyle === "Casual Dining") {
+    return Math.max(1, Math.ceil(serversCount / 10));
+  } else { // Fast Casual
+    return Math.max(1, Math.ceil(serversCount / 12));
+  }
+};
+
+// Calculate Number of Cashiers Required
+export const calculateCashiersRequired = (
+  spaceParams: SpaceParameters,
+  serviceStyle: ServiceStyle
+): number => {
+  const totalCapacity = calculateSeatingCapacity(spaceParams);
+  
+  // As per the calculation logic document
+  if (serviceStyle === "Premium Dining") {
+    return Math.max(1, Math.ceil(totalCapacity / 100));
+  } else if (serviceStyle === "Casual Dining") {
+    return Math.max(1, Math.ceil(totalCapacity / 120));
+  } else { // Fast Casual
+    return Math.max(1, Math.ceil(totalCapacity / 60)); // Higher turnover
+  }
+};
+
+// Calculate Stations per Chef based on service style
+export const calculateStationsPerChef = (serviceStyle: ServiceStyle): number => {
+  if (serviceStyle === "Premium Dining") {
+    return 1;
+  } else if (serviceStyle === "Casual Dining") {
+    return 1.5;
+  } else { // Fast Casual
+    return 2;
+  }
+};
+
+// Calculate Line Cooks Required
+export const calculateLineCooksRequired = (
+  serviceParams: ServiceParameters,
+  serviceStyle: ServiceStyle
+): number => {
+  const stationsPerChef = calculateStationsPerChef(serviceStyle);
+  return Math.ceil(serviceParams.kitchenStations / stationsPerChef);
+};
+
+// Calculate Executive Chef Required
+export const calculateExecutiveChefRequired = (serviceStyle: ServiceStyle): number => {
+  return 1; // Always present in the model
+};
+
+// Calculate Sous Chef Required
+export const calculateSousChefRequired = (serviceStyle: ServiceStyle): number => {
+  if (serviceStyle === "Premium Dining") {
+    return 2;
+  } else if (serviceStyle === "Casual Dining") {
+    return 1;
+  } else { // Fast Casual
+    return 0;
+  }
+};
+
+// Calculate Prep Cooks Required
+export const calculatePrepCooksRequired = (lineCooksCount: number): number => {
+  return Math.floor(lineCooksCount * 0.75); // Rounded down as per logic document
+};
+
+// Calculate Kitchen Helpers Required
+export const calculateKitchenHelpersRequired = (lineCooksCount: number): number => {
+  return Math.ceil(lineCooksCount * 0.5); // Rounded up as per logic document
+};
+
+// Calculate Dishwashers Required
+export const calculateDishwashersRequired = (spaceParams: SpaceParameters): number => {
+  const totalCapacity = calculateSeatingCapacity(spaceParams);
+  return Math.max(1, Math.ceil(totalCapacity / 80));
+};
+
+// Calculate Combined Efficiency Factor
+export const calculateCombinedEfficiencyFactor = (
+  efficiencyParams: EfficiencyParameters,
+  month: number = 0 // Default to first month
+): number => {
+  const staffUtilizationEffect = (100 - efficiencyParams.staffUtilizationRate) / 100;
+  const technologyEffect = (100 - efficiencyParams.technologyImpact) / 100;
+  const crossTrainingEffect = (100 - efficiencyParams.crossTrainingCapability) / 100;
+  
+  // Get seasonality factor for the given month (or use a default if not specified)
+  const seasonalityFactor = efficiencyParams.seasonalityAdjustment[month] || 1;
+  
+  return staffUtilizationEffect * technologyEffect * crossTrainingEffect * seasonalityFactor;
+};
+
 // Calculate BOH Staff Required
 export const calculateBOHStaffRequired = (
   serviceParams: ServiceParameters, 
   serviceStyle: ServiceStyle
 ): number => {
-  let baseStaff = serviceParams.kitchenStations * serviceParams.staffPerStation;
+  const lineCooksRequired = calculateLineCooksRequired(serviceParams, serviceStyle);
+  const sousChefRequired = calculateSousChefRequired(serviceStyle);
+  const prepCooksRequired = calculatePrepCooksRequired(lineCooksRequired);
+  const kitchenHelpersRequired = calculateKitchenHelpersRequired(lineCooksRequired);
+  const executiveChefRequired = calculateExecutiveChefRequired(serviceStyle);
   
-  // Apply service style adjustment
-  if (serviceStyle === "Fast Casual") {
-    baseStaff *= 0.8;
-  } else if (serviceStyle === "Premium Dining") {
-    baseStaff *= 1.2;
-  }
-  
-  return Math.ceil(baseStaff);
+  return (
+    lineCooksRequired + 
+    sousChefRequired + 
+    prepCooksRequired + 
+    kitchenHelpersRequired + 
+    executiveChefRequired
+  );
 };
 
 // Calculate Daily Covers
@@ -66,12 +186,27 @@ export const calculateDailyCovers = (
   operationalParams: OperationalParameters
 ): number => {
   const capacity = calculateSeatingCapacity(spaceParams);
-  const tableTurns = Math.floor((
-    operationalParams.weekdayHours.reduce((sum, h) => sum + h, 0) / 5 + 
-    operationalParams.weekendHours.reduce((sum, h) => sum + h, 0) / 2
-  ) * 60 / revenueParams.tableTurnTime);
+  const tableTurns = calculateTableTurnsPerDay(revenueParams, operationalParams);
   
   return Math.floor(capacity * tableTurns * (1 - revenueParams.emptySeatsProvision));
+};
+
+// Calculate Table Turns Per Day
+export const calculateTableTurnsPerDay = (
+  revenueParams: RevenueParameters,
+  operationalParams: OperationalParameters
+): number => {
+  // Calculate average daily operating hours
+  const weekdayHoursTotal = operationalParams.weekdayHours.reduce((sum, h) => sum + h, 0);
+  const weekendHoursTotal = operationalParams.weekendHours.reduce((sum, h) => sum + h, 0);
+  
+  const averageDailyHours = (
+    (weekdayHoursTotal / 5) * 5 + // Weekdays (5 days)
+    (weekendHoursTotal / 2) * 2    // Weekends (2 days)
+  ) / 7; // Divide by 7 days to get daily average
+  
+  // Calculate table turns based on operating hours and guest dwelling time
+  return (averageDailyHours * 60) / revenueParams.tableTurnTime;
 };
 
 // Calculate Monthly Revenue
@@ -81,12 +216,25 @@ export const calculateMonthlyRevenue = (
   operationalParams: OperationalParameters
 ): number => {
   const dailyCovers = calculateDailyCovers(spaceParams, revenueParams, operationalParams);
-  const effectiveDays = operationalParams.operatingDays / 12; // Monthly average
-  return dailyCovers * revenueParams.averageSpendPerGuest * effectiveDays;
+  const effectiveDaysPerMonth = operationalParams.operatingDays / 12; // Monthly average
+  
+  // Factor in Ramadan impact - assuming 30 days with 50% capacity
+  const normalDays = effectiveDaysPerMonth - (30 / 12); // Regular days per month
+  const ramadanDays = 30 / 12; // Ramadan days per month
+  
+  const normalRevenue = dailyCovers * revenueParams.averageSpendPerGuest * normalDays;
+  const ramadanRevenue = dailyCovers * revenueParams.averageSpendPerGuest * ramadanDays * (1 - operationalParams.ramadanCapacityReduction);
+  
+  return normalRevenue + ramadanRevenue;
 };
 
 // Calculate Total Labor Cost
-export const calculateTotalLaborCost = (staffingRequirements: StaffingRequirement[]): number => {
+export const calculateTotalLaborCost = (
+  staffingRequirements: StaffingRequirement[],
+  efficiencyParams: EfficiencyParameters
+): number => {
+  const efficiencyFactor = calculateCombinedEfficiencyFactor(efficiencyParams);
+  
   return staffingRequirements.reduce((total, req) => {
     const position = mockPositions.find(p => p.id === req.positionId);
     if (!position) return total;
@@ -94,7 +242,7 @@ export const calculateTotalLaborCost = (staffingRequirements: StaffingRequiremen
     const baseCost = position.baseSalary + position.variablePay + position.benefits;
     const additionalCosts = position.trainingCost + position.recruitmentCost * position.turnoverRate + position.mealCost;
     
-    return total + (baseCost + additionalCosts) * req.count;
+    return total + (baseCost + additionalCosts) * req.count * efficiencyFactor;
   }, 0);
 };
 
@@ -103,6 +251,7 @@ export const calculateLaborCostPercentage = (
   laborCost: number,
   monthlyRevenue: number
 ): number => {
+  if (monthlyRevenue === 0) return 0;
   return (laborCost / monthlyRevenue) * 100;
 };
 
@@ -115,18 +264,20 @@ export const calculateStaffingRequirements = (
 ): StaffingRequirement[] => {
   const requirements: StaffingRequirement[] = [];
   
+  // FOH Positions
+  
   // Calculate servers
-  const serversRequired = calculateServersRequired(spaceParams, serviceParams);
+  const serversRequired = calculateServersRequired(spaceParams, serviceParams, serviceStyle);
   const adjustedServers = Math.ceil(
     serversRequired * 
     serviceParams.serviceStyleAdjustment * 
-    (1 - efficiencyParams.technologyImpact)
+    (1 - efficiencyParams.technologyImpact / 100)
   );
   
   requirements.push({
     positionId: "pos-001", // Server/Waiter
     count: adjustedServers,
-    calculationMethod: "Total capacity / Covers per waiter"
+    calculationMethod: `Total capacity (${calculateSeatingCapacity(spaceParams)}) ÷ Covers per waiter (${serviceParams.coversPerWaiter})`
   });
   
   // Calculate runners
@@ -134,72 +285,81 @@ export const calculateStaffingRequirements = (
   requirements.push({
     positionId: "pos-002", // Runner/Busser
     count: runnersRequired,
-    calculationMethod: "Servers × Runner ratio %"
+    calculationMethod: `Servers (${adjustedServers}) × Runner ratio (${serviceParams.runnerToWaiterRatio}%)`
   });
   
-  // Calculate hosts (1 per 50 covers, minimum 1)
-  const hostsRequired = Math.max(1, Math.ceil(calculateSeatingCapacity(spaceParams) / 50));
+  // Calculate hosts
+  const hostsRequired = calculateHostsRequired(spaceParams, serviceStyle);
   requirements.push({
     positionId: "pos-003", // Host/Hostess
     count: hostsRequired,
-    calculationMethod: "1 per 50 covers (min 1)"
+    calculationMethod: serviceStyle === "Fast Casual" ? 
+      "0 (self-seating for Fast Casual)" : 
+      `1 per ${serviceStyle === "Premium Dining" ? "60" : "80"} covers (min 1)`
   });
   
-  // Calculate cashiers (1 per 75 covers, minimum 1)
-  const cashiersRequired = Math.max(1, Math.ceil(calculateSeatingCapacity(spaceParams) / 75));
+  // Calculate cashiers
+  const cashiersRequired = calculateCashiersRequired(spaceParams, serviceStyle);
   requirements.push({
     positionId: "pos-004", // Cashier
     count: cashiersRequired,
-    calculationMethod: "1 per 75 covers (min 1)"
+    calculationMethod: `1 per ${
+      serviceStyle === "Premium Dining" ? "100" : 
+      serviceStyle === "Casual Dining" ? "120" : "60"
+    } covers (min 1)`
   });
   
-  // BOH Staffing based on kitchen stations
-  const bohBaseStaff = calculateBOHStaffRequired(serviceParams, serviceStyle);
+  // BOH Positions
   
-  // Executive Chef (1 for Premium, 0.5 for others)
+  // Calculate line cooks
+  const lineCooksRequired = calculateLineCooksRequired(serviceParams, serviceStyle);
+  requirements.push({
+    positionId: "pos-007", // Line Cook
+    count: lineCooksRequired,
+    calculationMethod: `Kitchen stations (${serviceParams.kitchenStations}) ÷ Stations per chef (${calculateStationsPerChef(serviceStyle)})`
+  });
+  
+  // Executive Chef
+  const executiveChefRequired = calculateExecutiveChefRequired(serviceStyle);
   requirements.push({
     positionId: "pos-005", // Executive Chef
-    count: serviceStyle === "Premium Dining" ? 1 : 0.5,
-    calculationMethod: "Based on service style"
+    count: executiveChefRequired,
+    calculationMethod: "1 per restaurant (standard)"
   });
   
-  // Sous Chef (1 per 4 kitchen stations, minimum 1)
-  const sousChefRequired = Math.max(1, Math.ceil(serviceParams.kitchenStations / 4));
+  // Sous Chef
+  const sousChefRequired = calculateSousChefRequired(serviceStyle);
   requirements.push({
     positionId: "pos-006", // Sous Chef
     count: sousChefRequired,
-    calculationMethod: "1 per 4 kitchen stations (min 1)"
+    calculationMethod: `${
+      serviceStyle === "Premium Dining" ? "2" : 
+      serviceStyle === "Casual Dining" ? "1" : "0"
+    } for ${serviceStyle}`
   });
   
-  // Line Cooks (1 per station)
-  requirements.push({
-    positionId: "pos-007", // Line Cook
-    count: serviceParams.kitchenStations,
-    calculationMethod: "1 per kitchen station"
-  });
-  
-  // Prep Cooks (0.75 per station)
-  const prepCooksRequired = Math.ceil(serviceParams.kitchenStations * 0.75);
+  // Prep Cooks
+  const prepCooksRequired = calculatePrepCooksRequired(lineCooksRequired);
   requirements.push({
     positionId: "pos-008", // Prep Cook
     count: prepCooksRequired,
-    calculationMethod: "0.75 per kitchen station"
+    calculationMethod: `Line cooks (${lineCooksRequired}) × 0.75`
   });
   
-  // Kitchen Helpers (0.5 per station)
-  const kitchenHelpersRequired = Math.ceil(serviceParams.kitchenStations * 0.5);
+  // Kitchen Helpers
+  const kitchenHelpersRequired = calculateKitchenHelpersRequired(lineCooksRequired);
   requirements.push({
     positionId: "pos-009", // Kitchen Helper
     count: kitchenHelpersRequired,
-    calculationMethod: "0.5 per kitchen station"
+    calculationMethod: `Line cooks (${lineCooksRequired}) × 0.5`
   });
   
-  // Dishwashers (1 for every 100 covers, minimum 1)
-  const dishwashersRequired = Math.max(1, Math.ceil(calculateSeatingCapacity(spaceParams) / 100));
+  // Dishwashers
+  const dishwashersRequired = calculateDishwashersRequired(spaceParams);
   requirements.push({
     positionId: "pos-010", // Dishwasher
     count: dishwashersRequired,
-    calculationMethod: "1 per 100 covers (min 1)"
+    calculationMethod: "1 per 80 covers (min 1)"
   });
   
   // Management
@@ -210,15 +370,18 @@ export const calculateStaffingRequirements = (
     calculationMethod: "1 per location"
   });
   
-  // Assistant Manager (1 per 150 covers, minimum 1)
-  const assistantManagersRequired = Math.max(1, Math.ceil(calculateSeatingCapacity(spaceParams) / 150));
+  // Assistant Managers
+  const managersRequired = calculateManagersRequired(adjustedServers, serviceStyle);
   requirements.push({
     positionId: "pos-012", // Assistant Manager
-    count: assistantManagersRequired,
-    calculationMethod: "1 per 150 covers (min 1)"
+    count: managersRequired,
+    calculationMethod: `1 per ${
+      serviceStyle === "Premium Dining" ? "8" : 
+      serviceStyle === "Casual Dining" ? "10" : "12"
+    } servers (min 1)`
   });
   
-  // Shift Supervisors (1 per 75 covers, minimum 2)
+  // Shift Supervisors
   const supervisorsRequired = Math.max(2, Math.ceil(calculateSeatingCapacity(spaceParams) / 75));
   requirements.push({
     positionId: "pos-013", // Shift Supervisor
@@ -227,6 +390,26 @@ export const calculateStaffingRequirements = (
   });
   
   return requirements;
+};
+
+// Calculate staff hours requirements
+export const calculateStaffHoursRequirement = (
+  staffingRequirements: StaffingRequirement[],
+  operationalParams: OperationalParameters
+): number => {
+  const totalStaff = staffingRequirements.reduce((sum, req) => sum + req.count, 0);
+  
+  // Calculate average daily hours
+  const weekdayHoursTotal = operationalParams.weekdayHours.reduce((sum, h) => sum + h, 0);
+  const weekendHoursTotal = operationalParams.weekendHours.reduce((sum, h) => sum + h, 0);
+  
+  const averageDailyHours = (
+    (weekdayHoursTotal / 5) * 5 + // Weekdays (5 days)
+    (weekendHoursTotal / 2) * 2    // Weekends (2 days)
+  ) / 7; // Divide by 7 days to get daily average
+  
+  // Typical full-time employee works ~160 hours per month (40 hours × 4 weeks)
+  return totalStaff * averageDailyHours * (operationalParams.operatingDays / 12);
 };
 
 // Process a full scenario and calculate all metrics
@@ -254,7 +437,10 @@ export const processScenario = (
   );
   
   // Calculate labor cost
-  const laborCost = calculateTotalLaborCost(scenario.staffingRequirements);
+  const laborCost = calculateTotalLaborCost(
+    scenario.staffingRequirements, 
+    scenario.efficiencyParameters
+  );
   
   // Calculate labor cost percentage
   const laborCostPercentage = calculateLaborCostPercentage(laborCost, monthlyRevenue);
@@ -263,8 +449,12 @@ export const processScenario = (
   const totalStaff = scenario.staffingRequirements.reduce((sum, req) => sum + req.count, 0);
   
   // Calculate efficiency metrics
-  const totalMonthlyHours = totalStaff * 160; // Assuming 160 working hours per month
-  const revenuePerLaborHour = monthlyRevenue / totalMonthlyHours;
+  const totalMonthlyHours = calculateStaffHoursRequirement(
+    scenario.staffingRequirements,
+    scenario.operationalParameters
+  );
+  
+  const revenuePerLaborHour = totalMonthlyHours > 0 ? monthlyRevenue / totalMonthlyHours : 0;
   
   const dailyCovers = calculateDailyCovers(
     scenario.spaceParameters,
@@ -272,7 +462,7 @@ export const processScenario = (
     scenario.operationalParameters
   );
   const monthlyCovers = dailyCovers * (scenario.operationalParameters.operatingDays / 12);
-  const coversPerLaborHour = monthlyCovers / totalMonthlyHours;
+  const coversPerLaborHour = totalMonthlyHours > 0 ? monthlyCovers / totalMonthlyHours : 0;
   
   // Update calculations
   scenario.calculations = {

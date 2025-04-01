@@ -187,6 +187,7 @@ const Dashboard = () => {
                         cx="50%"
                         cy="50%"
                         outerRadius={80}
+                        dataKey="value"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       />
                       <Tooltip />
