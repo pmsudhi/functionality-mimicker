@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { 
   FileText, 
   FileSpreadsheet, 
@@ -26,6 +25,7 @@ import {
   ChartLegendContent,
   type ChartConfig
 } from "@/components/ui/chart";
+import { ChartContainer as CustomChartContainer } from "@/components/ui/chart-container";
 
 const staffDistributionData = [
   { name: "Kitchen Staff", value: 40, color: "#22c55e" },
@@ -99,7 +99,7 @@ const StaffingStructure = () => {
   const chartConfig = {
     monthly_cost: {
       label: "Monthly Cost (SAR)",
-      color: "hsl(var(--primary))",
+      color: "#3b82f6",
     },
   } satisfies ChartConfig;
 
@@ -505,28 +505,69 @@ const StaffingStructure = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="h-80 mb-8">
-                <ChartContainer config={chartConfig}>
+              <CustomChartContainer 
+                title="Monthly Cost by Department" 
+                description="Breakdown of monthly labor costs across different departments"
+                className="h-[400px] mb-8"
+                contentClassName="pt-4"
+              >
+                <ChartContainer config={chartConfig} className="w-full h-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={costAnalysisData}
                       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      barSize={60}
                     >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="department" />
-                      <YAxis />
-                      <Tooltip content={<ChartTooltipContent />} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
+                      <XAxis 
+                        dataKey="department" 
+                        tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
+                        tickLine={{ stroke: 'var(--border)' }}
+                        axisLine={{ stroke: 'var(--border)' }}
+                      />
+                      <YAxis 
+                        tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
+                        tickLine={{ stroke: 'var(--border)' }}
+                        axisLine={{ stroke: 'var(--border)' }}
+                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                      />
+                      <Tooltip 
+                        content={<ChartTooltipContent />}
+                        cursor={{ fill: 'var(--muted)', opacity: 0.1 }}
+                      />
                       <Bar 
                         dataKey="cost" 
                         name="Monthly Cost (SAR)" 
                         fill="var(--color-monthly_cost)"
-                        radius={[4, 4, 0, 0]} 
-                      />
+                        radius={[6, 6, 0, 0]}
+                        animationDuration={800}
+                      >
+                        <LabelList 
+                          dataKey="percentage" 
+                          position="top" 
+                          content={(props: any) => {
+                            const { x, y, width, value } = props;
+                            return (
+                              <g>
+                                <text
+                                  x={x + width / 2}
+                                  y={y - 10}
+                                  fill="var(--muted-foreground)"
+                                  textAnchor="middle"
+                                  fontSize={12}
+                                >
+                                  {`${value}%`}
+                                </text>
+                              </g>
+                            );
+                          }}
+                        />
+                      </Bar>
                       <ChartLegendContent />
                     </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
-              </div>
+              </CustomChartContainer>
               
               <div>
                 <Badge variant="outline" className="mb-4 font-medium bg-primary/5">
