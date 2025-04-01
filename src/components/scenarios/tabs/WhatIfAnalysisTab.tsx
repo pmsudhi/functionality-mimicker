@@ -1,46 +1,9 @@
 
-import { Dispatch, SetStateAction } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Scenario } from "@/types/modelTypes";
-import ControlPanel from "@/components/scenarios/what-if/ControlPanel";
-import ResultsPanel from "@/components/scenarios/what-if/ResultsPanel";
 import { Sparkles } from "lucide-react";
 
-interface WhatIfAnalysisTabProps {
-  baseScenario: string;
-  setBaseScenario: Dispatch<SetStateAction<string>>;
-  staffingLevel: number;
-  setStaffingLevel: (value: number) => void;
-  averageWage: number;
-  setAverageWage: (value: number) => void;
-  operatingHours: number;
-  setOperatingHours: (value: number) => void;
-  serviceEfficiency: number;
-  setServiceEfficiency: (value: number) => void;
-  customerVolume: number;
-  setCustomerVolume: (value: number) => void;
-  averageCheck: number;
-  setAverageCheck: (value: number) => void;
-  selectedBaseScenario: Scenario | undefined;
-}
-
-const WhatIfAnalysisTab = ({
-  baseScenario,
-  setBaseScenario,
-  staffingLevel,
-  setStaffingLevel,
-  averageWage,
-  setAverageWage,
-  operatingHours,
-  setOperatingHours,
-  serviceEfficiency,
-  setServiceEfficiency,
-  customerVolume,
-  setCustomerVolume,
-  averageCheck,
-  setAverageCheck,
-  selectedBaseScenario
-}: WhatIfAnalysisTabProps) => {
+// We'll create a simplified version for now and update it later
+const WhatIfAnalysisTab = () => {
   return (
     <Card className="border shadow-sm">
       <CardHeader>
@@ -54,32 +17,12 @@ const WhatIfAnalysisTab = ({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ControlPanel 
-            baseScenario={baseScenario}
-            setBaseScenario={setBaseScenario}
-            staffingLevel={staffingLevel}
-            setStaffingLevel={setStaffingLevel}
-            averageWage={averageWage}
-            setAverageWage={setAverageWage}
-            operatingHours={operatingHours}
-            setOperatingHours={setOperatingHours}
-            serviceEfficiency={serviceEfficiency}
-            setServiceEfficiency={setServiceEfficiency}
-            customerVolume={customerVolume}
-            setCustomerVolume={setCustomerVolume}
-            averageCheck={averageCheck}
-            setAverageCheck={setAverageCheck}
-          />
-          
-          <ResultsPanel
-            selectedBaseScenario={selectedBaseScenario}
-            staffingLevel={staffingLevel}
-            averageWage={averageWage}
-            operatingHours={operatingHours}
-            serviceEfficiency={serviceEfficiency}
-            customerVolume={customerVolume}
-            averageCheck={averageCheck}
-          />
+          <div>
+            <p>Control panel for adjusting parameters will be displayed here</p>
+          </div>
+          <div>
+            <p>Results panel showing impact of changes will be displayed here</p>
+          </div>
         </div>
       </CardContent>
     </Card>

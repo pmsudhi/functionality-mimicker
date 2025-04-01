@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,13 +20,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ScenarioBuilder } from "./ScenarioBuilder";
-import { StaffingModeler } from "./StaffingModeler";
-import { FinancialImpact } from "./FinancialImpact";
-import { ScenarioComparison } from "./ScenarioComparison";
-import { PeakHourAnalysis } from "./PeakHourAnalysis";
-import { EfficiencyMetrics } from "./EfficiencyMetrics";
-import { RevenueProjections } from "./RevenueProjections";
+import ScenarioBuilder from "./ScenarioBuilder";
+import StaffingModeler from "./StaffingModeler";
+import FinancialImpact from "./FinancialImpact";
+import ScenarioComparison from "./ScenarioComparison";
+import PeakHourAnalysis from "./PeakHourAnalysis";
+import EfficiencyMetrics from "./EfficiencyMetrics";
+import RevenueProjections from "./RevenueProjections";
 
 const PlanningBoard = () => {
   const [planningView, setPlanningView] = useState("scenarios");
@@ -35,7 +34,6 @@ const PlanningBoard = () => {
   const [selectedBrand, setSelectedBrand] = useState("all");
   const { toast } = useToast();
   
-  // Animated counter effect for metrics
   const [countValues, setCountValues] = useState({
     staff: 386,
     laborCost: 26.4,
@@ -53,7 +51,6 @@ const PlanningBoard = () => {
   return (
     <PageLayout>
       <div className="h-full flex flex-col overflow-hidden bg-gradient-to-br from-background to-muted/30">
-        {/* Header with advanced filters */}
         <div className="border-b bg-background/95 backdrop-blur-sm p-4 z-10">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -124,7 +121,6 @@ const PlanningBoard = () => {
           </div>
         </div>
         
-        {/* Key Metrics Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
           <Card className="border border-muted/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
             <CardHeader className="pb-2 space-y-0">
@@ -199,7 +195,6 @@ const PlanningBoard = () => {
           </Card>
         </div>
         
-        {/* Main Content Area with Tabs */}
         <div className="flex-1 overflow-hidden border rounded-md m-4 bg-background/95 backdrop-blur-sm shadow-sm">
           <Tabs 
             defaultValue="scenarios" 
