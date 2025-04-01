@@ -63,12 +63,7 @@ const PeakHourAnalysisContent = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <div>
-          <h3 className="text-xl font-bold">Peak Hour Staffing Analysis</h3>
-          <p className="text-muted-foreground">Analyze and optimize staffing levels throughout the day</p>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-4">
           <Select value={selectedDay} onValueChange={setSelectedDay}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Select day" />
@@ -108,9 +103,7 @@ const PeakHourAnalysisContent = () => {
               : `Position Breakdown - ${selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}`}
           </CardTitle>
           <CardDescription>
-            {selectedView === "heatmap" 
-              ? "Visual representation of staffing needs throughout the day" 
-              : "Detailed staffing by position throughout the day"}
+            Analyze and optimize staffing levels throughout the day
           </CardDescription>
         </CardHeader>
         <CardContent>

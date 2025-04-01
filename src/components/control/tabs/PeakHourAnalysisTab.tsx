@@ -4,23 +4,17 @@ import {
   Card, 
   CardContent, 
   CardHeader, 
-  CardTitle, 
-  CardDescription 
+  CardTitle 
 } from '@/components/ui/card';
-import PeakHourDescription from '../peak-hour-analysis/PeakHourDescription';
 import PeakHourAnalysisContent from '../peak-hour-analysis/PeakHourAnalysisContent';
 
 const PeakHourAnalysisTab = () => {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>Peak Hour Analysis</CardTitle>
-        <CardDescription>
-          Analyze staffing requirements during peak hours of operation
-        </CardDescription>
+        <CardTitle>Peak Hour Staffing Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <PeakHourDescription />
         <div className="mt-6">
           <PeakHourAnalysisContent />
         </div>
