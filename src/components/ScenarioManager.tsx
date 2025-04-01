@@ -3,9 +3,9 @@ import { useState } from "react";
 import { mockScenarios, mockOutlets, mockBrands } from "@/services/mockData";
 import { compareScenarios } from "@/services/calculationService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import SavedScenariosTab from "@/components/scenarios/SavedScenariosTab";
-import WhatIfAnalysisTab from "@/components/scenarios/WhatIfAnalysisTab";
-import ScenarioFilters from "@/components/scenarios/ScenarioFilters";
+import ScenarioFilters from "@/components/scenarios/filters/ScenarioFilters";
+import SavedScenariosTab from "@/components/scenarios/tabs/SavedScenariosTab";
+import WhatIfAnalysisTab from "@/components/scenarios/tabs/WhatIfAnalysisTab";
 import { useBrandOutletFilter } from "@/hooks/useBrandOutletFilter";
 
 const ScenarioManager = () => {
