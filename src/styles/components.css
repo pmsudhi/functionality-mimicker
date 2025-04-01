@@ -1,0 +1,50 @@
+
+/* Layout patterns */
+@layer components {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .grid-auto-fit {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+  
+  /* Custom button variants */
+  .btn-icon {
+    @apply rounded-full p-2 flex items-center justify-center;
+  }
+  
+  /* Status indicators */
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .status-badge-success {
+    @apply status-badge bg-success/20 text-success-700 dark:bg-success-900/30 dark:text-success-400;
+  }
+  
+  .status-badge-warning {
+    @apply status-badge bg-warning/20 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400;
+  }
+  
+  .status-badge-error {
+    @apply status-badge bg-destructive/20 text-destructive-700 dark:bg-destructive-900/30 dark:text-destructive-400;
+  }
+  
+  /* Form elements */
+  .form-group {
+    @apply space-y-2 mb-4;
+  }
+  
+  .input-label {
+    @apply block text-sm font-medium text-foreground;
+  }
+  
+  .input-hint {
+    @apply mt-1 text-xs text-muted-foreground;
+  }
+}

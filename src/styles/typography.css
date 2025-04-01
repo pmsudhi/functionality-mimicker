@@ -1,0 +1,56 @@
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl leading-tight md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl leading-tight md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl leading-snug md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl leading-snug md:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg leading-normal md:text-xl;
+  }
+
+  h6 {
+    @apply text-base leading-normal md:text-lg;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  .small-text {
+    @apply text-sm leading-relaxed;
+  }
+
+  .tiny-text {
+    @apply text-xs leading-relaxed;
+  }
+
+  /* Apply smooth scrolling to the whole document */
+  html {
+    @apply scroll-smooth;
+  }
+}

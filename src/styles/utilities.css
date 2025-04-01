@@ -1,0 +1,43 @@
+
+@layer utilities {
+  /* Container classes */
+  .content-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .content-section {
+    @apply py-8 md:py-12;
+  }
+
+  /* Card patterns */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:border-primary/30;
+  }
+
+  /* Interactive element states */
+  .interactive-element {
+    @apply transition-colors duration-200;
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-secondary rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground rounded-full hover:bg-primary/50;
+  }
+}

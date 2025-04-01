@@ -1,0 +1,61 @@
+
+/* Custom styles for the dashboard */
+.resizable-panel {
+  @apply border border-border;
+}
+
+.drag-handle {
+  @apply hover:bg-muted/50 transition-colors cursor-move;
+}
+
+.tab-indicator {
+  @apply h-0.5 bg-primary absolute bottom-0 transition-all duration-200;
+}
+
+.slider-track {
+  @apply h-2.5 bg-secondary rounded-full;
+}
+
+.slider-thumb {
+  @apply h-5 w-5 bg-primary rounded-full focus:outline-none focus:ring-2 focus:ring-ring;
+}
+
+.tooltip-trigger {
+  @apply relative inline-block;
+}
+
+.tooltip {
+  @apply invisible absolute z-10 whitespace-nowrap rounded bg-secondary px-2 py-1 text-xs text-secondary-foreground opacity-0 transition-opacity;
+}
+
+.tooltip-trigger:hover .tooltip {
+  @apply visible opacity-100;
+}
+
+.gantt-chart {
+  @apply overflow-x-auto;
+}
+
+.gantt-row {
+  @apply grid border-b border-border py-2;
+}
+
+.gantt-cell {
+  @apply px-2 py-1;
+}
+
+.drag-item {
+  @apply rounded bg-secondary p-2 cursor-grab shadow-sm;
+}
+
+.drag-item:active {
+  @apply cursor-grabbing shadow-md;
+}
+
+.drop-zone {
+  @apply border-2 border-dashed border-muted-foreground rounded-md p-4;
+}
+
+.drop-zone.active {
+  @apply border-primary;
+}
