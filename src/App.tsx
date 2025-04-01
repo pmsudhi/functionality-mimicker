@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import MainNavigation from '@/components/layout/MainNavigation';
@@ -10,6 +10,11 @@ import ScenarioManager from '@/components/scenarios/index';
 import FinancialImpact from '@/components/financial/FinancialImpact';
 import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
 import WhatIfAnalisis from '@/components/WhatIfAnalisis';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SpaceParametersTab from "@/components/control/tabs/parameters/SpaceParametersTab";
+import ServiceParametersTab from "@/components/control/tabs/parameters/ServiceParametersTab";
+import EfficiencyDriversTab from "@/components/control/tabs/parameters/EfficiencyDriversTab";
+import OperationalHoursTab from "@/components/control/tabs/parameters/OperationalHoursTab";
 
 function App() {
   return (
