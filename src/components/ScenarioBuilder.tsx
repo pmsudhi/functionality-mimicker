@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -303,14 +303,10 @@ const ScenarioBuilder = () => {
     const newValue = values[0];
     
     // Update parameter values
-    setParamValues({
-      ...paramValues,
-      [paramId]: newValue
-    });
+    const newParamValues = { ...paramValues, [paramId]: newValue };
+    setParamValues(newParamValues);
     
     // Recalculate any dependent parameters
-    const newParamValues = { ...paramValues, [paramId]: newValue };
-    
     blocks.forEach(block => {
       block.parameters.forEach(param => {
         if (param.isCalculated && param.calculation) {
@@ -321,6 +317,28 @@ const ScenarioBuilder = () => {
     
     setParamValues(newParamValues);
   };
+  
+  // Calculate values for any parameters with calculations
+  useEffect(() => {
+    const calculatedParams = { ...paramValues };
+    let hasUpdates = false;
+    
+    blocks.forEach(block => {
+      block.parameters.forEach(param => {
+        if (param.isCalculated && param.calculation) {
+          const calculated = param.calculation(paramValues);
+          if (calculatedParams[param.id] !== calculated) {
+            calculatedParams[param.id] = calculated;
+            hasUpdates = true;
+          }
+        }
+      });
+    });
+    
+    if (hasUpdates) {
+      setParamValues(calculatedParams);
+    }
+  }, [blocks, paramValues]);
   
   const handleSaveScenario = () => {
     toast({
@@ -518,7 +536,7 @@ const ScenarioBuilder = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {block.parameters.map((param) => (
-                      <div key={param.id} className="space-y-2">
+                      <div key={param.id}>
                         <SliderControl
                           label={param.label}
                           value={paramValues[param.id] || param.value}

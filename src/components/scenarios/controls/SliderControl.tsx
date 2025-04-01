@@ -34,7 +34,8 @@ const SliderControl = ({
   }, [value]);
 
   const handleValueChange = (vals: number[]) => {
-    setLocalValue(vals[0]);
+    const newValue = vals[0];
+    setLocalValue(newValue);
     
     // Always update parent state immediately for better user experience
     onChange(vals);
