@@ -187,4 +187,4 @@ Ramadan Adjustments:
 • Shifted peak times
 • Modified staff scheduling`
   }
-}; 
+};
