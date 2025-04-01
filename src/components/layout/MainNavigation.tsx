@@ -52,7 +52,7 @@ const MainNavigation = () => {
           <div className="flex items-center mr-8">
             <Link to="/" className="flex items-center">
               <BarChart4 className="h-6 w-6 mr-2 text-primary" />
-              <span className="text-xl font-bold">F&B Manpower</span>
+              <span className="text-xl font-bold">Dashboard</span>
             </Link>
           </div>
           
