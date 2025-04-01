@@ -1,5 +1,6 @@
 
 import React from 'react';
+import PeakHourAnalysisContent from '../control/peak-hour-analysis/PeakHourAnalysisContent';
 
 const PeakHourAnalysis = () => {
   return (
@@ -8,6 +9,9 @@ const PeakHourAnalysis = () => {
       <p className="text-muted-foreground">
         This is a placeholder for the Peak Hour Analysis component in the planning section.
       </p>
+      <div className="mt-6">
+        <PeakHourAnalysisContent />
+      </div>
     </div>
   );
 };

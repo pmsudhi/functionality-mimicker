@@ -7,6 +7,8 @@ import {
   CardTitle, 
   CardDescription 
 } from '@/components/ui/card';
+import PeakHourDescription from '../peak-hour-analysis/PeakHourDescription';
+import PeakHourAnalysisContent from '../peak-hour-analysis/PeakHourAnalysisContent';
 
 const PeakHourAnalysisTab = () => {
   return (
@@ -18,12 +20,8 @@ const PeakHourAnalysisTab = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground mb-6">
-          This tab provides tools to analyze how staffing requirements change during peak operating hours.
-        </p>
-        <div className="h-60 flex items-center justify-center border rounded-md bg-muted/20">
-          <p className="text-muted-foreground">Peak hour analysis content coming soon...</p>
-        </div>
+        <PeakHourDescription />
+        <PeakHourAnalysisContent />
       </CardContent>
     </Card>
   );
