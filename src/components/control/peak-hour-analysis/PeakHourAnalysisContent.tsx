@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,7 +55,6 @@ const getCellColor = (count: number) => {
 const PeakHourAnalysisContent = () => {
   const [selectedDay, setSelectedDay] = useState("friday");
   const [selectedView, setSelectedView] = useState("heatmap");
-  const [showBreakdown, setShowBreakdown] = useState(false);
   
   const totalForHour = (hourIndex: number) => {
     return positionBreakdownData.data.reduce((sum, position) => sum + position[hourIndex], 0);
@@ -64,12 +62,6 @@ const PeakHourAnalysisContent = () => {
   
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-base text-muted-foreground mb-6">
-          This tab provides tools to analyze how staffing requirements change during peak operating hours.
-        </p>
-      </div>
-      
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <div>
           <h3 className="text-xl font-bold">Peak Hour Staffing Analysis</h3>
@@ -101,16 +93,6 @@ const PeakHourAnalysisContent = () => {
               <SelectItem value="position">Position Breakdown</SelectItem>
             </SelectContent>
           </Select>
-
-          {selectedView === "heatmap" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setShowBreakdown(!showBreakdown)}
-              className="border-border"
-            >
-              {showBreakdown ? "Hide Position Breakdown" : "Show Position Breakdown"}
-            </Button>
-          )}
           
           <Button className="bg-black text-white hover:bg-gray-800">
             Optimize Staffing
@@ -127,7 +109,7 @@ const PeakHourAnalysisContent = () => {
           </CardTitle>
           <CardDescription>
             {selectedView === "heatmap" 
-              ? `Visual representation of staffing needs throughout the day${showBreakdown ? ' with position breakdown' : ''}` 
+              ? "Visual representation of staffing needs throughout the day" 
               : "Detailed staffing by position throughout the day"}
           </CardDescription>
         </CardHeader>
@@ -145,37 +127,14 @@ const PeakHourAnalysisContent = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {showBreakdown ? (
-                      <>
-                        {positionBreakdownData.positions.map((position, posIndex) => (
-                          <TableRow key={position}>
-                            <TableCell className="font-medium">{position}</TableCell>
-                            {positionBreakdownData.data[posIndex].map((count, hourIndex) => (
-                              <TableCell key={hourIndex} className={`text-center ${getCellColor(count)} p-2 h-10`}>
-                                {count}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                        <TableRow className="font-bold border-t-2">
-                          <TableCell>Total Staff</TableCell>
-                          {heatmapData.totalStaff.map((count, index) => (
-                            <TableCell key={index} className={`text-center ${getCellColor(count)} p-2 h-12 font-bold`}>
-                              {count}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </>
-                    ) : (
-                      <TableRow>
-                        <TableCell className="font-medium">Total Staff</TableCell>
-                        {heatmapData.totalStaff.map((count, index) => (
-                          <TableCell key={index} className={`text-center ${getCellColor(count)} p-2 h-16`}>
-                            <div className="text-lg font-semibold">{count}</div>
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    )}
+                    <TableRow>
+                      <TableCell className="font-medium">Total Staff</TableCell>
+                      {heatmapData.totalStaff.map((count, index) => (
+                        <TableCell key={index} className={`text-center ${getCellColor(count)} p-2 h-16`}>
+                          <div className="text-lg font-semibold">{count}</div>
+                        </TableCell>
+                      ))}
+                    </TableRow>
                   </TableBody>
                 </Table>
               </div>
