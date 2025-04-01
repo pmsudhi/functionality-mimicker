@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ScenarioBuilderTab from '../control/tabs/ScenarioBuilderTab';
 
 const ScenarioBuilder = () => {
   return (
@@ -10,14 +11,7 @@ const ScenarioBuilder = () => {
         <p className="text-muted-foreground">Create and test staffing scenarios</p>
       </div>
       
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Scenario Builder</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>This is a placeholder for the Scenario Builder component.</p>
-        </CardContent>
-      </Card>
+      <ScenarioBuilderTab />
     </div>
   );
 };

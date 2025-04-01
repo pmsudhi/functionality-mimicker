@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import ActionButtons from '../scenario-builder/ActionButtons';
 import ParameterBlocksList from '../scenario-builder/ParameterBlocksList';
+import { toast } from 'sonner';
 
 const ScenarioBuilderTab = () => {
   const actionButtonLabels = [
@@ -20,6 +21,13 @@ const ScenarioBuilderTab = () => {
     'Add Efficiency Drivers',
     'Add Custom Parameters'
   ];
+
+  const handleSaveScenario = () => {
+    toast.success('Scenario saved successfully!', {
+      position: 'bottom-right',
+      description: 'Your scenario has been saved and can be accessed from the Saved Scenarios tab.',
+    });
+  };
 
   return (
     <Card className="shadow-sm">
@@ -32,7 +40,7 @@ const ScenarioBuilderTab = () => {
         <ParameterBlocksList />
         
         <div className="mt-6 flex justify-end">
-          <Button>
+          <Button onClick={handleSaveScenario}>
             <Save className="mr-2 h-4 w-4" />
             Save Scenario
           </Button>

@@ -1,27 +1,32 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface Parameter {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  disabled?: boolean;
+  unit?: string;
+}
 
 interface ParameterBlockProps {
   color: 'blue' | 'green' | 'yellow';
   number: number;
   title: string;
-  parameters: {
-    label: string;
-    value: number;
-    min: number;
-    max: number;
-    step: number;
-    disabled?: boolean;
-    unit?: string;
-  }[];
+  parameters: Parameter[];
 }
 
-const ParameterBlock = ({ color, number, title, parameters }: ParameterBlockProps) => {
+const ParameterBlock = ({ color, number, title, parameters: initialParameters }: ParameterBlockProps) => {
+  const [parameters, setParameters] = useState<Parameter[]>(initialParameters);
+
   const colorClasses = {
     blue: {
       border: 'border-blue-100',
@@ -43,6 +48,33 @@ const ParameterBlock = ({ color, number, title, parameters }: ParameterBlockProp
     },
   };
 
+  const handleValueChange = (index: number, newValue: number[]) => {
+    const updatedParameters = [...parameters];
+    updatedParameters[index] = {
+      ...updatedParameters[index],
+      value: newValue[0]
+    };
+    setParameters(updatedParameters);
+    
+    // Show toast notification with updated value
+    toast.success(`Updated ${updatedParameters[index].label} to ${newValue[0]}${updatedParameters[index].unit || ''}`, {
+      position: 'bottom-right',
+      duration: 2000,
+    });
+  };
+
+  const handleAddParameter = () => {
+    toast.info('Add parameter functionality coming soon', {
+      position: 'bottom-right'
+    });
+  };
+
+  const handleDeleteBlock = () => {
+    toast.info(`Removed ${title} block`, {
+      position: 'bottom-right'
+    });
+  };
+
   return (
     <Card className={`border-2 ${colorClasses[color].border} ${colorClasses[color].bg}`}>
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
@@ -59,7 +91,7 @@ const ParameterBlock = ({ color, number, title, parameters }: ParameterBlockProp
         </div>
         <div className="flex items-center gap-1">
           <span className="text-xs text-muted-foreground">{parameters.length} parameters</span>
-          <Button variant="ghost" size="icon" className="h-6 w-6">
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleDeleteBlock}>
             <Trash className="h-3 w-3" />
           </Button>
         </div>
@@ -79,11 +111,12 @@ const ParameterBlock = ({ color, number, title, parameters }: ParameterBlockProp
               max={param.max} 
               step={param.step}
               disabled={param.disabled}
+              onValueChange={(newValue) => handleValueChange(index, newValue)}
             />
           </div>
         ))}
         
-        <Button variant="outline" size="sm" className="w-full">
+        <Button variant="outline" size="sm" className="w-full" onClick={handleAddParameter}>
           <Plus className="mr-2 h-3 w-3" />
           Add Parameter
         </Button>
