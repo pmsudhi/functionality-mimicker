@@ -1,456 +1,471 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart, Bar, Line, Area, AreaChart, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
-import { mockOutlets, mockBrands, createSampleScenario } from "@/services/mockData";
-import { calculateMonthlyRevenue, calculateTotalLaborCost } from "@/services/calculationService";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  LineChart, 
+  Line, 
+  BarChart,
+  Bar,
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Download,
+  FileText,
+  Printer,
+  FileSpreadsheet
+} from "lucide-react";
 
-// Sample financial data
-const financialTrend = [
-  { month: "Jan", revenue: 520000, laborCost: 135200, costPercentage: 26 },
-  { month: "Feb", revenue: 540000, laborCost: 140400, costPercentage: 26 },
-  { month: "Mar", revenue: 585000, laborCost: 146250, costPercentage: 25 },
-  { month: "Apr", revenue: 610000, laborCost: 158600, costPercentage: 26 },
-  { month: "May", revenue: 650000, laborCost: 169000, costPercentage: 26 },
-  { month: "Jun", revenue: 695000, laborCost: 174000, costPercentage: 25 },
-  { month: "Jul", revenue: 710000, laborCost: 184600, costPercentage: 26 },
-  { month: "Aug", revenue: 730000, laborCost: 186900, costPercentage: 25.6 },
+// Sample data
+const monthlyRevenueData = [
+  { month: "Jan", revenue: 650000, labor: 150000 },
+  { month: "Feb", revenue: 680000, labor: 155000 },
+  { month: "Mar", revenue: 710000, labor: 160000 },
+  { month: "Apr", revenue: 740000, labor: 165000 },
+  { month: "May", revenue: 770000, labor: 170000 },
+  { month: "Jun", revenue: 800000, labor: 175000 },
+  { month: "Jul", revenue: 830000, labor: 180000 },
+  { month: "Aug", revenue: 820000, labor: 178000 },
+  { month: "Sep", revenue: 780000, labor: 172000 },
+  { month: "Oct", revenue: 790000, labor: 175000 },
+  { month: "Nov", revenue: 810000, labor: 177000 },
+  { month: "Dec", revenue: 900000, labor: 185000 },
 ];
 
-const costBreakdown = [
-  { category: "Base Salary", value: 56 },
-  { category: "Variable Pay", value: 12 },
-  { category: "Benefits", value: 18 },
-  { category: "Training", value: 6 },
-  { category: "Recruitment", value: 5 },
-  { category: "Meals", value: 3 },
+const laborCostByDepartment = [
+  { department: "FOH Management", cost: 28000, percentage: 15.9 },
+  { department: "FOH Service", cost: 63000, percentage: 33.5 },
+  { department: "BOH Management", cost: 15000, percentage: 16.7 },
+  { department: "BOH Kitchen", cost: 43500, percentage: 31.5 },
+  { department: "BOH Support", cost: 16000, percentage: 4.0 },
 ];
 
-const departmentCost = [
-  { department: "FOH", value: 42 },
-  { department: "BOH", value: 38 },
-  { department: "Management", value: 20 },
+const pAndLData = [
+  { item: "Revenue", amount: 25000000, percentage: 100.0 },
+  { item: "Cost of Goods Sold (COGS)", amount: 7500000, percentage: 30.0 },
+  { item: "Gross Profit", amount: 17500000, percentage: 70.0 },
+  { item: "Operating Expenses", amount: 0, percentage: 0, isHeader: true },
+  { item: "Labor Cost", amount: 6000000, percentage: 24.0 },
+  { item: "Rent", amount: 2000000, percentage: 8.0 },
+  { item: "Utilities", amount: 750000, percentage: 3.0 },
+  { item: "Marketing", amount: 500000, percentage: 2.0 },
+  { item: "Other Expenses", amount: 1250000, percentage: 5.0 },
+  { item: "Total Operating Expenses", amount: 10500000, percentage: 42.0 },
+  { item: "Operating Profit", amount: 7000000, percentage: 28.0 },
+  { item: "Taxes", amount: 1400000, percentage: 5.6 },
+  { item: "Net Profit", amount: 5600000, percentage: 22.4, highlight: true },
 ];
 
-const benchmarks = {
-  "Fast Casual": { min: 22, target: 25, max: 28 },
-  "Casual Dining": { min: 25, target: 28, max: 32 },
-  "Premium Dining": { min: 30, target: 33, max: 36 },
+const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8", "#ef4444"];
+
+const getBarColor = (data: any) => {
+  if (data.department?.includes("FOH Management")) return COLORS[0];
+  if (data.department?.includes("FOH Service")) return COLORS[1];
+  if (data.department?.includes("BOH Management")) return COLORS[2];
+  if (data.department?.includes("BOH Kitchen")) return COLORS[3];
+  return COLORS[4];
 };
 
 const FinancialImpact = () => {
-  const navigate = useNavigate();
-  const [selectedOutlet, setSelectedOutlet] = useState(mockOutlets[0].id);
-  
-  const currentOutlet = mockOutlets.find(o => o.id === selectedOutlet);
-  const currentBrand = currentOutlet ? mockBrands.find(b => b.id === currentOutlet.brandId) : null;
-  const serviceStyle = currentBrand?.serviceStyle || "Casual Dining";
-  
-  // Get the scenario for this outlet
-  const scenario = createSampleScenario(selectedOutlet);
-  
-  // Calculate financial metrics
-  const monthlyRevenue = calculateMonthlyRevenue(
-    scenario.spaceParameters,
-    scenario.revenueParameters,
-    scenario.operationalParameters
-  );
-  
-  const laborCost = calculateTotalLaborCost(scenario.staffingRequirements);
-  const laborCostPercentage = (laborCost / monthlyRevenue) * 100;
-  
-  // Get industry benchmarks for this service style
-  const benchmark = benchmarks[serviceStyle];
-  
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
+  const { toast } = useToast();
+  const [selectedTab, setSelectedTab] = useState("revenue-vs-labor");
+  const [selectedBrand, setSelectedBrand] = useState("all-brands");
+  const [selectedOutlet, setSelectedOutlet] = useState("all-outlets");
+  const [selectedScenario, setSelectedScenario] = useState("current-operation");
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState("monthly");
+
+  const handleExport = (type: string) => {
+    toast({
+      title: `Exported as ${type.toUpperCase()}`,
+      description: "Your financial report has been exported."
+    });
   };
-  
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-3xl font-bold">Financial Impact</h1>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <Select value={selectedOutlet} onValueChange={setSelectedOutlet}>
-            <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Select an outlet" />
+        <h1 className="text-3xl font-bold">Financial Impact</h1>
+        <div className="flex gap-4">
+          <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Brand" />
             </SelectTrigger>
             <SelectContent>
-              {mockOutlets.map(outlet => (
-                <SelectItem key={outlet.id} value={outlet.id}>
-                  {outlet.name}
-                </SelectItem>
-              ))}
+              <SelectItem value="all-brands">All Brands</SelectItem>
+              <SelectItem value="white-robata">White Robata</SelectItem>
+              <SelectItem value="lazy-cat">Lazy Cat</SelectItem>
+              <SelectItem value="burger-boutique">Burger Boutique</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={selectedOutlet} onValueChange={setSelectedOutlet}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Outlet" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-outlets">All Outlets</SelectItem>
+              <SelectItem value="mall-of-dhahran">Mall of Dhahran</SelectItem>
+              <SelectItem value="riyadh-park">Riyadh Park</SelectItem>
+              <SelectItem value="red-sea-mall">Red Sea Mall</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={selectedScenario} onValueChange={setSelectedScenario}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Scenario" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="current-operation">Current Operation</SelectItem>
+              <SelectItem value="optimized-staffing">Optimized Staffing</SelectItem>
+              <SelectItem value="ramadan-schedule">Ramadan Schedule</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
       
-      <Tabs defaultValue="overview">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analysis">Cost Analysis</TabsTrigger>
-          <TabsTrigger value="forecast">Financial Forecast</TabsTrigger>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Annual Revenue
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">SAR 92,10,000</div>
+            <p className="text-xs text-muted-foreground">
+              Based on 12-month projection
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Annual Labor Cost
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">SAR 21,90,400</div>
+            <p className="text-xs text-muted-foreground">
+              Total staff cost for 12 months
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Labor % of Revenue
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">23.8%</div>
+            <p className="text-xs text-muted-foreground">
+              Industry benchmark: 25-30%
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Monthly Cost per Seat
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">SAR 1521</div>
+            <p className="text-xs text-muted-foreground">
+              Based on 120 seats
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+        <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsTrigger value="revenue-vs-labor">Revenue vs. Labor</TabsTrigger>
+          <TabsTrigger value="cost-breakdown">Cost Breakdown</TabsTrigger>
+          <TabsTrigger value="revenue-projections">Revenue Projections</TabsTrigger>
+          <TabsTrigger value="pl-integration">P&L Integration</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Monthly Revenue</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{formatCurrency(monthlyRevenue)}</div>
-                <div className="flex items-center text-sm text-muted-foreground mt-1">
-                  <TrendingUp className="h-4 w-4 mr-1 text-green-500" />
-                  <span>Projected from capacity and spending</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Labor Cost</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{formatCurrency(laborCost)}</div>
-                <div className="flex items-center text-sm text-muted-foreground mt-1">
-                  <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
-                  <span>Total monthly labor expense</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Labor Cost %</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{laborCostPercentage.toFixed(1)}%</div>
-                <div className="flex items-center gap-2 text-sm mt-1">
-                  {laborCostPercentage > benchmark.max ? (
-                    <>
-                      <TrendingUp className="h-4 w-4 text-red-500" />
-                      <span className="text-red-500">Above target ({benchmark.target}%)</span>
-                    </>
-                  ) : laborCostPercentage < benchmark.min ? (
-                    <>
-                      <TrendingDown className="h-4 w-4 text-amber-500" />
-                      <span className="text-amber-500">Below target ({benchmark.target}%)</span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="h-4 w-4 text-green-500" />
-                      <span className="text-green-500">Within target range</span>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Revenue vs. Labor Cost Trend</CardTitle>
-                <CardDescription>
-                  Monthly revenue and labor cost with percentage trend
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={financialTrend}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis yAxisId="left" orientation="left" />
-                      <YAxis yAxisId="right" orientation="right" domain={[0, 50]} />
-                      <Tooltip formatter={(value, name) => {
-                        if (name === "costPercentage") return [`${value}%`, "Labor Cost %"];
-                        return [formatCurrency(value as number), name === "revenue" ? "Revenue" : "Labor Cost"];
-                      }} />
-                      <Legend />
-                      <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="#8884d8" activeDot={{ r: 8 }} />
-                      <Line yAxisId="left" type="monotone" dataKey="laborCost" name="Labor Cost" stroke="#82ca9d" />
-                      <Line yAxisId="right" type="monotone" dataKey="costPercentage" name="Labor Cost %" stroke="#ff7300" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Department Cost Distribution</CardTitle>
-                <CardDescription>Percentage of labor cost by department</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={departmentCost}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" domain={[0, 100]} />
-                      <YAxis type="category" dataKey="department" />
-                      <Tooltip formatter={(value) => [`${value}%`, "of total labor cost"]} />
-                      <Bar dataKey="value" name="Percentage" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="analysis">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Labor Cost Breakdown</CardTitle>
-                <CardDescription>Distribution of labor costs by category</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={costBreakdown}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" />
-                      <YAxis type="category" dataKey="category" width={100} />
-                      <Tooltip formatter={(value) => [`${value}%`, "of total labor cost"]} />
-                      <Bar dataKey="value" name="Percentage" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Cost per Seat Analysis</CardTitle>
-                <CardDescription>Monthly labor cost per seat</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <div className="text-7xl font-bold text-primary">
-                      {formatCurrency(laborCost / (scenario.spaceParameters.totalCapacity || 100))}
-                    </div>
-                    <div className="text-lg text-muted-foreground mt-4">Per Seat Monthly</div>
-                    
-                    <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-md">
-                      <div className="text-center">
-                        <div className="text-xl font-semibold">{formatCurrency(laborCost / (scenario.spaceParameters.totalCapacity || 100) / 30)}</div>
-                        <div className="text-xs text-muted-foreground">Daily</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-semibold">{formatCurrency(laborCost / (scenario.spaceParameters.totalCapacity || 100) / 4)}</div>
-                        <div className="text-xs text-muted-foreground">Weekly</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-semibold">{formatCurrency(laborCost / (scenario.spaceParameters.totalCapacity || 100) * 12)}</div>
-                        <div className="text-xs text-muted-foreground">Yearly</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Industry Benchmark Comparison</CardTitle>
-                <CardDescription>Labor cost percentage compared to industry standards for {serviceStyle}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={[
-                        { name: "Current", value: laborCostPercentage },
-                        { name: "Min Benchmark", value: benchmark.min },
-                        { name: "Target Benchmark", value: benchmark.target },
-                        { name: "Max Benchmark", value: benchmark.max }
-                      ]}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis domain={[0, 40]} />
-                      <Tooltip formatter={(value) => [`${value}%`, "Labor Cost Percentage"]} />
-                      <Bar dataKey="value" name="Percentage" fill={(data) => {
-                        const value = data.value as number;
-                        if (data.name === "Current") {
-                          if (value > benchmark.max) return "#ef4444";
-                          if (value < benchmark.min) return "#f59e0b";
-                          return "#22c55e";
-                        }
-                        if (data.name === "Target Benchmark") return "#3b82f6";
-                        return "#94a3b8";
-                      }} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="forecast">
+        <TabsContent value="revenue-vs-labor">
           <Card>
             <CardHeader>
-              <CardTitle>12-Month Financial Forecast</CardTitle>
-              <CardDescription>Projected revenue, labor cost, and cost percentage</CardDescription>
+              <CardTitle>Monthly Revenue vs. Labor Cost</CardTitle>
+              <CardDescription>12-month financial trend</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-96">
+              <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={[...financialTrend, 
-                      { month: "Sep", revenue: 750000, laborCost: 195000, costPercentage: 26 },
-                      { month: "Oct", revenue: 785000, laborCost: 204100, costPercentage: 26 },
-                      { month: "Nov", revenue: 820000, laborCost: 213200, costPercentage: 26 },
-                      { month: "Dec", revenue: 865000, laborCost: 224900, costPercentage: 26 },
-                    ]}
-                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  <LineChart
+                    data={monthlyRevenueData}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip formatter={(value, name) => {
-                      if (name === "costPercentage") return [`${value}%`, "Labor Cost %"];
-                      return [formatCurrency(value as number), name === "revenue" ? "Revenue" : "Labor Cost"];
-                    }} />
+                    <YAxis yAxisId="left" orientation="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip />
                     <Legend />
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1} />
-                      </linearGradient>
-                      <linearGradient id="colorLaborCost" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1} />
-                      </linearGradient>
-                    </defs>
-                    <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#8884d8" fillOpacity={1} fill="url(#colorRevenue)" />
-                    <Area type="monotone" dataKey="laborCost" name="Labor Cost" stroke="#82ca9d" fillOpacity={1} fill="url(#colorLaborCost)" />
-                  </AreaChart>
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="revenue"
+                      name="Revenue"
+                      stroke="#3b82f6"
+                      activeDot={{ r: 8 }}
+                    />
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="labor"
+                      name="Labor Cost"
+                      stroke="#ef4444"
+                    />
+                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quarterly Projections</CardTitle>
-                <CardDescription>Quarterly financial summary</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left font-medium p-2">Quarter</th>
-                        <th className="text-right font-medium p-2">Revenue</th>
-                        <th className="text-right font-medium p-2">Labor Cost</th>
-                        <th className="text-right font-medium p-2">Labor %</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b">
-                        <td className="p-2">Q1</td>
-                        <td className="text-right p-2">{formatCurrency(1645000)}</td>
-                        <td className="text-right p-2">{formatCurrency(421850)}</td>
-                        <td className="text-right p-2">25.6%</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-2">Q2</td>
-                        <td className="text-right p-2">{formatCurrency(1955000)}</td>
-                        <td className="text-right p-2">{formatCurrency(501600)}</td>
-                        <td className="text-right p-2">25.7%</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-2">Q3</td>
-                        <td className="text-right p-2">{formatCurrency(2190000)}</td>
-                        <td className="text-right p-2">{formatCurrency(566500)}</td>
-                        <td className="text-right p-2">25.9%</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-2">Q4</td>
-                        <td className="text-right p-2">{formatCurrency(2470000)}</td>
-                        <td className="text-right p-2">{formatCurrency(642200)}</td>
-                        <td className="text-right p-2">26.0%</td>
-                      </tr>
-                      <tr className="font-medium">
-                        <td className="p-2">Annual</td>
-                        <td className="text-right p-2">{formatCurrency(8260000)}</td>
-                        <td className="text-right p-2">{formatCurrency(2132150)}</td>
-                        <td className="text-right p-2">25.8%</td>
-                      </tr>
-                    </tbody>
-                  </table>
+        </TabsContent>
+        
+        <TabsContent value="cost-breakdown">
+          <Card>
+            <CardHeader>
+              <CardTitle>Labor Cost Breakdown by Department</CardTitle>
+              <CardDescription>Distribution of labor costs across departments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={laborCostByDepartment}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="department" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar 
+                      dataKey="cost" 
+                      name="Monthly Cost (SAR)" 
+                      fill={getBarColor}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <Table className="mt-6">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Monthly Cost (SAR)</TableHead>
+                    <TableHead>% of Total Labor</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {laborCostByDepartment.map((dept) => (
+                    <TableRow key={dept.department}>
+                      <TableCell>{dept.department}</TableCell>
+                      <TableCell>{dept.cost.toLocaleString()}</TableCell>
+                      <TableCell>{dept.percentage}%</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="font-bold">
+                    <TableCell>Total</TableCell>
+                    <TableCell>
+                      {laborCostByDepartment
+                        .reduce((sum, dept) => sum + dept.cost, 0)
+                        .toLocaleString()}
+                    </TableCell>
+                    <TableCell>100%</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="revenue-projections">
+          <Card>
+            <CardHeader>
+              <CardTitle>Revenue Projections</CardTitle>
+              <CardDescription>Project revenue based on varying scenarios and operational parameters</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2">
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={monthlyRevenueData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="revenue"
+                          name="Baseline"
+                          stroke="#3b82f6"
+                          activeDot={{ r: 8 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="labor"
+                          name="Projected"
+                          stroke="#22c55e"
+                          activeDot={{ r: 8 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Optimization Opportunities</CardTitle>
-                <CardDescription>Potential areas for labor cost optimization</CardDescription>
-              </CardHeader>
-              <CardContent>
+                
                 <div className="space-y-4">
-                  <div className="p-3 bg-muted/50 rounded-md">
-                    <h3 className="font-medium mb-1">Cross-Training Staff</h3>
-                    <p className="text-sm text-muted-foreground">Potential savings of {formatCurrency(laborCost * 0.05)} per month by increasing cross-training capability by 10%.</p>
-                  </div>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Annual Revenue</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">SAR 92,10,000</div>
+                    </CardContent>
+                  </Card>
                   
-                  <div className="p-3 bg-muted/50 rounded-md">
-                    <h3 className="font-medium mb-1">Technology Integration</h3>
-                    <p className="text-sm text-muted-foreground">Potential savings of {formatCurrency(laborCost * 0.08)} per month through improved POS and kitchen display systems.</p>
-                  </div>
-                  
-                  <div className="p-3 bg-muted/50 rounded-md">
-                    <h3 className="font-medium mb-1">Staff Scheduling Optimization</h3>
-                    <p className="text-sm text-muted-foreground">Potential savings of {formatCurrency(laborCost * 0.06)} per month through improved peak hour management.</p>
-                  </div>
-                  
-                  <div className="p-3 bg-green-100 dark:bg-green-950 rounded-md">
-                    <h3 className="font-medium mb-1">Total Potential Savings</h3>
-                    <p className="text-sm">Up to {formatCurrency(laborCost * 0.19)} per month ({(19).toFixed(1)}% of current labor cost)</p>
-                  </div>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Annual Projected</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">SAR 1,02,05,000</div>
+                      <p className="text-sm text-green-500">+10.8% increase</p>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+              
+              <Table className="mt-6">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Month</TableHead>
+                    <TableHead>Baseline (SAR)</TableHead>
+                    <TableHead>Projected (SAR)</TableHead>
+                    <TableHead>Difference (SAR)</TableHead>
+                    <TableHead>Change (%)</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {monthlyRevenueData.map((data) => (
+                    <TableRow key={data.month}>
+                      <TableCell>{data.month}</TableCell>
+                      <TableCell>{data.revenue.toLocaleString()}</TableCell>
+                      <TableCell>{(data.revenue * 1.1).toLocaleString()}</TableCell>
+                      <TableCell>{(data.revenue * 0.1).toLocaleString()}</TableCell>
+                      <TableCell className="text-green-500">+10%</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="font-bold">
+                    <TableCell>Total</TableCell>
+                    <TableCell>
+                      {monthlyRevenueData
+                        .reduce((sum, data) => sum + data.revenue, 0)
+                        .toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {monthlyRevenueData
+                        .reduce((sum, data) => sum + data.revenue * 1.1, 0)
+                        .toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {monthlyRevenueData
+                        .reduce((sum, data) => sum + data.revenue * 0.1, 0)
+                        .toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-green-500">+10%</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="pl-integration">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Profit & Loss Integration</CardTitle>
+                  <CardDescription>Financial impact of staff adjustments on P&L</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Select value={selectedTimeFrame} onValueChange={setSelectedTimeFrame}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Time Frame" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="yearly">Yearly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Button variant="outline" size="icon" onClick={() => handleExport("pdf")}>
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={() => handleExport("excel")}>
+                    <FileSpreadsheet className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item</TableHead>
+                    <TableHead className="text-right">Amount (SAR)</TableHead>
+                    <TableHead className="text-right">% of Revenue</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pAndLData.map((item, index) => (
+                    <TableRow 
+                      key={index} 
+                      className={`
+                        ${item.isHeader ? 'font-bold bg-muted' : ''}
+                        ${item.highlight ? 'bg-green-50 font-bold' : ''}
+                      `}
+                    >
+                      <TableCell>{item.item}</TableCell>
+                      <TableCell className="text-right">
+                        {item.amount.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {item.percentage}%
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

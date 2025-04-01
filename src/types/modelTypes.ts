@@ -1,135 +1,102 @@
 
-// Brand Types
-export type ServiceStyle = "Fast Casual" | "Casual Dining" | "Premium Dining";
-export type Currency = "SAR" | "AED" | "KWD" | "BHD" | "OMR" | "QAR" | "GBP" | "USD";
+// Service style types
+export type ServiceStyle = "Premium Dining" | "Casual Dining" | "Fast Casual";
 
-export interface Brand {
-  id: string;
-  name: string;
-  serviceStyle: ServiceStyle;
-  description?: string;
-  logoUrl?: string;
-}
-
-export interface Location {
-  id: string;
-  name: string;
-  city: string;
-  country: string;
-  currency: Currency;
-  exchangeRate: number; // Relative to base currency
-  laborCostMultiplier: number; // Regional cost variation
-}
-
-export interface Outlet {
-  id: string;
-  brandId: string;
-  locationId: string;
-  name: string;
-  status: "planned" | "active" | "inactive";
-  openingDate?: Date;
-}
-
-// Parameter Types
+// Space parameters
 export interface SpaceParameters {
-  totalArea: number; // in sqm
-  fohPercentage: number; // default 65%
-  areaPerCover: 1.5 | 1.67 | 1.86 | 2.05 | 2.32;
-  externalSeating: number;
-  totalCapacity?: number; // calculated
-  fohArea?: number; // calculated
+  totalArea: number; // In square meters
+  fohPercentage: number; // Front of house percentage (0-100)
+  areaPerCover: 1.5 | 1.67 | 1.86 | 2.05 | 2.32; // Space required per seat
+  externalSeating: number; // Number of external seats
+  totalCapacity?: number; // Calculated total capacity
+  fohArea?: number; // Calculated FOH area
 }
 
+// Service parameters
 export interface ServiceParameters {
-  coversPerWaiter: 12 | 16 | 20 | 24;
-  runnerToWaiterRatio: 25 | 50 | 75 | 100; // Percentage
-  kitchenStations: number;
-  staffPerStation: number;
-  serviceStyleAdjustment: number; // Multiplier based on service style
+  coversPerWaiter: 12 | 16 | 20 | 24; // Number of covers per waiter
+  runnerToWaiterRatio: 25 | 50 | 75 | 100; // Runner to waiter ratio (percentage)
+  kitchenStations: number; // Number of kitchen stations
+  staffPerStation: number; // Staff per kitchen station
+  serviceStyleAdjustment: number; // Service style multiplier
 }
 
+// Revenue parameters
 export interface RevenueParameters {
-  averageSpendPerGuest: number;
-  guestDwellingTime: number; // in minutes
-  tableTurnTime: number; // in minutes
-  peakHourFactor: number; // Multiplier for peak hours
-  emptySeatsProvision: number; // Percentage of expected empty seats
+  averageSpendPerGuest: number; // Average spend per guest in currency
+  guestDwellingTime: number; // Time in minutes a guest spends
+  tableTurnTime: number; // Total table turn time in minutes
+  peakHourFactor: number; // Peak hour multiplier
+  emptySeatsProvision: number; // Percentage of empty seats allowed (0-1)
 }
 
+// Operational parameters
 export interface OperationalParameters {
-  operatingDays: number; // Default 350 accounting for Ramadan
-  ramadanCapacityReduction: number; // Default 50%
-  weekdayHours: number[];
-  weekendHours: number[];
-  peakHoursDistribution: {
-    [hour: number]: number; // Hour -> percentage of daily covers
-  };
+  operatingDays: number; // Number of operating days per year
+  ramadanCapacityReduction: number; // Capacity reduction during Ramadan (0-1)
+  weekdayHours: number[]; // Operating hours for each weekday [Mon, Tue, Wed, Thu, Fri]
+  weekendHours: number[]; // Operating hours for weekend days [Sat, Sun]
 }
 
+// Efficiency parameters
 export interface EfficiencyParameters {
-  staffUtilizationRate: number; // Percentage
+  staffUtilizationRate: number; // Staff utilization rate (0-1)
   positionEfficiency: {
-    [position: string]: number; // Position -> efficiency percentage
+    [key: string]: number; // Efficiency by position (0-1)
   };
-  technologyImpact: number; // Percentage reduction in labor need
-  crossTrainingCapability: number; // Percentage of staff that can cover multiple roles
-  seasonalityAdjustment: {
-    [month: number]: number; // Month -> percentage adjustment
+  technologyImpact: number; // Labor reduction due to technology (0-1)
+  crossTrainingCapability: number; // Labor reduction due to cross-training (0-1)
+}
+
+// All parameters combined
+export interface ModelParameters {
+  space: SpaceParameters;
+  service: ServiceParameters;
+  revenue: RevenueParameters;
+  operational: OperationalParameters;
+  efficiency: EfficiencyParameters;
+}
+
+// Scenario calculations
+export interface ScenarioCalculations {
+  totalStaff: number;
+  totalFOH: number;
+  totalBOH: number;
+  fohBohRatio: number;
+  staffDetail: {
+    servers: number;
+    runners: number;
+    hosts: number;
+    managers: number;
+    cashiers: number;
+    executiveChef: number;
+    sousChef: number;
+    lineCooks: number;
+    prepCooks: number;
+    kitchenHelpers?: number;
+    dishwashers: number;
   };
+  seatingCapacity: number;
+  fohArea: number;
+  laborCost: number;
+  fohCost: number;
+  bohCost: number;
+  monthlyRevenue: number;
+  annualRevenue: number;
+  laborPercentage: number;
+  costPerSeat: number;
+  coversPerLaborHour: number;
+  dailyCovers: number;
+  turnsPerDay: number;
 }
 
-// Position Types
-export type PositionCategory = "FOH" | "BOH" | "Management";
-
-export interface Position {
-  id: string;
-  name: string;
-  category: PositionCategory;
-  baseSalary: number;
-  variablePay: number;
-  benefits: number;
-  trainingCost: number;
-  recruitmentCost: number;
-  mealCost: number;
-  turnoverRate: number;
-}
-
-export interface StaffingRequirement {
-  positionId: string;
-  count: number;
-  calculationMethod: string; // Formula used to calculate this requirement
-}
-
-// Scenario Types
+// Scenario model
 export interface Scenario {
   id: string;
   name: string;
   outletId: string;
   createdAt: Date;
   updatedAt: Date;
-  spaceParameters: SpaceParameters;
-  serviceParameters: ServiceParameters;
-  revenueParameters: RevenueParameters;
-  operationalParameters: OperationalParameters;
-  efficiencyParameters: EfficiencyParameters;
-  staffingRequirements: StaffingRequirement[];
-  calculations: {
-    totalStaff: number;
-    laborCost: number;
-    laborCostPercentage: number;
-    revenuePerLaborHour: number;
-    coversPerLaborHour: number;
-  };
-}
-
-// Comparison Types
-export interface ScenarioComparison {
-  baseScenarioId: string;
-  compareScenarioId: string;
-  staffingDifference: {
-    [positionId: string]: number;
-  };
-  costDifference: number;
-  efficiencyDifference: number;
-  highlights: string[];
+  parameters: ModelParameters;
+  calculations: ScenarioCalculations;
 }
