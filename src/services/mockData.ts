@@ -1,4 +1,3 @@
-
 import { 
   Brand,
   Location,
@@ -334,8 +333,8 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
         fohArea: 0
       },
       service: {
-        coversPerWaiter: 24,
-        runnerToWaiterRatio: 25,
+        coversPerWaiter: 24 as 24,
+        runnerToWaiterRatio: 25 as 25,
         kitchenStations: 4,
         staffPerStation: 1.5,
         serviceStyleAdjustment: 0.8
@@ -390,8 +389,8 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
         fohArea: 0
       },
       service: {
-        coversPerWaiter: 16,
-        runnerToWaiterRatio: 50,
+        coversPerWaiter: 16 as 16,
+        runnerToWaiterRatio: 50 as 50,
         kitchenStations: 6,
         staffPerStation: 1.8,
         serviceStyleAdjustment: 1.0
@@ -445,8 +444,8 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
         fohArea: 0
       },
       service: {
-        coversPerWaiter: 12,
-        runnerToWaiterRatio: 75,
+        coversPerWaiter: 12 as 12,
+        runnerToWaiterRatio: 75 as 75,
         kitchenStations: 8,
         staffPerStation: 2.2,
         serviceStyleAdjustment: 1.2
