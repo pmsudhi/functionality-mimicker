@@ -582,7 +582,7 @@ export const mockScenarios: ExtendedScenario[] = [
       },
       service: {
         coversPerWaiter: 20,
-        runnerToWaiterRatio: 40,
+        runnerToWaiterRatio: 50,
         kitchenStations: 6,
         staffPerStation: 2,
         serviceStyleAdjustment: 1.1,
@@ -627,7 +627,7 @@ export const mockScenarios: ExtendedScenario[] = [
     },
     serviceParameters: {
       coversPerWaiter: 20,
-      runnerToWaiterRatio: 40,
+      runnerToWaiterRatio: 50,
       kitchenStations: 6,
       staffPerStation: 2,
       serviceStyleAdjustment: 1.1,
