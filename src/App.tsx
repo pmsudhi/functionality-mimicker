@@ -2,14 +2,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import MainNavigation from '@/components/layout/MainNavigation';
-import PlanningBoard from '@/components/planning/PlanningBoard';
-import Dashboard from '@/components/dashboard/Dashboard';
-import ControlPanel from '@/components/control/ControlPanel';
-import StaffingStructure from '@/components/staffing/StaffingStructure';
-import ScenarioManager from '@/components/scenarios/ScenarioManager';
+import PlanningBoard from '@/components/PlanningBoard';
+import Dashboard from '@/components/Dashboard';
+import ControlPanel from '@/components/ControlPanel';
+import StaffingStructure from '@/components/StaffingStructure';
+import ScenarioManager from '@/components/ScenarioManager';
 import FinancialImpact from '@/components/financial/FinancialImpact';
-import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
-import ScenarioBuilder from '@/components/scenarios/ScenarioBuilder';
+import PeakHourAnalysis from '@/components/PeakHourAnalysis';
+import ScenarioBuilder from '@/components/ScenarioBuilder';
 
 function App() {
   return (
