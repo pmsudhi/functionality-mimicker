@@ -286,6 +286,30 @@ export const calculateScenario = (
  * Compare two scenarios and return differences
  */
 export const compareScenarios = (scenario1: Scenario, scenario2: Scenario) => {
+  // Check if the scenarios and their calculations exist
+  if (!scenario1 || !scenario2 || !scenario1.calculations || !scenario2.calculations) {
+    return {
+      staffDiff: 0,
+      costDiff: 0,
+      laborPercentageDiff: 0,
+      scenario1: {
+        name: scenario1?.name || 'Unknown',
+        totalStaff: 0,
+        laborCost: 0,
+        laborPercentage: 0,
+        fohBohRatio: 0
+      },
+      scenario2: {
+        name: scenario2?.name || 'Unknown',
+        totalStaff: 0,
+        laborCost: 0,
+        laborPercentage: 0,
+        fohBohRatio: 0
+      },
+      highlights: []
+    };
+  }
+
   const calc1 = scenario1.calculations;
   const calc2 = scenario2.calculations;
   
@@ -313,15 +337,17 @@ export const compareScenarios = (scenario1: Scenario, scenario2: Scenario) => {
     highlights.push(`FOH/BOH ratio changed from ${calc1.fohBohRatio.toFixed(2)} to ${calc2.fohBohRatio.toFixed(2)}`);
   }
   
-  // Add more specific insights
-  if (calc1.staffDetail.servers !== calc2.staffDetail.servers) {
-    const serverDiff = calc2.staffDetail.servers - calc1.staffDetail.servers;
-    highlights.push(`${Math.abs(serverDiff)} ${serverDiff > 0 ? 'more' : 'fewer'} servers required`);
-  }
-  
-  if (calc1.staffDetail.lineCooks !== calc2.staffDetail.lineCooks) {
-    const cookDiff = calc2.staffDetail.lineCooks - calc1.staffDetail.lineCooks;
-    highlights.push(`${Math.abs(cookDiff)} ${cookDiff > 0 ? 'more' : 'fewer'} line cooks required`);
+  // Add more specific insights - with null checks to prevent errors
+  if (calc1.staffDetail && calc2.staffDetail) {
+    if (calc1.staffDetail.servers !== calc2.staffDetail.servers) {
+      const serverDiff = calc2.staffDetail.servers - calc1.staffDetail.servers;
+      highlights.push(`${Math.abs(serverDiff)} ${serverDiff > 0 ? 'more' : 'fewer'} servers required`);
+    }
+    
+    if (calc1.staffDetail.lineCooks !== calc2.staffDetail.lineCooks) {
+      const cookDiff = calc2.staffDetail.lineCooks - calc1.staffDetail.lineCooks;
+      highlights.push(`${Math.abs(cookDiff)} ${cookDiff > 0 ? 'more' : 'fewer'} line cooks required`);
+    }
   }
   
   return {

@@ -35,11 +35,11 @@ const ScenarioManager = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [scenarios, setScenarios] = useState(mockScenarios);
-  const [selectedOutletId, setSelectedOutletId] = useState(mockOutlets[0].id);
+  const [selectedOutletId, setSelectedOutletId] = useState(mockOutlets[0]?.id || "");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newScenarioName, setNewScenarioName] = useState("");
   const [compareScenario1, setCompareScenario1] = useState(scenarios[0]?.id || "");
-  const [compareScenario2, setCompareScenario2] = useState(scenarios.length > 1 ? scenarios[1].id : "");
+  const [compareScenario2, setCompareScenario2] = useState(scenarios.length > 1 ? scenarios[1]?.id || "" : "");
   const [activeTab, setActiveTab] = useState("saved-scenarios");
   
   const filteredScenarios = scenarios.filter(s => s.outletId === selectedOutletId);
@@ -77,7 +77,7 @@ const ScenarioManager = () => {
     });
   };
   
-  const handleDuplicateScenario = (scenarioId) => {
+  const handleDuplicateScenario = (scenarioId: string) => {
     const originalScenario = scenarios.find(s => s.id === scenarioId);
     if (!originalScenario) return;
     
@@ -97,7 +97,7 @@ const ScenarioManager = () => {
     });
   };
   
-  const handleDeleteScenario = (scenarioId) => {
+  const handleDeleteScenario = (scenarioId: string) => {
     const filteredScenarios = scenarios.filter(s => s.id !== scenarioId);
     setScenarios(filteredScenarios);
     
@@ -133,7 +133,11 @@ const ScenarioManager = () => {
   
   const comparison = compareScenario1 && compareScenario2 ? getComparisonData() : null;
   
-  const comparisonChartData = [
+  const comparisonChartData = comparison ? [
+    { name: "Total Staff", base: comparison.scenario1.totalStaff, comparison: comparison.scenario2.totalStaff },
+    { name: "Labor Cost", base: comparison.scenario1.laborCost, comparison: comparison.scenario2.laborCost },
+    { name: "Labor %", base: comparison.scenario1.laborPercentage, comparison: comparison.scenario2.laborPercentage }
+  ] : [
     { name: "Total Staff", base: 33, comparison: 29 },
     { name: "Labor Cost", base: 165500, comparison: 148000 },
     { name: "Labor %", base: 24.8, comparison: 22.1 }
@@ -357,8 +361,8 @@ const ScenarioManager = () => {
                           <YAxis />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="base" name="Current Operation" fill="#8884d8" />
-                          <Bar dataKey="comparison" name="Optimized Staffing" fill="#82ca9d" />
+                          <Bar dataKey="base" name={comparison.scenario1.name} fill="#8884d8" />
+                          <Bar dataKey="comparison" name={comparison.scenario2.name} fill="#82ca9d" />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -388,7 +392,7 @@ const ScenarioManager = () => {
                 <div className="space-y-6">
                   <div>
                     <Label>Base Scenario</Label>
-                    <Select defaultValue="current-operation" className="mt-2">
+                    <Select defaultValue="current-operation">
                       <SelectTrigger>
                         <SelectValue placeholder="Select base scenario" />
                       </SelectTrigger>
