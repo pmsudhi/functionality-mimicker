@@ -6,13 +6,15 @@ import { toast } from 'sonner';
 
 interface ActionButtonsProps {
   buttonLabels: string[];
+  onAddBlock: (blockType: string) => void;
 }
 
-const ActionButtons = ({ buttonLabels }: ActionButtonsProps) => {
+const ActionButtons = ({ buttonLabels, onAddBlock }: ActionButtonsProps) => {
   const handleButtonClick = (label: string) => {
     toast.info(`Adding ${label} block`, {
       position: 'bottom-right',
     });
+    onAddBlock(label);
   };
 
   return (

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -10,10 +10,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import ActionButtons from '../scenario-builder/ActionButtons';
-import ParameterBlocksList from '../scenario-builder/ParameterBlocksList';
+import ParameterBlocksList, { Block } from '../scenario-builder/ParameterBlocksList';
 import { toast } from 'sonner';
 
 const ScenarioBuilderTab = () => {
+  const [blocks, setBlocks] = useState<Block[]>([]);
+  
   const actionButtonLabels = [
     'Add Space Configuration',
     'Add Service Parameters',
@@ -22,6 +24,10 @@ const ScenarioBuilderTab = () => {
     'Add Custom Parameters'
   ];
 
+  const handleAddBlock = (blockType: string) => {
+    // The actual adding is handled in ParameterBlocksList
+  };
+
   const handleSaveScenario = () => {
     toast.success('Scenario saved successfully!', {
       position: 'bottom-right',
@@ -29,18 +35,28 @@ const ScenarioBuilderTab = () => {
     });
   };
 
+  const handleBlocksChange = (updatedBlocks: Block[]) => {
+    setBlocks(updatedBlocks);
+  };
+
   return (
-    <Card className="shadow-sm">
-      <CardHeader>
+    <Card className="shadow-sm border-border">
+      <CardHeader className="bg-card">
         <CardTitle>Drag & Drop Scenario Builder</CardTitle>
         <CardDescription>Build your scenario by adding and arranging parameter blocks</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ActionButtons buttonLabels={actionButtonLabels} />
-        <ParameterBlocksList />
+      <CardContent className="p-6">
+        <ActionButtons 
+          buttonLabels={actionButtonLabels} 
+          onAddBlock={handleAddBlock}
+        />
+        <ParameterBlocksList onBlocksChange={handleBlocksChange} />
         
         <div className="mt-6 flex justify-end">
-          <Button onClick={handleSaveScenario}>
+          <Button 
+            onClick={handleSaveScenario}
+            className="bg-primary hover:bg-primary/90 text-white"
+          >
             <Save className="mr-2 h-4 w-4" />
             Save Scenario
           </Button>

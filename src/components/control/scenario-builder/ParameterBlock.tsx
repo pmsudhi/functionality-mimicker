@@ -18,34 +18,47 @@ interface Parameter {
 }
 
 interface ParameterBlockProps {
-  color: 'blue' | 'green' | 'yellow';
+  color: 'blue' | 'green' | 'yellow' | 'purple' | 'orange';
   number: number;
   title: string;
   parameters: Parameter[];
+  onDelete: () => void;
 }
 
-const ParameterBlock = ({ color, number, title, parameters: initialParameters }: ParameterBlockProps) => {
+const ParameterBlock = ({ color, number, title, parameters: initialParameters, onDelete }: ParameterBlockProps) => {
   const [parameters, setParameters] = useState<Parameter[]>(initialParameters);
 
   const colorClasses = {
     blue: {
-      border: 'border-blue-100',
-      bg: 'bg-blue-50/30',
+      border: 'border-blue-200',
+      bg: 'bg-blue-50/50',
       numberBg: 'bg-blue-100',
       numberText: 'text-blue-700',
     },
     green: {
-      border: 'border-green-100',
-      bg: 'bg-green-50/30',
+      border: 'border-green-200',
+      bg: 'bg-green-50/50',
       numberBg: 'bg-green-100',
       numberText: 'text-green-700',
     },
     yellow: {
-      border: 'border-yellow-100',
-      bg: 'bg-yellow-50/30',
+      border: 'border-yellow-200',
+      bg: 'bg-yellow-50/50',
       numberBg: 'bg-yellow-100',
       numberText: 'text-yellow-700',
     },
+    purple: {
+      border: 'border-purple-200',
+      bg: 'bg-purple-50/50',
+      numberBg: 'bg-purple-100',
+      numberText: 'text-purple-700',
+    },
+    orange: {
+      border: 'border-orange-200',
+      bg: 'bg-orange-50/50',
+      numberBg: 'bg-orange-100',
+      numberText: 'text-orange-700',
+    }
   };
 
   const handleValueChange = (index: number, newValue: number[]) => {
@@ -73,10 +86,11 @@ const ParameterBlock = ({ color, number, title, parameters: initialParameters }:
     toast.info(`Removed ${title} block`, {
       position: 'bottom-right'
     });
+    onDelete();
   };
 
   return (
-    <Card className={`border-2 ${colorClasses[color].border} ${colorClasses[color].bg}`}>
+    <Card className={`border ${colorClasses[color].border} ${colorClasses[color].bg} shadow-sm hover:shadow-md transition-shadow duration-200`}>
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-sm font-medium flex items-center">
