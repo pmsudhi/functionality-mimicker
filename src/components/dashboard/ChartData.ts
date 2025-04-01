@@ -1,3 +1,4 @@
+
 // Sample data for charts and metrics
 export const staffDistribution = [
   { name: "Kitchen Staff", value: 40, color: "#22c55e" },

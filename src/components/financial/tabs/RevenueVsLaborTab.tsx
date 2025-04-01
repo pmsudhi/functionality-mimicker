@@ -10,6 +10,8 @@ import {
   Legend, 
   ResponsiveContainer,
 } from "recharts";
+import { TrendingUp } from "lucide-react";
+import { ChartContainer } from "@/components/ui/chart-container";
 
 const monthlyRevenueData = [
   { month: "Jan", baseline: 650000, projected: 715000 },
@@ -27,45 +29,102 @@ const monthlyRevenueData = [
 ];
 
 const RevenueVsLaborTab = () => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Monthly Revenue vs. Labor Cost</CardTitle>
-        <CardDescription>12-month financial trend</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={monthlyRevenueData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis yAxisId="left" orientation="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="baseline"
-                name="Revenue"
-                stroke="#3b82f6"
-                activeDot={{ r: 8 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="projected"
-                name="Labor Cost"
-                stroke="#ef4444"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+  // Custom tooltip for line chart
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background/95 backdrop-blur-sm p-3 border rounded-lg shadow-md">
+          <p className="font-medium text-sm mb-1">{`${label}`}</p>
+          <p className="text-sm text-blue-500"><span className="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+            {`Revenue: SAR ${payload[0].value.toLocaleString()}`}
+          </p>
+          <p className="text-sm text-red-500"><span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+            {`Labor Cost: SAR ${payload[1].value.toLocaleString()}`}
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <ChartContainer
+      title="Monthly Revenue vs. Labor Cost"
+      description="12-month financial trend"
+      className="border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300"
+    >
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={monthlyRevenueData}
+            margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+          >
+            <defs>
+              <linearGradient id="colorBaseline" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+              </linearGradient>
+              <linearGradient id="colorProjected" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.4} />
+            <XAxis 
+              dataKey="month" 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={{ stroke: '#e2e8f0', strokeWidth: 1, opacity: 0.6 }}
+            />
+            <YAxis 
+              yAxisId="left" 
+              orientation="left"
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={{ stroke: '#e2e8f0', strokeWidth: 1, opacity: 0.6 }}
+              tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+            />
+            <YAxis 
+              yAxisId="right" 
+              orientation="right"
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={{ stroke: '#e2e8f0', strokeWidth: 1, opacity: 0.6 }}
+              tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              iconType="circle" 
+              iconSize={8}
+              wrapperStyle={{ paddingTop: '10px' }}
+              formatter={(value) => <span className="text-xs font-medium">{value}</span>}
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="baseline"
+              name="Revenue"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              fill="url(#colorBaseline)"
+              dot={{ r: 3, strokeWidth: 1 }}
+              activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 1 }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="projected"
+              name="Labor Cost"
+              stroke="#ef4444"
+              strokeWidth={2}
+              fill="url(#colorProjected)"
+              dot={{ r: 3, strokeWidth: 1 }}
+              activeDot={{ r: 6, stroke: '#ef4444', strokeWidth: 1 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </ChartContainer>
   );
 };
 
