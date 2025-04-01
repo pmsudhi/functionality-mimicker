@@ -24,22 +24,15 @@ export function HelpIcon({ content, className = "" }: HelpIconProps) {
           sideOffset={5}
         >
           <div className="p-4 text-sm text-gray-700 dark:text-gray-200">
-            {typeof content === 'string' && content.includes('<') ? (
-              <div 
-                className="space-y-3"
-                dangerouslySetInnerHTML={{ 
-                  __html: content 
-                }}
-              />
-            ) : (
-              <div className="space-y-3">{content}</div>
-            )}
+            <div 
+              className="space-y-3"
+              dangerouslySetInnerHTML={{ 
+                __html: content 
+              }}
+            />
           </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 } 
-
-// Function to format tooltip content with styling is no longer needed as we're
-// directly using the HTML content as provided in the constants

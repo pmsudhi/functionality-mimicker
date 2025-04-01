@@ -1,3 +1,4 @@
+
 export const CALCULATION_RULES = {
   space: {
     title: "Space Parameters",
@@ -46,145 +47,242 @@ export const CALCULATION_RULES = {
   },
   service: {
     title: "Service Parameters",
-    rules: `Formulas:
+    rules: `<div class="font-medium mb-1">Formulas:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Servers Required</span> = <span style="color: #F472B6">Total Seating</span> ÷ <span style="color: #34D399">Covers per Waiter</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">Servers Required</span> = 
+    <span class="text-pink-400">Total Seating</span> ÷ 
+    <span class="text-emerald-400">Covers per Waiter</span>
+  </div>
 
-<span style="color: #60A5FA">Runners Required</span> = <span style="color: #F472B6">Servers</span> × <span style="color: #34D399">Runner Ratio</span>
+  <div class="formula">
+    <span class="text-blue-400">Runners Required</span> = 
+    <span class="text-pink-400">Servers</span> × 
+    <span class="text-emerald-400">Runner Ratio</span>
+  </div>
+</div>
 
-Service Standards:
+<div class="font-medium mt-4 mb-1">Service Standards:</div>
 ───────────────────────────────
-Covers per Waiter:
-• 12 covers - Premium Dining
-• 16 covers - Casual Dining
-• 20 covers - Fast Casual
-• 24 covers - Fast Casual (high efficiency)
+<div class="ml-2">
+  <div class="mb-2">
+    <div class="font-medium">Covers per Waiter:</div>
+    • 12 covers - Premium Dining
+    • 16 covers - Casual Dining
+    • 20 covers - Fast Casual
+    • 24 covers - Fast Casual (high efficiency)
+  </div>
 
-Runner to Waiter Ratios:
-• 100% - Full support (1:1)
-• 75% - High support (3:4)
-• 50% - Medium support (1:2)
-• 25% - Basic support (1:4)`
+  <div class="mb-2">
+    <div class="font-medium">Runner to Waiter Ratios:</div>
+    • 100% - Full support (1:1)
+    • 75% - High support (3:4)
+    • 50% - Medium support (1:2)
+    • 25% - Basic support (1:4)
+  </div>
+</div>`
   },
   kitchen: {
     title: "Kitchen Staffing",
-    rules: `Formulas:
+    rules: `<div class="font-medium mb-1">Formulas:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Line Cooks</span> = <span style="color: #F472B6">Kitchen Stations</span> ÷ <span style="color: #34D399">Stations per Chef</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">Line Cooks</span> = 
+    <span class="text-pink-400">Kitchen Stations</span> ÷ 
+    <span class="text-emerald-400">Stations per Chef</span>
+  </div>
 
-<span style="color: #60A5FA">Prep Cooks</span> = <span style="color: #F472B6">Line Cooks</span> × <span style="color: #34D399">0.75</span>
+  <div class="formula">
+    <span class="text-blue-400">Prep Cooks</span> = 
+    <span class="text-pink-400">Line Cooks</span> × 
+    <span class="text-emerald-400">0.75</span>
+  </div>
 
-<span style="color: #60A5FA">Kitchen Helpers</span> = <span style="color: #F472B6">Line Cooks</span> × <span style="color: #34D399">0.50</span>
+  <div class="formula">
+    <span class="text-blue-400">Kitchen Helpers</span> = 
+    <span class="text-pink-400">Line Cooks</span> × 
+    <span class="text-emerald-400">0.50</span>
+  </div>
 
-<span style="color: #60A5FA">Dishwashers</span> = max(<span style="color: #34D399">1</span>, <span style="color: #F472B6">Total Seating</span> ÷ <span style="color: #34D399">80</span>)
+  <div class="formula">
+    <span class="text-blue-400">Dishwashers</span> = 
+    max(<span class="text-emerald-400">1</span>, 
+    <span class="text-pink-400">Total Seating</span> ÷ 
+    <span class="text-emerald-400">80</span>)
+  </div>
+</div>
 
-Staffing Standards:
+<div class="font-medium mt-4 mb-1">Staffing Standards:</div>
 ───────────────────────────────
-Stations per Chef:
-• Premium: 1.0 station
-• Casual: 1.5 stations
-• Fast Casual: 2.0 stations
+<div class="ml-2">
+  <div class="mb-2">
+    <div class="font-medium">Stations per Chef:</div>
+    • Premium: 1.0 station
+    • Casual: 1.5 stations
+    • Fast Casual: 2.0 stations
+  </div>
 
-Required Staff:
-• Executive Chef: Always 1
-• Sous Chefs:
-  - Premium: 2
-  - Casual: 1
-  - Fast Casual: 0`
+  <div class="mb-2">
+    <div class="font-medium">Required Staff:</div>
+    • Executive Chef: Always 1
+    • Sous Chefs:
+      - Premium: 2
+      - Casual: 1
+      - Fast Casual: 0
+  </div>
+</div>`
   },
   efficiency: {
     title: "Efficiency Adjustments",
-    rules: `Formula:
+    rules: `<div class="font-medium mb-1">Formula:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Combined Efficiency</span> = Average of:
-• <span style="color: #F472B6">Service Efficiency</span>
-• <span style="color: #F472B6">Kitchen Efficiency</span>
-• <span style="color: #F472B6">Staff Productivity</span>
-• <span style="color: #F472B6">Operational Efficiency</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">Combined Efficiency</span> = Average of:
+    <ul class="list-disc ml-6 mt-1 space-y-1">
+      <li><span class="text-pink-400">Service Efficiency</span></li>
+      <li><span class="text-pink-400">Kitchen Efficiency</span></li>
+      <li><span class="text-pink-400">Staff Productivity</span></li>
+      <li><span class="text-pink-400">Operational Efficiency</span></li>
+    </ul>
+  </div>
+</div>
 
-Industry Benchmarks:
+<div class="font-medium mt-4 mb-1">Industry Benchmarks:</div>
 ───────────────────────────────
-Labor Cost Targets:
-• Premium Dining: 28%
-• Casual Dining: 25%
-• Fast Casual: 22%
+<div class="ml-2">
+  <div class="mb-2">
+    <div class="font-medium">Labor Cost Targets:</div>
+    • Premium Dining: 28%
+    • Casual Dining: 25%
+    • Fast Casual: 22%
+  </div>
 
-Efficiency Impact:
-• Higher efficiency = Lower staffing needs
-• Each 1% improvement reduces staff by ~0.5%`
+  <div class="mb-2">
+    <div class="font-medium">Efficiency Impact:</div>
+    • Higher efficiency = Lower staffing needs
+    • Each 1% improvement reduces staff by ~0.5%
+  </div>
+</div>`
   },
   revenue: {
     title: "Revenue Calculations",
-    rules: `Formula:
+    rules: `<div class="font-medium mb-1">Formula:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Monthly Revenue</span> = 
-  <span style="color: #F472B6">Total Capacity</span>
-  × <span style="color: #34D399">Average Spend</span>
-  × <span style="color: #34D399">Turns per Day</span>
-  × <span style="color: #34D399">Operating Days</span>
-  ÷ <span style="color: #34D399">12</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">Monthly Revenue</span> = 
+    <span class="text-pink-400">Total Capacity</span>
+    × <span class="text-emerald-400">Average Spend</span>
+    × <span class="text-emerald-400">Turns per Day</span>
+    × <span class="text-emerald-400">Operating Days</span>
+    ÷ <span class="text-emerald-400">12</span>
+  </div>
+</div>
 
-Average Spend:
+<div class="font-medium mt-4 mb-1">Average Spend:</div>
 ───────────────────────────────
-• Premium: SAR 250/guest
-• Casual: SAR 180/guest
-• Fast Casual: SAR 120/guest
+<div class="ml-2">
+  <div class="mb-2">
+    • Premium: SAR 250/guest
+    • Casual: SAR 180/guest
+    • Fast Casual: SAR 120/guest
+  </div>
+</div>
 
-Operating Parameters:
+<div class="font-medium mt-4 mb-1">Operating Parameters:</div>
 ───────────────────────────────
-Standard Year: 365 days
-Ramadan Period: 
-• 15 days at 50% capacity
-• Adjusted operating hours
-• Modified peak times`
+<div class="ml-2">
+  <div class="mb-2">
+    • Standard Year: 365 days
+    • Ramadan Period: 
+      - 15 days at 50% capacity
+      - Adjusted operating hours
+      - Modified peak times
+  </div>
+</div>`
   },
   laborCost: {
     title: "Labor Cost Calculations",
-    rules: `Formulas:
+    rules: `<div class="font-medium mb-1">Formulas:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">FOH Cost</span> = Sum of:
-• <span style="color: #F472B6">Servers</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Runners</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Hosts</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Managers</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Cashiers</span> × <span style="color: #34D399">Rate</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">FOH Cost</span> = Sum of:
+    <ul class="list-disc ml-6 mt-1 space-y-1">
+      <li><span class="text-pink-400">Servers</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Runners</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Hosts</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Managers</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Cashiers</span> × <span class="text-emerald-400">Rate</span></li>
+    </ul>
+  </div>
 
-<span style="color: #60A5FA">BOH Cost</span> = Sum of:
-• <span style="color: #F472B6">Executive Chef</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Sous Chefs</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Line Cooks</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Prep Cooks</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Kitchen Helpers</span> × <span style="color: #34D399">Rate</span>
-• <span style="color: #F472B6">Dishwashers</span> × <span style="color: #34D399">Rate</span>
+  <div class="formula mt-3">
+    <span class="text-blue-400">BOH Cost</span> = Sum of:
+    <ul class="list-disc ml-6 mt-1 space-y-1">
+      <li><span class="text-pink-400">Executive Chef</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Sous Chefs</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Line Cooks</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Prep Cooks</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Kitchen Helpers</span> × <span class="text-emerald-400">Rate</span></li>
+      <li><span class="text-pink-400">Dishwashers</span> × <span class="text-emerald-400">Rate</span></li>
+    </ul>
+  </div>
+</div>
 
-Key Metrics:
+<div class="font-medium mt-4 mb-1">Key Metrics:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Total Labor</span> = <span style="color: #F472B6">FOH Cost</span> + <span style="color: #F472B6">BOH Cost</span>
-<span style="color: #60A5FA">Labor Cost %</span> = (<span style="color: #F472B6">Total Labor</span> ÷ <span style="color: #34D399">Revenue</span>) × <span style="color: #34D399">100</span>`
+<div class="space-y-2 ml-2">
+  <div class="formula">
+    <span class="text-blue-400">Total Labor</span> = <span class="text-pink-400">FOH Cost</span> + <span class="text-pink-400">BOH Cost</span>
+  </div>
+  <div class="formula">
+    <span class="text-blue-400">Labor Cost %</span> = (<span class="text-pink-400">Total Labor</span> ÷ <span class="text-emerald-400">Revenue</span>) × <span class="text-emerald-400">100</span>
+  </div>
+</div>`
   },
   operational: {
     title: "Operational Hours",
-    rules: `Formula:
+    rules: `<div class="font-medium mb-1">Formula:</div>
 ───────────────────────────────
-<span style="color: #60A5FA">Total Hours</span> = <span style="color: #F472B6">Operating Days</span> × <span style="color: #34D399">Peak Hours</span>
+<div class="space-y-2">
+  <div class="formula">
+    <span class="text-blue-400">Total Hours</span> = <span class="text-pink-400">Operating Days</span> × <span class="text-emerald-400">Peak Hours</span>
+  </div>
+</div>
 
-Service Impact:
+<div class="font-medium mt-4 mb-1">Service Impact:</div>
 ───────────────────────────────
-Staffing Requirements:
-• Fast Casual: Base staffing
-• Casual: +20% staff
-• Premium: +40% staff
+<div class="ml-2">
+  <div class="mb-2">
+    <div class="font-medium">Staffing Requirements:</div>
+    • Fast Casual: Base staffing
+    • Casual: +20% staff
+    • Premium: +40% staff
+  </div>
+</div>
 
-Peak Hour Types:
+<div class="font-medium mt-4 mb-1">Peak Hour Types:</div>
 ───────────────────────────────
-• Standard: 4-6 hours
-• Extended: 6-8 hours
-• Full Day: 8-12 hours
+<div class="ml-2">
+  <div class="mb-2">
+    • Standard: 4-6 hours
+    • Extended: 6-8 hours
+    • Full Day: 8-12 hours
+  </div>
+</div>
 
-Ramadan Adjustments:
+<div class="font-medium mt-4 mb-1">Ramadan Adjustments:</div>
 ───────────────────────────────
-• Reduced hours: -30% to -50%
-• Shifted peak times
-• Modified staff scheduling`
+<div class="ml-2">
+  <div class="mb-2">
+    • Reduced hours: -30% to -50%
+    • Shifted peak times
+    • Modified staff scheduling
+  </div>
+</div>`
   }
 };
