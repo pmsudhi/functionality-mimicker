@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,8 +19,8 @@ import {
   BadgePercent, 
   Building2 
 } from "lucide-react";
+import { Chart, ChartContainer, ChartTooltipContent, ChartLegendContent } from "@/components/ui/chart";
 
-// Sample data for staffing structure
 const staffDistributionData = [
   { name: "Kitchen Staff", value: 40, color: "#22c55e" },
   { name: "Service Staff", value: 29, color: "#3b82f6" },
@@ -59,7 +58,6 @@ const staffPositionsData = {
   ]
 };
 
-// Custom tooltip formatter for the pie chart
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
@@ -92,6 +90,13 @@ const StaffingStructure = () => {
     console.log(`Exporting as ${type}`);
   };
   
+  const chartConfig = {
+    monthly_cost: {
+      label: "Monthly Cost (SAR)",
+      color: "hsl(var(--primary))",
+    },
+  } satisfies ChartConfig;
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="flex justify-between items-center mb-6">
@@ -495,21 +500,26 @@ const StaffingStructure = () => {
             </CardHeader>
             <CardContent className="pt-6">
               <div className="h-80 mb-8">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={costAnalysisData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis dataKey="department" />
-                    <YAxis />
-                    <Tooltip 
-                      contentStyle={{ background: "var(--background)", borderColor: "var(--border)", borderRadius: "0.5rem" }}
-                    />
-                    <Legend />
-                    <Bar dataKey="cost" name="Monthly Cost (SAR)" fill="var(--primary)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <ChartContainer config={chartConfig}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={costAnalysisData}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="department" />
+                      <YAxis />
+                      <Tooltip content={<ChartTooltipContent />} />
+                      <Bar 
+                        dataKey="cost" 
+                        name="Monthly Cost (SAR)" 
+                        fill="var(--color-monthly_cost)"
+                        radius={[4, 4, 0, 0]} 
+                      />
+                      <ChartLegendContent />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
               </div>
               
               <div>
