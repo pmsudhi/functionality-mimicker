@@ -1,13 +1,14 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import SliderControl from "@/components/scenarios/controls/SliderControl";
+import WhatIfMetricCard from "@/components/scenarios/metrics/WhatIfMetricCard";
 import {
   LineChart,
   Line,
@@ -20,15 +21,16 @@ import {
 } from "recharts";
 
 const RevenueProjections = () => {
+  // State for control values
   const [selectedScenario, setSelectedScenario] = useState("optimized-staffing");
   const [averageCheck, setAverageCheck] = useState(135);
   const [seatingCapacity, setSeatingCapacity] = useState(135);
   const [turnoverRate, setTurnoverRate] = useState(3.0);
   const [occupancyRate, setOccupancyRate] = useState(73);
   const [includeSeasonality, setIncludeSeasonality] = useState(true);
-
-  // Monthly data with baseline and projected values based on image
-  const monthlyData = [
+  
+  // State for calculated data
+  const [monthlyData, setMonthlyData] = useState([
     { month: "Jan", baseline: 650000, projected: 1257252 },
     { month: "Feb", baseline: 680000, projected: 1257252 },
     { month: "Mar", baseline: 720000, projected: 1257252 },
@@ -41,17 +43,69 @@ const RevenueProjections = () => {
     { month: "Oct", baseline: 790000, projected: 1257252 },
     { month: "Nov", baseline: 810000, projected: 1257252 },
     { month: "Dec", baseline: 900000, projected: 1257252 }
-  ];
+  ]);
+  
+  // Calculate totals
+  const [totalBaseline, setTotalBaseline] = useState(9210000);
+  const [totalProjected, setTotalProjected] = useState(15087024);
+  const [percentageChange, setPercentageChange] = useState(63.8);
 
-  // Calculate sums for the table footer
-  const totalBaseline = 9210000; // From image: SAR 92,10,000
-  const totalProjected = 15087024; // From image: SAR 1,50,87,024
-  const totalDifference = totalProjected - totalBaseline;
-  const percentageChange = 63.8; // From image: 63.8%
+  // Function to recalculate projections based on parameter changes
+  const recalculateProjections = () => {
+    // Base monthly revenue calculation
+    const monthlyRevenue = seatingCapacity * turnoverRate * occupancyRate / 100 * averageCheck * 30;
+    
+    // Apply seasonality if enabled
+    let newMonthlyData = monthlyData.map((item, index) => {
+      let seasonalFactor = 1;
+      
+      if (includeSeasonality) {
+        // Simple seasonality model: summer higher, winter lower
+        if (index >= 5 && index <= 7) seasonalFactor = 1.1; // Summer months
+        if (index >= 0 && index <= 1 || index === 11) seasonalFactor = 0.9; // Winter months
+      }
+      
+      return {
+        ...item,
+        projected: Math.round(monthlyRevenue * seasonalFactor)
+      };
+    });
+    
+    setMonthlyData(newMonthlyData);
+    
+    // Update totals
+    const newTotalProjected = newMonthlyData.reduce((sum, item) => sum + item.projected, 0);
+    setTotalProjected(newTotalProjected);
+    
+    // Calculate percentage change
+    const newPercentageChange = ((newTotalProjected - totalBaseline) / totalBaseline) * 100;
+    setPercentageChange(parseFloat(newPercentageChange.toFixed(1)));
+  };
 
-  const handleRecalculate = () => {
-    // Placeholder for recalculation logic
-    console.log("Recalculating projections with new parameters");
+  // Effect to recalculate when parameters change
+  useEffect(() => {
+    recalculateProjections();
+  }, [averageCheck, seatingCapacity, turnoverRate, occupancyRate, includeSeasonality]);
+
+  // Format currency
+  const formatSAR = (value: number) => {
+    // Format like "92,10,000" as shown in the images
+    const valueStr = value.toString();
+    if (valueStr.length <= 3) return `SAR ${valueStr}`;
+    
+    const lastThree = valueStr.slice(-3);
+    const remaining = valueStr.slice(0, -3);
+    
+    let formattedValue = lastThree;
+    for (let i = remaining.length - 1; i >= 0; i--) {
+      if ((remaining.length - i) % 2 === 0 && i !== 0) {
+        formattedValue = remaining[i] + "," + formattedValue;
+      } else {
+        formattedValue = remaining[i] + formattedValue;
+      }
+    }
+    
+    return `SAR ${formattedValue}`;
   };
 
   return (
@@ -106,6 +160,9 @@ const RevenueProjections = () => {
                   <SliderControl
                     label="Turnover Rate (per day)"
                     value={turnoverRate}
+                    min={1}
+                    max={5}
+                    step={0.1}
                     onChange={(values) => setTurnoverRate(values[0])}
                     description="Average table turnover rate per day"
                   />
@@ -113,6 +170,8 @@ const RevenueProjections = () => {
                   <SliderControl
                     label="Occupancy Rate (%)"
                     value={occupancyRate}
+                    min={40}
+                    max={100}
                     onChange={(values) => setOccupancyRate(values[0])}
                     description="Average seat occupancy percentage"
                   />
@@ -128,7 +187,7 @@ const RevenueProjections = () => {
 
                   <Button 
                     className="w-full bg-black text-white hover:bg-gray-800" 
-                    onClick={handleRecalculate}
+                    onClick={recalculateProjections}
                   >
                     Recalculate Projections
                   </Button>
@@ -139,12 +198,12 @@ const RevenueProjections = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={monthlyData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis domain={[0, 1400000]} />
-                        <Tooltip />
+                        <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Revenue']} />
                         <Legend />
                         <Line
                           type="monotone"
@@ -164,20 +223,16 @@ const RevenueProjections = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="bg-background">
-                      <CardContent className="pt-6">
-                        <div className="text-sm mb-2">Annual Baseline</div>
-                        <div className="text-2xl font-bold">SAR 92,10,000</div>
-                      </CardContent>
-                    </Card>
+                    <WhatIfMetricCard 
+                      title="Annual Baseline" 
+                      value={formatSAR(totalBaseline)}
+                    />
                     
-                    <Card className="bg-background">
-                      <CardContent className="pt-6">
-                        <div className="text-sm mb-2">Annual Projected</div>
-                        <div className="text-2xl font-bold">SAR 1,50,87,024</div>
-                        <div className="text-xs text-green-500">+58,77,024 (63.8%)</div>
-                      </CardContent>
-                    </Card>
+                    <WhatIfMetricCard 
+                      title="Annual Projected" 
+                      value={formatSAR(totalProjected)}
+                      change={`+${formatSAR(totalProjected - totalBaseline).replace('SAR ', '')} (${percentageChange}%)`}
+                    />
                   </div>
 
                   <Table>
@@ -191,7 +246,7 @@ const RevenueProjections = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {monthlyData.slice(0, 3).map((item) => {
+                      {monthlyData.map((item) => {
                         const difference = item.projected - item.baseline;
                         const change = (difference / item.baseline) * 100;
                         const formattedChange = change.toFixed(1);
@@ -199,10 +254,10 @@ const RevenueProjections = () => {
                         return (
                           <TableRow key={item.month}>
                             <TableCell>{item.month}</TableCell>
-                            <TableCell className="text-right">{item.baseline.toLocaleString()}</TableCell>
-                            <TableCell className="text-right">{item.projected.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{item.baseline.toLocaleString().replace(/,/g, ',')}</TableCell>
+                            <TableCell className="text-right">{item.projected.toLocaleString().replace(/,/g, ',')}</TableCell>
                             <TableCell className="text-right text-green-500">
-                              +{difference.toLocaleString()}
+                              +{difference.toLocaleString().replace(/,/g, ',')}
                             </TableCell>
                             <TableCell className="text-right text-green-500">
                               +{formattedChange}%
@@ -210,28 +265,6 @@ const RevenueProjections = () => {
                           </TableRow>
                         );
                       })}
-                      {/* Showing visible rows that match the image */}
-                      <TableRow>
-                        <TableCell>Jan</TableCell>
-                        <TableCell className="text-right">6,50,000</TableCell>
-                        <TableCell className="text-right">12,57,252</TableCell>
-                        <TableCell className="text-right text-green-500">+6,07,252</TableCell>
-                        <TableCell className="text-right text-green-500">+93.4%</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Feb</TableCell>
-                        <TableCell className="text-right">6,80,000</TableCell>
-                        <TableCell className="text-right">12,57,252</TableCell>
-                        <TableCell className="text-right text-green-500">+5,77,252</TableCell>
-                        <TableCell className="text-right text-green-500">+84.9%</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Mar</TableCell>
-                        <TableCell className="text-right">7,20,000</TableCell>
-                        <TableCell className="text-right">12,57,252</TableCell>
-                        <TableCell className="text-right text-green-500">+5,37,252</TableCell>
-                        <TableCell className="text-right text-green-500">+74.6%</TableCell>
-                      </TableRow>
                     </TableBody>
                   </Table>
                 </div>
