@@ -1,5 +1,5 @@
 
-import { HelpCircle, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,20 +17,20 @@ export function HelpIcon({ content, className = "" }: HelpIconProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Info className={`h-4 w-4 text-primary-500 hover:text-primary-600 transition-colors cursor-help ${className}`} />
+          <Info 
+            className={`h-4 w-4 text-muted-foreground hover:text-primary transition-colors cursor-help ${className}`} 
+          />
         </TooltipTrigger>
         <TooltipContent 
-          className="max-w-[450px] p-0 overflow-hidden bg-white dark:bg-zinc-900 shadow-lg border border-gray-200 dark:border-gray-800 rounded-lg"
+          className="max-w-[350px] p-3 bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground"
           sideOffset={5}
         >
-          <div className="p-4 text-sm">
-            <div 
-              className="space-y-3"
-              dangerouslySetInnerHTML={{ 
-                __html: content 
-              }}
-            />
-          </div>
+          <div 
+            className="space-y-2"
+            dangerouslySetInnerHTML={{ 
+              __html: content 
+            }}
+          />
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
