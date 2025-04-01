@@ -1,9 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { FileText } from 'lucide-react';
+import ScenarioTable from '../saved/ScenarioTable';
+import { mockScenarios } from '@/services/mockData';
+import { ScenarioComparison } from '@/types/extraTypes';
 
 const SavedScenariosTab = () => {
+  const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
+  const [comparison, setComparison] = useState<ScenarioComparison | null>(null);
+
   return (
     <Card className="border shadow-sm">
       <CardHeader>
@@ -12,13 +18,11 @@ const SavedScenariosTab = () => {
           <CardTitle>Saved Scenarios</CardTitle>
         </div>
         <CardDescription>
-          View and manage your saved workforce scenarios
+          Select scenarios to compare or manage individual scenarios
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="text-center p-8 border border-dashed rounded-md">
-          <p>Your saved scenarios will be displayed here</p>
-        </div>
+        <ScenarioTable scenarios={mockScenarios} />
       </CardContent>
     </Card>
   );

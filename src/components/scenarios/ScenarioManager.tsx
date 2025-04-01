@@ -12,8 +12,8 @@ const ScenarioManager = () => {
     <PageLayout>
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold">Scenario Manager</h1>
-          <p className="text-muted-foreground">Create, manage and compare staffing scenarios</p>
+          <h1 className="text-2xl font-bold">Scenarios</h1>
+          <p className="text-muted-foreground">Create, compare, and manage staffing scenarios</p>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
