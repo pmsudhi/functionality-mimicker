@@ -527,6 +527,7 @@ const ScenarioBuilder = () => {
                           step={param.step}
                           onChange={(values) => updateParameterValue(param.id, values)}
                           disabled={param.isCalculated}
+                          description={param.isCalculated ? "Calculated value" : undefined}
                         />
                       </div>
                     ))}
