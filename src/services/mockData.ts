@@ -1,5 +1,14 @@
-import { Scenario, ScenarioCalculations, SpaceParameters, ServiceParameters, RevenueParameters, OperationalParameters, EfficiencyParameters } from "@/types/modelTypes";
-import { Brand, Currency, Location, Outlet, Position, PositionCategory, ExtendedScenario, StaffingRequirement } from "@/types/extraTypes";
+import { ModelParameters, ServiceStyle } from "@/types/modelTypes";
+import { 
+  Brand, 
+  Currency, 
+  Location, 
+  Outlet, 
+  Position, 
+  PositionCategory, 
+  ExtendedScenario, 
+  StaffingRequirement 
+} from "@/types/extraTypes";
 
 // Mock data for brands
 export const mockBrands: Brand[] = [
@@ -215,7 +224,210 @@ export const mockPositions: Position[] = [
   }
 ];
 
-// Mock scenarios
+// Function to get default parameters based on service style
+export const getDefaultParameters = (serviceStyle: ServiceStyle): ModelParameters => {
+  const defaults: Record<ServiceStyle, ModelParameters> = {
+    "Premium Dining": {
+      space: {
+        totalArea: 350,
+        fohPercentage: 70,
+        areaPerCover: 2.32,
+        externalSeating: 10,
+      },
+      service: {
+        coversPerWaiter: 12,
+        runnerToWaiterRatio: 50,
+        kitchenStations: 6,
+        staffPerStation: 2.5,
+        serviceStyleAdjustment: 1.2,
+      },
+      revenue: {
+        averageSpendPerGuest: 180,
+        guestDwellingTime: 90,
+        tableTurnTime: 120,
+        peakHourFactor: 1.3,
+        emptySeatsProvision: 0.05,
+      },
+      operational: {
+        operatingDays: 350,
+        ramadanCapacityReduction: 0.5,
+        weekdayHours: [10, 10, 10, 10, 10],
+        weekendHours: [12, 12],
+      },
+      efficiency: {
+        staffUtilizationRate: 0.85,
+        positionEfficiency: {
+          "p1": 0.9,
+          "p2": 0.85,
+          "p3": 0.8,
+          "p4": 0.75,
+          "p5": 0.7,
+          "p6": 0.75,
+          "p7": 0.9,
+          "p8": 0.85,
+          "p9": 0.8,
+          "p10": 0.75,
+          "p11": 0.7,
+        },
+        technologyImpact: 0.1,
+        crossTrainingCapability: 0.15,
+      },
+    },
+    "Casual Dining": {
+      space: {
+        totalArea: 300,
+        fohPercentage: 65,
+        areaPerCover: 1.86,
+        externalSeating: 20,
+      },
+      service: {
+        coversPerWaiter: 16,
+        runnerToWaiterRatio: 50,
+        kitchenStations: 5,
+        staffPerStation: 2,
+        serviceStyleAdjustment: 1,
+      },
+      revenue: {
+        averageSpendPerGuest: 100,
+        guestDwellingTime: 60,
+        tableTurnTime: 90,
+        peakHourFactor: 1.2,
+        emptySeatsProvision: 0.1,
+      },
+      operational: {
+        operatingDays: 350,
+        ramadanCapacityReduction: 0.5,
+        weekdayHours: [10, 10, 10, 10, 10],
+        weekendHours: [12, 12],
+      },
+      efficiency: {
+        staffUtilizationRate: 0.8,
+        positionEfficiency: {
+          "p1": 0.85,
+          "p2": 0.8,
+          "p3": 0.75,
+          "p4": 0.7,
+          "p5": 0.65,
+          "p6": 0.7,
+          "p7": 0.85,
+          "p8": 0.8,
+          "p9": 0.75,
+          "p10": 0.7,
+          "p11": 0.65,
+        },
+        technologyImpact: 0.1,
+        crossTrainingCapability: 0.2,
+      },
+    },
+    "Fast Casual": {
+      space: {
+        totalArea: 250,
+        fohPercentage: 60,
+        areaPerCover: 1.5,
+        externalSeating: 15,
+      },
+      service: {
+        coversPerWaiter: 24,
+        runnerToWaiterRatio: 25,
+        kitchenStations: 4,
+        staffPerStation: 1.5,
+        serviceStyleAdjustment: 0.8,
+      },
+      revenue: {
+        averageSpendPerGuest: 60,
+        guestDwellingTime: 45,
+        tableTurnTime: 60,
+        peakHourFactor: 1.4,
+        emptySeatsProvision: 0.15,
+      },
+      operational: {
+        operatingDays: 360,
+        ramadanCapacityReduction: 0.3,
+        weekdayHours: [12, 12, 12, 12, 12],
+        weekendHours: [12, 12],
+      },
+      efficiency: {
+        staffUtilizationRate: 0.9,
+        positionEfficiency: {
+          "p1": 0.9,
+          "p2": 0.85,
+          "p3": 0.8,
+          "p4": 0.75,
+          "p5": 0.7,
+          "p6": 0.75,
+          "p7": 0.9,
+          "p8": 0.85,
+          "p9": 0.8,
+          "p10": 0.75,
+          "p11": 0.7,
+        },
+        technologyImpact: 0.15,
+        crossTrainingCapability: 0.25,
+      },
+    },
+  };
+
+  return defaults[serviceStyle] || defaults["Casual Dining"];
+};
+
+// Add sample scenario creation function for ScenarioBuilder
+export const createSampleScenario = (outletId: string): ExtendedScenario => {
+  const outlet = mockOutlets.find(o => o.id === outletId);
+  const brand = outlet ? mockBrands.find(b => b.id === outlet.brandId) : null;
+  const serviceStyle = brand?.serviceStyle as ServiceStyle || "Casual Dining";
+  
+  const params = getDefaultParameters(serviceStyle);
+  
+  return {
+    id: `s-${Date.now()}`,
+    name: `New ${serviceStyle} Scenario`,
+    outletId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    parameters: params,
+    spaceParameters: params.space,
+    serviceParameters: params.service,
+    revenueParameters: params.revenue,
+    operationalParameters: params.operational,
+    efficiencyParameters: params.efficiency,
+    staffingRequirements: [],
+    calculations: {
+      totalStaff: 0,
+      totalFOH: 0,
+      totalBOH: 0,
+      fohBohRatio: 0,
+      staffDetail: {
+        servers: 0,
+        runners: 0,
+        hosts: 0,
+        managers: 0,
+        cashiers: 0,
+        executiveChef: 0,
+        sousChef: 0,
+        lineCooks: 0,
+        prepCooks: 0,
+        kitchenHelpers: 0,
+        dishwashers: 0,
+      },
+      seatingCapacity: 0,
+      fohArea: 0,
+      laborCost: 0,
+      fohCost: 0,
+      bohCost: 0,
+      monthlyRevenue: 0,
+      annualRevenue: 0,
+      laborPercentage: 0,
+      costPerSeat: 0,
+      coversPerLaborHour: 0,
+      dailyCovers: 0,
+      turnsPerDay: 0,
+      revenuePerLaborHour: 0,
+      laborCostPercentage: 0
+    }
+  };
+};
+
+// Convert existing scenarios to use the new ExtendedScenario format
 export const mockScenarios: ExtendedScenario[] = [
   {
     id: "s1",
@@ -269,6 +481,58 @@ export const mockScenarios: ExtendedScenario[] = [
         crossTrainingCapability: 0.2,
       },
     },
+    spaceParameters: {
+      totalArea: 300,
+      fohPercentage: 65,
+      areaPerCover: 1.67,
+      externalSeating: 20,
+    },
+    serviceParameters: {
+      coversPerWaiter: 16,
+      runnerToWaiterRatio: 50,
+      kitchenStations: 5,
+      staffPerStation: 2,
+      serviceStyleAdjustment: 1,
+    },
+    revenueParameters: {
+      averageSpendPerGuest: 100,
+      guestDwellingTime: 60,
+      tableTurnTime: 90,
+      peakHourFactor: 1.2,
+      emptySeatsProvision: 0.1,
+    },
+    operationalParameters: {
+      operatingDays: 30,
+      ramadanCapacityReduction: 0.5,
+      weekdayHours: [10, 10, 10, 10, 10],
+      weekendHours: [12, 12],
+    },
+    efficiencyParameters: {
+      staffUtilizationRate: 0.8,
+      positionEfficiency: {
+        "p1": 0.9,
+        "p2": 0.85,
+        "p3": 0.8,
+        "p4": 0.75,
+        "p5": 0.7,
+        "p6": 0.75,
+        "p7": 0.9,
+        "p8": 0.85,
+        "p9": 0.8,
+        "p10": 0.75,
+        "p11": 0.7,
+      },
+      technologyImpact: 0.1,
+      crossTrainingCapability: 0.2,
+    },
+    staffingRequirements: [
+      { positionId: "p1", count: 1 },
+      { positionId: "p2", count: 2 },
+      { positionId: "p4", count: 10 },
+      { positionId: "p5", count: 5 },
+      { positionId: "p7", count: 1 },
+      { positionId: "p9", count: 5 }
+    ],
     calculations: {
       totalStaff: 50,
       totalFOH: 30,
@@ -300,6 +564,7 @@ export const mockScenarios: ExtendedScenario[] = [
       dailyCovers: 300,
       turnsPerDay: 2,
       revenuePerLaborHour: 50,
+      laborCostPercentage: 25,
     },
   },
   {
@@ -354,6 +619,58 @@ export const mockScenarios: ExtendedScenario[] = [
         crossTrainingCapability: 0.25,
       },
     },
+    spaceParameters: {
+      totalArea: 400,
+      fohPercentage: 70,
+      areaPerCover: 1.5,
+      externalSeating: 30,
+    },
+    serviceParameters: {
+      coversPerWaiter: 20,
+      runnerToWaiterRatio: 40,
+      kitchenStations: 6,
+      staffPerStation: 2,
+      serviceStyleAdjustment: 1.1,
+    },
+    revenueParameters: {
+      averageSpendPerGuest: 120,
+      guestDwellingTime: 70,
+      tableTurnTime: 80,
+      peakHourFactor: 1.3,
+      emptySeatsProvision: 0.05,
+    },
+    operationalParameters: {
+      operatingDays: 30,
+      ramadanCapacityReduction: 0.5,
+      weekdayHours: [10, 10, 10, 10, 10],
+      weekendHours: [12, 12],
+    },
+    efficiencyParameters: {
+      staffUtilizationRate: 0.85,
+      positionEfficiency: {
+        "p1": 0.92,
+        "p2": 0.87,
+        "p3": 0.82,
+        "p4": 0.78,
+        "p5": 0.73,
+        "p6": 0.78,
+        "p7": 0.92,
+        "p8": 0.88,
+        "p9": 0.83,
+        "p10": 0.78,
+        "p11": 0.73,
+      },
+      technologyImpact: 0.15,
+      crossTrainingCapability: 0.25,
+    },
+    staffingRequirements: [
+      { positionId: "p1", count: 1 },
+      { positionId: "p2", count: 3 },
+      { positionId: "p4", count: 12 },
+      { positionId: "p5", count: 6 },
+      { positionId: "p7", count: 1 },
+      { positionId: "p9", count: 6 }
+    ],
     calculations: {
       totalStaff: 60,
       totalFOH: 35,
@@ -385,6 +702,7 @@ export const mockScenarios: ExtendedScenario[] = [
       dailyCovers: 350,
       turnsPerDay: 2.5,
       revenuePerLaborHour: 60,
+      laborCostPercentage: 26,
     },
   }
 ];

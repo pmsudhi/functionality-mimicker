@@ -1,3 +1,4 @@
+
 import { SpaceParameters, RevenueParameters, OperationalParameters, Scenario } from "@/types/modelTypes";
 import { ExtendedScenario, ScenarioComparison } from "@/types/extraTypes";
 
@@ -116,7 +117,7 @@ export const compareScenarios = (
 };
 
 // Add the processScenario function that's referenced in StaffingModeler.tsx
-export const processScenario = (scenario: Scenario) => {
+export const processScenario = (scenario: Scenario): Scenario => {
   // This is a placeholder implementation
   return scenario;
 };

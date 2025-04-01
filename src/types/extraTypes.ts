@@ -1,4 +1,14 @@
 
+import { 
+  ScenarioCalculations, 
+  Scenario, 
+  SpaceParameters, 
+  ServiceParameters, 
+  RevenueParameters, 
+  OperationalParameters, 
+  EfficiencyParameters 
+} from "@/types/modelTypes";
+
 // Additional type definitions for model types
 
 export interface Brand {
@@ -62,11 +72,13 @@ export interface ExtendedScenario extends Scenario {
   operationalParameters: OperationalParameters;
   efficiencyParameters: EfficiencyParameters;
   staffingRequirements: StaffingRequirement[];
+  calculations: ExtendedScenarioCalculations;
 }
 
 export interface StaffingRequirement {
   positionId: string;
   count: number;
+  calculationMethod?: string;
 }
 
 // Extend the comparison return type
