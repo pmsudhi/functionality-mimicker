@@ -1,5 +1,9 @@
 
 /* Tooltip Styles */
+.tooltip-content {
+  @apply space-y-2;
+}
+
 .formula {
   @apply py-1 px-2 rounded bg-gray-50 dark:bg-gray-900;
 }
@@ -18,4 +22,9 @@
 
 hr {
   @apply my-3 border-t border-gray-200 dark:border-gray-800;
+}
+
+/* Override the default Radix tooltip styling */
+[data-radix-tooltip-content] {
+  @apply max-w-[350px] bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground !important;
 }

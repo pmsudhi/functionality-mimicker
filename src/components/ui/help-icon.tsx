@@ -22,11 +22,12 @@ export function HelpIcon({ content, className = "" }: HelpIconProps) {
           />
         </TooltipTrigger>
         <TooltipContent 
-          className="max-w-[350px] p-3 bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground"
+          className="max-w-[350px] bg-white dark:bg-zinc-900 shadow-lg border border-border rounded-lg text-sm text-foreground"
+          side="top"
           sideOffset={5}
         >
           <div 
-            className="space-y-2"
+            className="tooltip-content p-3"
             dangerouslySetInnerHTML={{ 
               __html: content 
             }}
