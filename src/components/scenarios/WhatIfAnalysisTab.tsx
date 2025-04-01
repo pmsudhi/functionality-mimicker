@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { BarChart3 } from "lucide-react";
 import { mockScenarios } from "@/services/mockData";
 import { Scenario } from "@/types/modelTypes";
+import WhatIfImpactChart from "./WhatIfImpactChart";
 
 interface WhatIfAnalysisTabProps {
   baseScenario: string;
@@ -43,6 +43,24 @@ const WhatIfAnalysisTab = ({
   setAverageCheck,
   selectedBaseScenario
 }: WhatIfAnalysisTabProps) => {
+  // Calculate impact values based on slider settings
+  const baseLaborCost = selectedBaseScenario?.calculations.laborCost || 0;
+  const baseRevenue = selectedBaseScenario?.calculations.monthlyRevenue || 0;
+  
+  const adjustedLaborCost = baseLaborCost * (staffingLevel / 100) * (averageWage / 100);
+  const adjustedRevenue = baseRevenue * (customerVolume / 100) * (averageCheck / 100);
+  
+  // Labor cost difference
+  const laborCostDiff = adjustedLaborCost - baseLaborCost;
+  
+  // Calculate labor percentage
+  const basePercentage = selectedBaseScenario?.calculations.laborPercentage || 0;
+  const newPercentage = (adjustedRevenue > 0) ? (adjustedLaborCost / adjustedRevenue) * 100 : 0;
+  
+  // Format currency values
+  const formatCurrency = (value: number) => `SAR ${Math.round(value).toLocaleString()}`;
+  const formatChange = (value: number) => `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
+
   return (
     <Card>
       <CardHeader>
@@ -112,36 +130,41 @@ const WhatIfAnalysisTab = ({
           </div>
           
           <div className="space-y-6">
-            <div className="h-60 border border-dashed rounded-md p-4 flex items-center justify-center">
-              <div className="text-center">
-                <BarChart3 className="h-10 w-10 mx-auto text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">Comparison chart showing the impact of changes</p>
-              </div>
+            <div className="h-60 rounded-md">
+              <WhatIfImpactChart
+                selectedBaseScenario={selectedBaseScenario}
+                staffingLevel={staffingLevel}
+                averageWage={averageWage}
+                operatingHours={operatingHours}
+                serviceEfficiency={serviceEfficiency}
+                customerVolume={customerVolume}
+                averageCheck={averageCheck}
+              />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <MetricCard 
                 title="Impact on Labor Cost"
-                value={`SAR ${selectedBaseScenario?.calculations.laborCost.toLocaleString() || "0"}`}
-                change="0.0(%)"
+                value={formatCurrency(adjustedLaborCost)}
+                change={formatChange((laborCostDiff / baseLaborCost) * 100)}
               />
               
               <MetricCard 
                 title="Impact on Revenue"
-                value="SAR 6,67,000"
-                change="0.0(%)"
+                value={formatCurrency(adjustedRevenue)}
+                change={formatChange((adjustedRevenue / baseRevenue - 1) * 100)}
               />
               
               <MetricCard 
                 title="Labor Percentage"
-                value={`${selectedBaseScenario?.calculations.laborPercentage.toFixed(1) || "0.0"}%`}
-                change="0.0%"
+                value={`${newPercentage.toFixed(1)}%`}
+                change={formatChange(newPercentage - basePercentage)}
               />
               
               <MetricCard 
                 title="Profit Impact"
-                value="SAR 0"
-                change="Negative impact on profit"
+                value={formatCurrency((adjustedRevenue - adjustedLaborCost) - (baseRevenue - baseLaborCost))}
+                change={laborCostDiff < 0 && adjustedRevenue >= baseRevenue ? "Positive impact on profit" : "Negative impact on profit"}
               />
             </div>
             
