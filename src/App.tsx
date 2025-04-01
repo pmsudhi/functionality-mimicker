@@ -9,7 +9,7 @@ import StaffingStructure from '@/components/staffing/index';
 import ScenarioManager from '@/components/scenarios/index';
 import FinancialImpact from '@/components/financial/FinancialImpact';
 import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
-import WhatIfAnalisis from '@/components/WhatIfAnalisis';  // Updated import path
+import WhatIfAnalisis from '@/components/WhatIfAnalisis';
 
 function App() {
   return (
