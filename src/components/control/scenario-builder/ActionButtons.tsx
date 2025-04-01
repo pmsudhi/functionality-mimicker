@@ -19,10 +19,10 @@ const ActionButtons = ({ buttonLabels, onAddBlock }: ActionButtonsProps) => {
         <Button 
           key={index} 
           variant="outline" 
-          className="flex items-center justify-start"
+          className="flex items-center justify-start w-full text-sm font-normal px-4 py-2 border-border hover:bg-accent"
           onClick={() => handleButtonClick(label)}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
           {label}
         </Button>
       ))}
