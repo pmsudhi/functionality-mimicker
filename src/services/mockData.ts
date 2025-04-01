@@ -328,7 +328,7 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
       space: {
         totalArea: 200,
         fohPercentage: 65,
-        areaPerCover: 1.5,
+        areaPerCover: 1.5 as 1.5,
         externalSeating: 20,
         totalCapacity: 0,
         fohArea: 0
@@ -384,7 +384,7 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
       space: {
         totalArea: 300,
         fohPercentage: 60,
-        areaPerCover: 1.86,
+        areaPerCover: 1.86 as 1.86,
         externalSeating: 30,
         totalCapacity: 0,
         fohArea: 0
@@ -439,7 +439,7 @@ export const getDefaultParameters = (serviceStyle: ServiceStyle): {
       space: {
         totalArea: 400,
         fohPercentage: 55,
-        areaPerCover: 2.32,
+        areaPerCover: 2.32 as 2.32,
         externalSeating: 20,
         totalCapacity: 0,
         fohArea: 0
