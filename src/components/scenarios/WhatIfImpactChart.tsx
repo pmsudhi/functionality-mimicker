@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   BarChart,
@@ -89,6 +90,20 @@ const WhatIfImpactChart = ({
     return value.toLocaleString('en-US', { maximumFractionDigits: 1 });
   };
 
+  // Fixed the type issue by performing appropriate comparison
+  const valueFormatter = (value: any) => {
+    if (typeof value !== 'number') return String(value);
+    
+    const laborPercentItem = data.find(item => item.name === "Labor %");
+    const isLaborPercent = laborPercentItem && (
+      value === laborPercentItem.base || 
+      value === laborPercentItem.adjusted ||
+      value === laborPercentItem.diff
+    );
+    
+    return isLaborPercent ? `${formatNumber(value)}%` : formatNumber(value);
+  };
+
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -98,7 +113,7 @@ const WhatIfImpactChart = ({
             top: 20,
             right: 30,
             left: 20,
-            bottom: 50, // Increased bottom margin for legend
+            bottom: 60, // Increased bottom margin for legend
           }}
           barSize={40}
         >
@@ -108,16 +123,11 @@ const WhatIfImpactChart = ({
           <Tooltip 
             content={<ChartTooltip
               labelFormatter={(name) => `${name} Impact`}
-              valueFormatter={(value) => {
-                if (typeof value !== 'number') return String(value);
-                return data.find(item => item.name === "Labor %") && value === data.find(item => item.name === "Labor %")?.base
-                  ? `${formatNumber(value)}%`
-                  : formatNumber(value);
-              }}
+              valueFormatter={valueFormatter}
             />}
           />
           <Legend 
-            wrapperStyle={{ paddingTop: 20, bottom: 0 }}
+            wrapperStyle={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)' }}
             formatter={(value) => <span className="text-sm font-medium">{value}</span>}
             payload={[
               { value: 'Base', type: 'square', color: baseColor },

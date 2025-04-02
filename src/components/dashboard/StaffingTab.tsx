@@ -54,19 +54,19 @@ export const StaffingTab = () => {
               <BadgeCheck className="h-3.5 w-3.5 mr-1 text-primary" />
               Department Overview
             </Badge>
-            <div className="flex-1 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="flex-1">
+              <ResponsiveContainer width="100%">
                 <PieChart>
                   <Pie
                     data={staffDistribution}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    outerRadius={100}
-                    innerRadius={60}
+                    outerRadius={90}
+                    innerRadius={55}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
                     paddingAngle={2}
                   >
                     {staffDistribution.map((entry, index) => (

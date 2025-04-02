@@ -35,18 +35,18 @@ export const StaffingOverviewTab = () => {
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="pie-chart-container">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%">
               <PieChart>
                 <Pie
                   data={staffDistributionData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={100}
-                  innerRadius={60}
+                  outerRadius={90}
+                  innerRadius={55}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({name, percent}) => `${(percent * 100).toFixed(0)}%`}
                   paddingAngle={2}
                 >
                   {staffDistributionData.map((entry, index) => (
