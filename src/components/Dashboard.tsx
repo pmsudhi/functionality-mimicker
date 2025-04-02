@@ -13,22 +13,21 @@ import { LaborCostTab } from "./dashboard/LaborCostTab";
 import { EfficiencyTab } from "./dashboard/EfficiencyTab";
 import { RevenueTab } from "./dashboard/RevenueTab";
 import { DashboardFooter } from "./dashboard/DashboardFooter";
+import { useBrandOutlet } from "@/context/BrandOutletContext";
 
 // Dashboard component with improved organization
 const Dashboard = () => {
-  const [selectedOutlet, setSelectedOutlet] = useState(mockOutlets[0].id);
+  const { selectedBrandId, selectedOutletId } = useBrandOutlet();
   const [selectedSection, setSelectedSection] = useState("efficiency");
-  const currentOutlet = mockOutlets.find(o => o.id === selectedOutlet);
+  
+  const currentOutlet = mockOutlets.find(o => o.id === selectedOutletId);
   const currentBrand = currentOutlet ? mockBrands.find(b => b.id === currentOutlet.brandId) : null;
   const currentLocation = currentOutlet ? mockLocations.find(l => l.id === currentOutlet.locationId) : null;
 
   return (
     <PageLayout>
       <div className="container mx-auto">
-        <DashboardHeader 
-          selectedOutlet={selectedOutlet} 
-          setSelectedOutlet={setSelectedOutlet} 
-        />
+        <DashboardHeader />
         
         {currentOutlet && currentBrand && currentLocation && (
           <>
