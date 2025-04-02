@@ -4,21 +4,16 @@ import { PageLayout } from '@/components/ui/page-layout';
 import { StaffingHeader } from './components/StaffingHeader';
 import { StaffingMetricCards } from './components/StaffingMetricCards';
 import { StaffingTabs } from './components/StaffingTabs';
+import { useBrandOutlet } from '@/context/BrandOutletContext';
 
 const StaffingStructure = () => {
   const [selectedTab, setSelectedTab] = useState("overview");
-  const [selectedBrand, setSelectedBrand] = useState("all-brands");
-  const [selectedOutlet, setSelectedOutlet] = useState("all-outlets");
+  const { selectedBrandId, selectedOutletId } = useBrandOutlet();
 
   return (
     <PageLayout>
       <div className="container mx-auto p-6">
-        <StaffingHeader 
-          selectedBrand={selectedBrand}
-          setSelectedBrand={setSelectedBrand}
-          selectedOutlet={selectedOutlet}
-          setSelectedOutlet={setSelectedOutlet}
-        />
+        <StaffingHeader />
         
         <StaffingMetricCards />
         
