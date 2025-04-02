@@ -4,7 +4,10 @@ import { PageLayout } from '@/components/ui/page-layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'react-router-dom';
-import ControlPanelHeader from './layout/ControlPanelHeader';
+import { PageHeader } from '@/components/ui/page-header';
+import { Settings, ArrowLeft, Copy, Save, Play } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import ScenarioConfigTab from './tabs/ScenarioConfigTab';
 import ParameterConfigTab from './tabs/ParameterConfigTab';
 import ScenarioBuilderTab from './tabs/ScenarioBuilderTab';
@@ -50,12 +53,33 @@ const ControlPanel = () => {
   return (
     <PageLayout>
       <div className="container mx-auto p-6 max-w-7xl">
-        <ControlPanelHeader 
-          handleDuplicate={handleDuplicate}
-          handleSaveScenario={handleSaveScenario}
-          handleRunCalculation={handleRunCalculation}
-          showBackButton={showBackButton}
-        />
+        <PageHeader
+          title="Control Panel"
+          description="Adjust operational parameters to build different scenarios"
+          icon={<Settings className="h-6 w-6 text-primary" />}
+        >
+          <div className="flex items-center gap-2">
+            {showBackButton && (
+              <Link to="/">
+                <Button variant="outline" size="icon" className="hover:bg-background/80 transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
+            <Button variant="outline" onClick={handleDuplicate} className="flex items-center gap-2 hover:bg-background/80 transition-colors">
+              <Copy className="h-4 w-4" />
+              Duplicate
+            </Button>
+            <Button variant="outline" onClick={handleSaveScenario} className="flex items-center gap-2 hover:bg-background/80 transition-colors">
+              <Save className="h-4 w-4" />
+              Save Scenario
+            </Button>
+            <Button onClick={handleRunCalculation} className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/90 shadow-sm">
+              <Play className="h-4 w-4" />
+              Run Calculation
+            </Button>
+          </div>
+        </PageHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 h-14 bg-muted/50">

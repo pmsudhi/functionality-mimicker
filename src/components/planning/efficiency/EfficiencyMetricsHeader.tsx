@@ -16,8 +16,7 @@ const EfficiencyMetricsHeader = ({
   
   // Filter scenarios based on the selected brand and outlet
   const filteredScenarios = mockScenarios.filter(scenario => 
-    (!selectedBrandId || scenario.brandId === selectedBrandId) && 
-    (!selectedOutletId || scenario.outletId === selectedOutletId)
+    (!selectedBrandId || scenario.outletId === selectedOutletId)
   );
 
   return (

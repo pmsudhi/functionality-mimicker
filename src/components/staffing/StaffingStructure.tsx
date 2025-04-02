@@ -1,28 +1,46 @@
 
 import React, { useState } from 'react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
-import { StaffingHeader } from './components/StaffingHeader';
-import { StaffingMetricCards } from './components/StaffingMetricCards';
-import { StaffingTabs } from './components/StaffingTabs';
-import { useBrandOutlet } from '@/context/BrandOutletContext';
+import { PageHeader } from '@/components/ui/page-header';
+import { Users } from 'lucide-react';
+import StaffingOverviewTab from './tabs/StaffingOverviewTab';
+import PositionsTab from './tabs/PositionsTab';
+import CostAnalysisTab from './tabs/CostAnalysisTab';
+import StaffingMetricCards from './components/StaffingMetricCards';
 
 const StaffingStructure = () => {
-  const [selectedTab, setSelectedTab] = useState("overview");
-  const { selectedBrandId, selectedOutletId } = useBrandOutlet();
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
     <PageLayout>
-      <div className="container mx-auto p-6">
-        <StaffingHeader />
+      <PageHeader
+        title="Staffing Structure"
+        description="Organize and optimize your workforce"
+        icon={<Users className="h-6 w-6 text-primary" />}
+      />
+      
+      <StaffingMetricCards />
+      
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
+        <TabsList className="w-full">
+          <TabsTrigger value="overview">Staffing Overview</TabsTrigger>
+          <TabsTrigger value="positions">Positions</TabsTrigger>
+          <TabsTrigger value="cost">Cost Analysis</TabsTrigger>
+        </TabsList>
         
-        <StaffingMetricCards />
+        <TabsContent value="overview" className="mt-6">
+          <StaffingOverviewTab />
+        </TabsContent>
         
-        <StaffingTabs 
-          selectedTab={selectedTab} 
-          setSelectedTab={setSelectedTab} 
-          handleExport={(format) => console.log(`Exporting as ${format}`)} 
-        />
-      </div>
+        <TabsContent value="positions" className="mt-6">
+          <PositionsTab />
+        </TabsContent>
+        
+        <TabsContent value="cost" className="mt-6">
+          <CostAnalysisTab />
+        </TabsContent>
+      </Tabs>
     </PageLayout>
   );
 };

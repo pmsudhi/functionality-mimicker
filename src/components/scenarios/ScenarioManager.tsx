@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
 import SavedScenariosTab from './tabs/SavedScenariosTab';
 import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
-import { BriefcaseBusiness, FileText, Lightbulb, ArrowLeft } from 'lucide-react';
+import { BriefcaseBusiness, ArrowLeft } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/ui/page-header';
 
 const ScenarioManager = () => {
   const [activeTab, setActiveTab] = useState('saved');
@@ -18,24 +18,19 @@ const ScenarioManager = () => {
   return (
     <PageLayout>
       <div className="container mx-auto p-6">
-        <div className="mb-6 bg-gradient-to-r from-primary/5 to-transparent rounded-lg p-4">
-          <div className="flex items-center gap-3 mb-2">
-            {showBackButton && (
-              <Link to="/">
-                <Button variant="outline" size="icon" className="mr-2 hover:bg-background/80 transition-colors">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-            )}
-            <div className="bg-primary/10 p-2 rounded-md">
-              <BriefcaseBusiness className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Scenarios</h1>
-              <p className="text-muted-foreground">Create, compare, and manage staffing scenarios</p>
-            </div>
-          </div>
-        </div>
+        <PageHeader
+          title="Scenarios"
+          description="Create, compare, and manage staffing scenarios"
+          icon={<BriefcaseBusiness className="h-6 w-6 text-primary" />}
+        >
+          {showBackButton && (
+            <Link to="/">
+              <Button variant="outline" size="icon" className="hover:bg-background/80 transition-colors">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+          )}
+        </PageHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-muted/40 mb-6 p-1 border border-border/20 rounded-md">

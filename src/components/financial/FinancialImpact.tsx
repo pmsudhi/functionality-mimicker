@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterBar } from "@/components/ui/filter-bar";
-import { DollarSign, BadgePercent, Building2, Users } from "lucide-react";
+import { DollarSign, BadgePercent, Building2, CreditCard } from "lucide-react";
 import { useScenarioSelection } from "@/hooks/useScenarioSelection";
 import { useBrandOutlet } from "@/context/BrandOutletContext";
+import { PageHeader } from "@/components/ui/page-header";
 import MetricCards from "./MetricCards";
 import RevenueVsLaborTab from "./tabs/RevenueVsLaborTab";
 import CostBreakdownTab from "./tabs/CostBreakdownTab";
@@ -38,9 +39,9 @@ const FinancialImpact = () => {
 
   return (
     <PageLayout>
-      <FilterBar
+      <PageHeader
         title="Financial Impact"
-        className="mb-6"
+        icon={<CreditCard className="h-6 w-6 text-primary" />}
       >
         <Select 
           value={selectedScenarioId} 
@@ -57,7 +58,7 @@ const FinancialImpact = () => {
             ))}
           </SelectContent>
         </Select>
-      </FilterBar>
+      </PageHeader>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card className="bg-gradient-to-br from-card to-muted/5 transition-all duration-200 hover:shadow-md">
