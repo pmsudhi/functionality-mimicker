@@ -6,6 +6,8 @@ import { Sparkles } from "lucide-react";
 import ControlPanel from "../what-if/ControlPanel";
 import WhatIfComparisonChart from "../what-if/WhatIfComparisonChart";
 import ResultsPanel from "../what-if/ResultsPanel";
+import ImpactMetricsPanel from "../what-if/ImpactMetricsPanel";
+import { LastUpdatedIndicator } from "@/components/dashboard/components/LastUpdatedIndicator";
 import { mockScenarios } from "@/services/mockData";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -32,9 +34,12 @@ const WhatIfAnalysisTab = () => {
   return (
     <Card className="border shadow-sm">
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <CardTitle>What-If Analysis</CardTitle>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>What-If Analysis</CardTitle>
+          </div>
+          <LastUpdatedIndicator />
         </div>
         <CardDescription>
           Adjust parameters to see how changes would impact your staffing and financial metrics
