@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -19,7 +18,7 @@ const WhatIfAnalysis = lazy(() => import('@/components/WhatIfAnalysis'));
 function App() {
   return (
     <BrandOutletProvider>
-      <Router>
+      <Router basename="/solutions/manpower">
         <div className="min-h-screen bg-background flex flex-col">
           <MainNavigation />
           <main className="flex-1">
