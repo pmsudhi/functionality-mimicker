@@ -111,7 +111,7 @@ const WhatIfImpactChart = ({
               labelFormatter={(name) => `${name} Impact`}
               valueFormatter={(value) => {
                 if (typeof value !== 'number') return String(value);
-                return name === "Labor %" 
+                return data.find(item => item.name === "Labor %") && value === data.find(item => item.name === "Labor %")?.base
                   ? `${formatNumber(value)}%`
                   : formatNumber(value);
               }}

@@ -11,7 +11,8 @@ import {
   YAxis, 
   CartesianGrid, 
   LabelList,
-  Tooltip
+  Tooltip,
+  Cell
 } from 'recharts';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import ChartTooltip from '@/components/ui/chart-tooltip';
