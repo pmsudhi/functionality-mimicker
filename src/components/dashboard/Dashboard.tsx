@@ -26,72 +26,66 @@ const Dashboard = () => {
 
   return (
     <PageLayout className="dashboard-container p-0">
-      <div className="container mx-auto">
-        <div className="dashboard-header">
-          <ResponsiveContainer withHorizontalPadding={true} withPadding={false} className="py-6">
-            <DashboardHeader />
-          </ResponsiveContainer>
-        </div>
-        
-        {currentOutlet && currentBrand && currentLocation && (
-          <>
-            <ResponsiveContainer>
-              <MetricCards />
-              
-              <Tabs 
-                value={selectedSection} 
-                onValueChange={setSelectedSection} 
-                className="mt-6"
+      <ResponsiveContainer withPadding={false} className="bg-gradient-to-r from-primary/5 to-transparent py-6 border-b border-border/20">
+        <DashboardHeader />
+      </ResponsiveContainer>
+      
+      {currentOutlet && currentBrand && currentLocation && (
+        <ResponsiveContainer>
+          <MetricCards />
+          
+          <Tabs 
+            value={selectedSection} 
+            onValueChange={setSelectedSection} 
+            className="mt-6"
+          >
+            <TabsList className="bg-muted/40 mb-6 p-1 rounded-md border border-border/20">
+              <TabsTrigger 
+                value="staffing" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
               >
-                <TabsList className="bg-muted/40 mb-6 p-1 rounded-md border border-border/20">
-                  <TabsTrigger 
-                    value="staffing" 
-                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
-                  >
-                    Staffing Structure
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="labor" 
-                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
-                  >
-                    Labor Cost
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="efficiency" 
-                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
-                  >
-                    Efficiency Metrics
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="revenue" 
-                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
-                  >
-                    Revenue Projections
-                  </TabsTrigger>
-                </TabsList>
+                Staffing Structure
+              </TabsTrigger>
+              <TabsTrigger 
+                value="labor" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+              >
+                Labor Cost
+              </TabsTrigger>
+              <TabsTrigger 
+                value="efficiency" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+              >
+                Efficiency Metrics
+              </TabsTrigger>
+              <TabsTrigger 
+                value="revenue" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+              >
+                Revenue Projections
+              </TabsTrigger>
+            </TabsList>
 
-                <TabsContent value="staffing" className="space-y-6">
-                  <StaffingTab />
-                </TabsContent>
+            <TabsContent value="staffing" className="space-y-6">
+              <StaffingTab />
+            </TabsContent>
 
-                <TabsContent value="labor" className="space-y-6">
-                  <LaborCostTab />
-                </TabsContent>
+            <TabsContent value="labor" className="space-y-6">
+              <LaborCostTab />
+            </TabsContent>
 
-                <TabsContent value="efficiency" className="space-y-6">
-                  <EfficiencyTab />
-                </TabsContent>
+            <TabsContent value="efficiency" className="space-y-6">
+              <EfficiencyTab />
+            </TabsContent>
 
-                <TabsContent value="revenue" className="space-y-6">
-                  <RevenueTab />
-                </TabsContent>
-              </Tabs>
-            </ResponsiveContainer>
+            <TabsContent value="revenue" className="space-y-6">
+              <RevenueTab />
+            </TabsContent>
+          </Tabs>
 
-            <DashboardFooter />
-          </>
-        )}
-      </div>
+          <DashboardFooter />
+        </ResponsiveContainer>
+      )}
     </PageLayout>
   );
 };
