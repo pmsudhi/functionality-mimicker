@@ -34,15 +34,15 @@ export const StaffingOverviewTab = () => {
       </CardHeader>
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="h-80 pie-chart-container">
-            <ResponsiveContainer width="100%" height="85%">
+          <div className="pie-chart-container">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={staffDistributionData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={110}
+                  outerRadius={100}
                   innerRadius={60}
                   fill="#8884d8"
                   dataKey="value"

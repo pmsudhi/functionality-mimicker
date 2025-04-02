@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   BarChart,
@@ -90,7 +89,7 @@ const WhatIfComparisonChart = ({
             top: 20,
             right: 30,
             left: 20,
-            bottom: 30, // Increased bottom margin for legend
+            bottom: 50, // Increased bottom margin for legend
           }}
           barSize={30}
         >
@@ -113,7 +112,7 @@ const WhatIfComparisonChart = ({
             />}
           />
           <Legend 
-            wrapperStyle={{ paddingTop: 10 }}
+            wrapperStyle={{ paddingTop: 20, bottom: 0 }}
             payload={[
               { value: 'Base Scenario', type: 'square', color: baseColor },
               { value: 'What-If Scenario', type: 'square', color: adjustedColor }

@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   BarChart,
@@ -99,7 +98,7 @@ const WhatIfImpactChart = ({
             top: 20,
             right: 30,
             left: 20,
-            bottom: 30, // Increased bottom margin for legend
+            bottom: 50, // Increased bottom margin for legend
           }}
           barSize={40}
         >
@@ -118,7 +117,7 @@ const WhatIfImpactChart = ({
             />}
           />
           <Legend 
-            wrapperStyle={{ paddingTop: 10 }}
+            wrapperStyle={{ paddingTop: 20, bottom: 0 }}
             formatter={(value) => <span className="text-sm font-medium">{value}</span>}
             payload={[
               { value: 'Base', type: 'square', color: baseColor },
