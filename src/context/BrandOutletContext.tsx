@@ -36,7 +36,7 @@ export const BrandOutletProvider = ({ children }: { children: ReactNode }) => {
         setSelectedOutletId(brandOutlets[0].id);
       }
     }
-  }, []);
+  }, [selectedBrandId, selectedOutletId]);
 
   return (
     <BrandOutletContext.Provider value={{

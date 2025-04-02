@@ -1,9 +1,9 @@
 
 import { useState } from "react";
 import { PageLayout } from "@/components/ui/page-layout";
-import { FilterBar } from "@/components/ui/filter-bar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { mockOutlets, mockBrands, mockLocations } from "@/services/mockData";
+import { useBrandOutlet } from "@/context/BrandOutletContext";
 
 // Import the refactored components
 import { DashboardHeader } from "./dashboard/DashboardHeader";
@@ -13,7 +13,6 @@ import { LaborCostTab } from "./dashboard/LaborCostTab";
 import { EfficiencyTab } from "./dashboard/EfficiencyTab";
 import { RevenueTab } from "./dashboard/RevenueTab";
 import { DashboardFooter } from "./dashboard/DashboardFooter";
-import { useBrandOutlet } from "@/context/BrandOutletContext";
 
 // Dashboard component with improved organization
 const Dashboard = () => {

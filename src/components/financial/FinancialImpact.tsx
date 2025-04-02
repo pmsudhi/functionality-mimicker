@@ -5,8 +5,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { DollarSign, BadgePercent, Building2, Users } from "lucide-react";
-import { useBrandOutletFilter } from "@/hooks/useBrandOutletFilter";
 import { useScenarioSelection } from "@/hooks/useScenarioSelection";
+import { useBrandOutlet } from "@/context/BrandOutletContext";
 import MetricCards from "./MetricCards";
 import RevenueVsLaborTab from "./tabs/RevenueVsLaborTab";
 import CostBreakdownTab from "./tabs/CostBreakdownTab";
@@ -23,15 +23,8 @@ const FinancialImpact = () => {
   const [laborPercentage] = useState(23.8);
   const [totalBaseline, setTotalBaseline] = useState(9280000);
 
-  // Use the filter hook for brand and outlet selection
-  const {
-    selectedBrandId,
-    selectedOutletId,
-    availableBrands,
-    availableOutlets,
-    handleBrandChange,
-    handleOutletChange
-  } = useBrandOutletFilter();
+  // Use global brand/outlet context
+  const { selectedBrandId, selectedOutletId } = useBrandOutlet();
 
   // Use the scenario selection hook
   const { 
@@ -49,30 +42,6 @@ const FinancialImpact = () => {
         title="Financial Impact"
         className="mb-6"
       >
-        <Select value={selectedBrandId || "all"} onValueChange={handleBrandChange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All Brands" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Brands</SelectItem>
-            {availableBrands.map(brand => (
-              <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        
-        <Select value={selectedOutletId || "all"} onValueChange={handleOutletChange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All Outlets" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Outlets</SelectItem>
-            {availableOutlets.map(outlet => (
-              <SelectItem key={outlet.id} value={outlet.id}>{outlet.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        
         <Select 
           value={selectedScenarioId} 
           onValueChange={setSelectedScenarioId}

@@ -13,6 +13,8 @@ import { useBrandOutlet } from "@/context/BrandOutletContext";
 
 export const OutletSelector = () => {
   const { selectedBrandId, selectedOutletId, setSelectedOutletId } = useBrandOutlet();
+  
+  // Filter outlets based on the selected brand
   const availableOutlets = mockOutlets.filter(o => o.brandId === selectedBrandId);
 
   return (
