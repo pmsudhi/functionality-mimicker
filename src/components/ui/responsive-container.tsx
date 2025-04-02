@@ -19,10 +19,10 @@ export function ResponsiveContainer({
   return (
     <div
       className={cn(
-        "w-full",
+        "w-full mx-auto",
         withPadding && "py-6",
         withHorizontalPadding && "px-4 sm:px-6 lg:px-8",
-        !fullWidth && "max-w-7xl mx-auto",
+        !fullWidth && "max-w-7xl",
         className
       )}
     >

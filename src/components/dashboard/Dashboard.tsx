@@ -25,13 +25,15 @@ const Dashboard = () => {
   const currentLocation = currentOutlet ? mockLocations.find(l => l.id === currentOutlet.locationId) : null;
 
   return (
-    <PageLayout className="dashboard-container p-0">
-      <ResponsiveContainer withPadding={false} className="bg-gradient-to-r from-primary/5 to-transparent py-6 border-b border-border/20">
-        <DashboardHeader />
-      </ResponsiveContainer>
+    <PageLayout className="p-0">
+      <div className="w-full bg-gradient-to-r from-primary/5 to-transparent border-b border-border/20">
+        <ResponsiveContainer className="py-6">
+          <DashboardHeader />
+        </ResponsiveContainer>
+      </div>
       
       {currentOutlet && currentBrand && currentLocation && (
-        <ResponsiveContainer>
+        <ResponsiveContainer className="py-6">
           <MetricCards />
           
           <Tabs 
