@@ -1,6 +1,6 @@
 # Manpower Planning System - Backend
 
-A FastAPI-based backend service for restaurant manpower planning and optimization. Built with Python, featuring machine learning capabilities and robust data processing.
+A FastAPI-based backend service for restaurant manpower planning and optimization. Built with Python, featuring machine learning capabilities and robust data processing. This is the backend service for the Manpower Planning application. It supports both PostgreSQL and MySQL databases.
 
 ## Project Structure
 
@@ -249,4 +249,138 @@ The API implements comprehensive error handling:
 ## Support
 
 For support, please contact the development team or refer to the internal documentation.
+
+## Prerequisites
+
+- Python 3.8+
+- PostgreSQL 12+ or MySQL 8.0+
+- Docker (optional)
+
+## Installation
+
+1. Clone the repository
+2. Create a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Copy the environment file and configure it:
+```bash
+cp .env.example .env
+```
+
+5. Edit the `.env` file with your database configuration:
+```env
+# Choose your database type
+DATABASE_TYPE=postgresql  # or mysql
+
+# Configure your database connection
+# For PostgreSQL:
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=manpower_planning
+
+# For MySQL:
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=root
+MYSQL_DB=manpower_planning
+```
+
+## Database Setup
+
+### PostgreSQL
+1. Create a database:
+```sql
+CREATE DATABASE manpower_planning;
+```
+
+### MySQL
+1. Create a database:
+```sql
+CREATE DATABASE manpower_planning CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+## Running Migrations
+
+The application uses Alembic for database migrations. To run migrations:
+
+```bash
+# Initialize migrations (first time only)
+alembic init migrations
+
+# Create a new migration
+alembic revision --autogenerate -m "description"
+
+# Run migrations
+alembic upgrade head
+```
+
+## Running the Application
+
+```bash
+uvicorn main:app --reload
+```
+
+The API will be available at `http://localhost:8000`
+
+## API Documentation
+
+Once the application is running, you can access:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## Development
+
+### Adding New Models
+
+1. Create your model in `models.py`
+2. Add database model in `database.py`
+3. Create a new migration:
+```bash
+alembic revision --autogenerate -m "add new model"
+```
+4. Apply the migration:
+```bash
+alembic upgrade head
+```
+
+### Database-Specific Considerations
+
+#### PostgreSQL
+- Native JSON support
+- Better handling of concurrent operations
+- More flexible with schema changes
+
+#### MySQL
+- JSON stored as TEXT (automatically handled by the application)
+- Better performance for read-heavy operations
+- More strict with data types
+
+## Testing
+
+```bash
+pytest
+```
+
+## Docker Support
+
+Build and run with Docker:
+
+```bash
+docker-compose up --build
+```
+
+## License
+
+MIT
 

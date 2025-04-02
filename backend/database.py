@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Table, Enum
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Table, Enum, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.sql import func
@@ -7,12 +7,18 @@ import os
 import json
 from typing import List, Optional, Dict, Any
 from models import Scenario, StaffPosition, SpaceParameters, ServiceParameters, RevenueDrivers, OperationalHours, EfficiencyDrivers, ServiceStyle, Currency, OutletStatus
+from core.config import settings
 
-# Get database URL from environment variable or use default
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/manpower_planning")
-
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
+# Create SQLAlchemy engine using the configuration
+engine = create_engine(
+    settings.database_url,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    # MySQL specific settings
+    connect_args={
+        "charset": "utf8mb4"
+    } if settings.DATABASE_TYPE == "mysql" else {}
+)
 
 # Create session factory
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
@@ -35,14 +41,14 @@ scenario_boh_positions = Table(
     Column("position_id", Integer, ForeignKey("staff_positions.id")),
 )
 
-# Database models
+# Database models with database-agnostic types
 class DBUser(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    username = Column(String(255), unique=True, index=True)
+    email = Column(String(255), unique=True, index=True)
+    hashed_password = Column(String(255))
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -53,11 +59,11 @@ class DBUser(Base):
 class DBDefaultValues(Base):
     __tablename__ = "default_values"
     
-    id = Column(String, primary_key=True, index=True)
-    category = Column(String, nullable=False)
-    name = Column(String, nullable=False, unique=True)
-    value = Column(JSON, nullable=False)
-    description = Column(String, nullable=True)
+    id = Column(String(36), primary_key=True, index=True)
+    category = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
+    value = Column(JSON if settings.DATABASE_TYPE == "postgresql" else Text, nullable=False)
+    description = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     is_active = Column(Boolean, default=True)
@@ -201,6 +207,21 @@ def get_db():
         yield db
     finally:
         db.close()
+
+# Helper function to convert JSON data for MySQL
+def prepare_json_for_db(data: Any) -> Any:
+    if settings.DATABASE_TYPE == "mysql" and isinstance(data, (dict, list)):
+        return json.dumps(data)
+    return data
+
+# Helper function to parse JSON data from MySQL
+def parse_json_from_db(data: Any) -> Any:
+    if settings.DATABASE_TYPE == "mysql" and isinstance(data, str):
+        try:
+            return json.loads(data)
+        except json.JSONDecodeError:
+            return data
+    return data
 
 # Convert database models to Pydantic models
 def db_scenario_to_pydantic(db_scenario):
