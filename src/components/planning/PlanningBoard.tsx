@@ -89,7 +89,7 @@ const PlanningBoard = () => {
       />
       
       <div className="mt-6 overflow-hidden border rounded-lg bg-card">
-        <ScrollArea orientation="horizontal" className="w-full">
+        <ScrollArea className="w-full">
           <ConsistentTabs
             tabs={tabs}
             value={activeTab}

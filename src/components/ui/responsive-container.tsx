@@ -6,6 +6,7 @@ interface ResponsiveContainerProps {
   className?: string;
   fullWidth?: boolean;
   withPadding?: boolean;
+  withHorizontalPadding?: boolean;
 }
 
 export function ResponsiveContainer({
@@ -13,12 +14,14 @@ export function ResponsiveContainer({
   className,
   fullWidth = false,
   withPadding = true,
+  withHorizontalPadding = true,
 }: ResponsiveContainerProps) {
   return (
     <div
       className={cn(
         "w-full",
-        withPadding && "px-4 sm:px-6 lg:px-8 py-6",
+        withPadding && "py-6",
+        withHorizontalPadding && "px-4 sm:px-6 lg:px-8",
         !fullWidth && "max-w-7xl mx-auto",
         className
       )}

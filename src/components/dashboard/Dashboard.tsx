@@ -4,6 +4,7 @@ import { PageLayout } from "@/components/ui/page-layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { mockOutlets, mockBrands, mockLocations } from "@/services/mockData";
 import { useBrandOutlet } from "@/context/BrandOutletContext";
+import { ResponsiveContainer } from "@/components/ui/responsive-container";
 
 // Import the refactored components
 import { DashboardHeader } from "./DashboardHeader";
@@ -26,13 +27,15 @@ const Dashboard = () => {
   return (
     <PageLayout className="dashboard-container p-0">
       <div className="container mx-auto">
-        <div className="dashboard-header px-6">
-          <DashboardHeader />
+        <div className="dashboard-header">
+          <ResponsiveContainer withHorizontalPadding={true} withPadding={false} className="py-6">
+            <DashboardHeader />
+          </ResponsiveContainer>
         </div>
         
         {currentOutlet && currentBrand && currentLocation && (
           <>
-            <div className="px-6">
+            <ResponsiveContainer>
               <MetricCards />
               
               <Tabs 
@@ -83,7 +86,7 @@ const Dashboard = () => {
                   <RevenueTab />
                 </TabsContent>
               </Tabs>
-            </div>
+            </ResponsiveContainer>
 
             <DashboardFooter />
           </>
