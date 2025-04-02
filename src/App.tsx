@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from '@/components/ui/toaster';
 import MainNavigation from '@/components/layout/MainNavigation';
 import { BrandOutletProvider } from '@/context/BrandOutletContext';
+import { LoadingFallback } from '@/components/ui/loading-fallback';
 
 // Use React.lazy to lazy-load components
 const Dashboard = lazy(() => import('@/components/dashboard'));
@@ -14,13 +15,6 @@ const StaffingStructure = lazy(() => import('@/components/staffing'));
 const FinancialImpact = lazy(() => import('@/components/financial'));
 const PeakHourAnalysis = lazy(() => import('@/components/analysis/PeakHourAnalysis'));
 const WhatIfAnalysis = lazy(() => import('@/components/WhatIfAnalysis'));
-
-// Loading fallback
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-  </div>
-);
 
 function App() {
   return (

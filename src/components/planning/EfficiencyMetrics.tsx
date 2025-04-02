@@ -2,12 +2,14 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, LineChart, PieChart } from 'lucide-react';
+import { SectionContainer } from '@/components/ui/section-container';
 
 const EfficiencyMetrics = () => {
   return (
-    <div className="h-full p-6 overflow-auto">
-      <h2 className="text-2xl font-bold mb-4">Efficiency Metrics</h2>
-      
+    <SectionContainer 
+      title="Efficiency Metrics"
+      icon={BarChart}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="border shadow-sm">
           <CardHeader>
@@ -65,7 +67,7 @@ const EfficiencyMetrics = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </SectionContainer>
   );
 };
 
