@@ -1,7 +1,8 @@
 
 import { 
   LayoutPanelLeft, PieChart, Users, DollarSign, 
-  BarChartHorizontal, TrendingUp, BarChart3, LineChart 
+  BarChartHorizontal, TrendingUp, BarChart3, LineChart,
+  LucideIcon 
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import {
@@ -19,7 +20,7 @@ import {
 export interface PlanningTab {
   value: string;
   label: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   content: ReactNode;
 }
 

@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ConsistentTabs } from '@/components/ui/consistent-tabs';
 import { PlanningHeader, PlanningMetricCards } from './components';
-import { getPlanningTabs } from './config/planningTabs';
+import { getPlanningTabs, PlanningTab } from './config/planningTabs';
 
 const PlanningBoard = () => {
   const [activeTab, setActiveTab] = useState('gantt');
