@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
 import { PageHeader } from '@/components/ui/page-header';
-import { PlanningSquare } from 'lucide-react';
+import { LayoutPanelLeft } from 'lucide-react';
 
 // Import existing components - assuming these are already in the codebase
 import GanttView from './GanttView';
@@ -24,7 +24,7 @@ const PlanningBoard = () => {
       <PageHeader
         title="Planning Board"
         description="Plan and visualize your staffing strategies"
-        icon={<PlanningSquare className="h-6 w-6 text-primary" />}
+        icon={<LayoutPanelLeft className="h-6 w-6 text-primary" />}
       />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

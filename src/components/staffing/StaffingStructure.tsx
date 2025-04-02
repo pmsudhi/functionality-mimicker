@@ -4,10 +4,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
 import { PageHeader } from '@/components/ui/page-header';
 import { Users } from 'lucide-react';
-import StaffingOverviewTab from './tabs/StaffingOverviewTab';
-import PositionsTab from './tabs/PositionsTab';
-import CostAnalysisTab from './tabs/CostAnalysisTab';
-import StaffingMetricCards from './components/StaffingMetricCards';
+import { StaffingOverviewTab } from './tabs/StaffingOverviewTab';
+import { PositionsTab } from './tabs/PositionsTab';
+import { CostAnalysisTab } from './tabs/CostAnalysisTab';
+import { StaffingMetricCards } from './components/StaffingMetricCards';
 
 const StaffingStructure = () => {
   const [activeTab, setActiveTab] = useState('overview');

@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
 import SavedScenariosTab from './tabs/SavedScenariosTab';
 import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
-import { BriefcaseBusiness, ArrowLeft } from 'lucide-react';
+import { BriefcaseBusiness, ArrowLeft, FileIcon, LightbulbIcon } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
@@ -35,11 +36,11 @@ const ScenarioManager = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-muted/40 mb-6 p-1 border border-border/20 rounded-md">
             <TabsTrigger value="saved" className="data-[state=active]:bg-background rounded-md flex items-center gap-2 px-4">
-              <FileText className="h-4 w-4" />
+              <FileIcon className="h-4 w-4" />
               Saved Scenarios
             </TabsTrigger>
             <TabsTrigger value="what-if" className="data-[state=active]:bg-background rounded-md flex items-center gap-2 px-4">
-              <Lightbulb className="h-4 w-4" />
+              <LightbulbIcon className="h-4 w-4" />
               What-If Analysis
             </TabsTrigger>
           </TabsList>
