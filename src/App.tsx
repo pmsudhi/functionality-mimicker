@@ -3,14 +3,14 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import MainNavigation from '@/components/layout/MainNavigation';
-import PlanningBoard from '@/components/planning/index';
-import Dashboard from '@/components/dashboard/index';
-import ControlPanel from '@/components/control/index';
-import StaffingStructure from '@/components/staffing/index';
-import ScenarioManager from '@/components/scenarios/index';
-import FinancialImpact from '@/components/financial/FinancialImpact';
-import PeakHourAnalysis from '@/components/analysis/PeakHourAnalysis';
-import WhatIfAnalisis from '@/components/WhatIfAnalisis';
+import { PlanningBoard } from '@/components/planning';
+import { Dashboard } from '@/components/dashboard';
+import { ControlPanel } from '@/components/control';
+import { StaffingStructure } from '@/components/staffing';
+import { ScenarioManager } from '@/components/scenarios';
+import { FinancialImpact } from '@/components/financial';
+import { PeakHourAnalysis } from '@/components/analysis';
+import WhatIfAnalysis from '@/components/WhatIfAnalysis';
 import { BrandOutletProvider } from '@/context/BrandOutletContext';
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
               {/* Planning & Scenarios */}
               <Route path="/planning" element={<PlanningBoard />} />
               <Route path="/scenarios" element={<ScenarioManager />} />
-              <Route path="/scenario-builder" element={<WhatIfAnalisis />} />
+              <Route path="/scenario-builder" element={<WhatIfAnalysis />} />
               
               {/* Analysis & Reports */}
               <Route path="/financial" element={<FinancialImpact />} />

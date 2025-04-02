@@ -1,22 +1,29 @@
 
-import React from 'react';
 import { 
   LayoutPanelLeft, PieChart, Users, DollarSign, 
   BarChartHorizontal, TrendingUp, BarChart3, LineChart 
 } from 'lucide-react';
+import { ReactNode } from 'react';
+import {
+  GanttView,
+  TeamView,
+  CapacityView,
+  EfficiencyMetrics,
+  ScenarioBuilder,
+  ScenarioComparison,
+  FinancialImpact,
+  PeakHourAnalysis,
+  RevenueProjections
+} from '../components';
 
-// Import existing components
-import GanttView from '../GanttView';
-import TeamView from '../TeamView';
-import CapacityView from '../CapacityView';
-import EfficiencyMetrics from '../EfficiencyMetrics';
-import ScenarioBuilder from '../ScenarioBuilder';
-import ScenarioComparison from '../ScenarioComparison';
-import FinancialImpact from '../FinancialImpact';
-import PeakHourAnalysis from '../PeakHourAnalysis';
-import RevenueProjections from '../RevenueProjections';
+export interface PlanningTab {
+  value: string;
+  label: string;
+  icon: React.ComponentType<any>;
+  content: ReactNode;
+}
 
-export const getPlanningTabs = () => {
+export const getPlanningTabs = (): PlanningTab[] => {
   return [
     {
       value: 'gantt',
