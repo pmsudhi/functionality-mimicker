@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 export const DashboardFooter = () => {
   return (
     <div className="px-6 pb-6 flex gap-4 justify-center">
-      <Link to="/control-panel">
+      <Link to="/control-panel" state={{ from: "dashboard" }}>
         <Button>
           Adjust Parameters
           <ChevronRight className="ml-2 h-4 w-4" />

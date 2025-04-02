@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { PageLayout } from '@/components/ui/page-layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
 import ControlPanelHeader from './layout/ControlPanelHeader';
 import ScenarioConfigTab from './tabs/ScenarioConfigTab';
 import ParameterConfigTab from './tabs/ParameterConfigTab';
@@ -11,7 +12,11 @@ import PeakHourAnalysisTab from './tabs/PeakHourAnalysisTab';
 
 const ControlPanel = () => {
   const { toast } = useToast();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("parameter");
+  
+  // Check if we came from the dashboard
+  const showBackButton = location.state && location.state.from === "dashboard";
   
   const handleSaveScenario = () => {
     toast({
@@ -49,6 +54,7 @@ const ControlPanel = () => {
           handleDuplicate={handleDuplicate}
           handleSaveScenario={handleSaveScenario}
           handleRunCalculation={handleRunCalculation}
+          showBackButton={showBackButton}
         />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
