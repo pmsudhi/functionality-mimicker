@@ -9,10 +9,10 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine,
   Cell
 } from "recharts";
 import { Scenario } from "@/types/modelTypes";
+import ChartTooltip from "@/components/ui/chart-tooltip";
 
 interface WhatIfComparisonChartProps {
   selectedBaseScenario: Scenario | undefined;
@@ -71,6 +71,16 @@ const WhatIfComparisonChart = ({
     },
   ];
 
+  // Chart colors
+  const baseColor = "#8b5cf6";
+  const adjustedColor = "#10b981";
+  
+  // Format for the tooltip
+  const formatValue = (value: number) => {
+    if (Math.abs(value) < 1) return value.toFixed(2);
+    return value.toLocaleString('en-US', { maximumFractionDigits: 1 });
+  };
+
   return (
     <div className="h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -96,25 +106,31 @@ const WhatIfComparisonChart = ({
             tickLine={false}
             tick={{ fill: '#6b7280', fontSize: 12 }}
           />
-          <Tooltip
-            formatter={(value: number) => [value.toFixed(1), ""]}
-            labelFormatter={(label) => `${label}`}
-            contentStyle={{ 
-              backgroundColor: 'white', 
-              borderRadius: '8px', 
-              padding: '10px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-            }}
+          <Tooltip 
+            content={<ChartTooltip 
+              valueFormatter={formatValue}
+              labelFormatter={(name) => `${name} Comparison`}
+            />}
           />
           <Legend 
             wrapperStyle={{ paddingTop: 10 }}
             payload={[
-              { value: 'Base Scenario', type: 'square', color: '#8884d8' },
-              { value: 'What-If Scenario', type: 'square', color: '#4ade80' }
+              { value: 'Base Scenario', type: 'square', color: baseColor },
+              { value: 'What-If Scenario', type: 'square', color: adjustedColor }
             ]}
           />
-          <Bar dataKey="base" name="Base Scenario" fill="#8884d8" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="adjusted" name="What-If Scenario" fill="#4ade80" radius={[4, 4, 0, 0]} />
+          <Bar 
+            dataKey="base" 
+            name="Base Scenario" 
+            fill={baseColor} 
+            radius={[4, 4, 0, 0]} 
+          />
+          <Bar 
+            dataKey="adjusted" 
+            name="What-If Scenario" 
+            fill={adjustedColor} 
+            radius={[4, 4, 0, 0]} 
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

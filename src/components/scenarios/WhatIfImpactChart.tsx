@@ -12,8 +12,8 @@ import {
   ReferenceLine,
   LabelList
 } from "recharts";
-import { ChartContainer } from "@/components/ui/chart-container";
 import { Scenario } from "@/types/modelTypes";
+import ChartTooltip from "@/components/ui/chart-tooltip";
 
 interface WhatIfImpactChartProps {
   selectedBaseScenario: Scenario | undefined;
@@ -78,38 +78,16 @@ const WhatIfImpactChart = ({
       diff: percentageDiff,
     },
   ];
+  
+  // Chart colors
+  const baseColor = "#8b5cf6";    // Purple
+  const adjustedColor = "#10b981"; // Green
+  const diffColor = "#f59e0b";     // Amber/Yellow
 
   // Format for the tooltip
   const formatNumber = (value: number) => {
     if (Math.abs(value) < 1) return value.toFixed(2);
-    return value.toLocaleString();
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-md p-3 shadow-md">
-          <p className="font-medium">{label}</p>
-          <div className="mt-2 space-y-1">
-            <p className="text-sm">
-              Base: <span className="font-medium">{formatNumber(payload[0]?.value)}</span>
-              {label === "Labor %" ? "%" : ""}
-            </p>
-            <p className="text-sm">
-              Adjusted: <span className="font-medium">{formatNumber(payload[1]?.value)}</span>
-              {label === "Labor %" ? "%" : ""}
-            </p>
-            <p className="text-sm">
-              Change: <span className={`font-medium ${payload[2]?.value >= 0 ? "text-green-500" : "text-red-500"}`}>
-                {payload[2]?.value >= 0 ? "+" : ""}{formatNumber(payload[2]?.value)}
-                {label === "Labor %" ? "%" : ""}
-              </span>
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
+    return value.toLocaleString('en-US', { maximumFractionDigits: 1 });
   };
 
   return (
@@ -128,16 +106,37 @@ const WhatIfImpactChart = ({
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey="name" tick={{ fill: '#6b7280' }} />
           <YAxis tick={{ fill: '#6b7280' }} />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip 
+            content={<ChartTooltip
+              labelFormatter={(name) => `${name} Impact`}
+              valueFormatter={(value) => {
+                if (typeof value !== 'number') return String(value);
+                return name === "Labor %" 
+                  ? `${formatNumber(value)}%`
+                  : formatNumber(value);
+              }}
+            />}
+          />
           <Legend 
             wrapperStyle={{ paddingTop: 10 }}
             formatter={(value) => <span className="text-sm font-medium">{value}</span>}
+            payload={[
+              { value: 'Base', type: 'square', color: baseColor },
+              { value: 'Adjusted', type: 'square', color: adjustedColor },
+              { value: 'Difference', type: 'square', color: diffColor },
+            ]}
           />
           <ReferenceLine y={0} stroke="#000" />
-          <Bar dataKey="base" name="Base" fill="#8884d8" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="adjusted" name="Adjusted" fill="#82ca9d" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="diff" name="Difference" fill="#ffc658" radius={[4, 4, 0, 0]}>
-            <LabelList dataKey="diff" position="top" formatter={(value: number) => value >= 0 ? `+${value.toFixed(1)}` : value.toFixed(1)} />
+          <Bar dataKey="base" name="Base" fill={baseColor} radius={[4, 4, 0, 0]} />
+          <Bar dataKey="adjusted" name="Adjusted" fill={adjustedColor} radius={[4, 4, 0, 0]} />
+          <Bar dataKey="diff" name="Difference" fill={diffColor} radius={[4, 4, 0, 0]}>
+            <LabelList 
+              dataKey="diff" 
+              position="top" 
+              formatter={(value: number) => value >= 0 ? `+${formatNumber(value)}` : formatNumber(value)} 
+              fill="#6b7280"
+              style={{ fontWeight: 500, fontSize: 11 }}
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

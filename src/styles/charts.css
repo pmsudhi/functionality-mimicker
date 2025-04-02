@@ -1,0 +1,158 @@
+
+/* Chart styling */
+.recharts-wrapper {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Pie chart styling */
+.recharts-pie-sector:hover {
+  opacity: 0.85;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Bar chart styling */
+.recharts-bar-rectangle:hover {
+  opacity: 0.85;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Legend styling */
+.recharts-legend-item {
+  font-weight: 500;
+}
+
+.recharts-legend-item-text {
+  font-size: 0.85rem;
+}
+
+/* Tooltip styling enhancement */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.75rem !important;
+}
+
+/* Dark mode tooltip */
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgba(30, 30, 30, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value {
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+}
+
+/* Custom Tooltip wrapper */
+.chart-tooltip {
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.dark .chart-tooltip {
+  background-color: rgba(30, 30, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.chart-tooltip-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .chart-tooltip-label {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.chart-tooltip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.chart-tooltip-color {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.chart-tooltip-name {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 0.8125rem;
+}
+
+.dark .chart-tooltip-name {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.chart-tooltip-value {
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Chart grid */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(0, 0, 0, 0.08);
+}
+
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+/* Axis styling */
+.recharts-cartesian-axis-line {
+  stroke: rgba(0, 0, 0, 0.15);
+}
+
+.dark .recharts-cartesian-axis-line {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+
+.recharts-cartesian-axis-tick-line {
+  stroke: rgba(0, 0, 0, 0.15);
+}
+
+.dark .recharts-cartesian-axis-tick-line {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+
+.recharts-text.recharts-cartesian-axis-tick-value {
+  fill: rgba(0, 0, 0, 0.65);
+  font-size: 0.75rem;
+}
+
+.dark .recharts-text.recharts-cartesian-axis-tick-value {
+  fill: rgba(255, 255, 255, 0.65);
+}
+
+/* Enhanced colors for charts */
+.chart-color-palette-1 { fill: #8b5cf6; }
+.chart-color-palette-2 { fill: #3b82f6; }
+.chart-color-palette-3 { fill: #10b981; }
+.chart-color-palette-4 { fill: #f59e0b; }
+.chart-color-palette-5 { fill: #ef4444; }
+.chart-color-palette-6 { fill: #ec4899; }
+.chart-color-palette-7 { fill: #6366f1; }
+.chart-color-palette-8 { fill: #14b8a6; }

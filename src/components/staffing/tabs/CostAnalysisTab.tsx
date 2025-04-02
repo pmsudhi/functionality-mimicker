@@ -10,9 +10,11 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  LabelList 
+  LabelList,
+  Tooltip
 } from 'recharts';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import ChartTooltip from '@/components/ui/chart-tooltip';
 
 export const CostAnalysisTab = () => {
   // Mock data - in a real app, this would come from props or a data fetching hook
@@ -25,6 +27,15 @@ export const CostAnalysisTab = () => {
   ];
   
   const totalCost = costAnalysisData.reduce((sum, dept) => sum + dept.cost, 0);
+
+  // Define consistent colors for each department
+  const departmentColors = {
+    "FOH Management": "#8b5cf6", // purple
+    "FOH Service": "#3b82f6",    // blue
+    "BOH Management": "#10b981", // green
+    "BOH Kitchen": "#f59e0b",    // amber
+    "BOH Support": "#ef4444"     // red
+  };
 
   return (
     <Card className="border shadow-sm">
@@ -46,12 +57,6 @@ export const CostAnalysisTab = () => {
                 margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
                 barSize={80}
               >
-                <defs>
-                  <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                  </linearGradient>
-                </defs>
                 <CartesianGrid 
                   strokeDasharray="3 3" 
                   vertical={false} 
@@ -80,15 +85,35 @@ export const CostAnalysisTab = () => {
                     style: { textAnchor: 'middle', fill: '#6b7280', fontSize: 12 }
                   }}
                 />
+                <Tooltip 
+                  content={<ChartTooltip 
+                    labelFormatter={(label) => `${label}`} 
+                    valueFormatter={(value) => {
+                      if (typeof value === 'number') {
+                        return value.toLocaleString('en-US', { 
+                          style: 'currency', 
+                          currency: 'SAR', 
+                          maximumFractionDigits: 0 
+                        });
+                      }
+                      return String(value);
+                    }}
+                  />}
+                />
                 <Bar 
                   dataKey="cost" 
                   name="Monthly Cost" 
-                  fill="url(#colorCost)"
                   radius={[4, 4, 0, 0]}
                   animationDuration={1000}
                   animationEasing="ease-out"
                   isAnimationActive={true}
                 >
+                  {costAnalysisData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={departmentColors[entry.department as keyof typeof departmentColors] || "#3b82f6"} 
+                    />
+                  ))}
                   <LabelList 
                     dataKey="percentage" 
                     position="top"
@@ -134,7 +159,15 @@ export const CostAnalysisTab = () => {
               <TableBody>
                 {costAnalysisData.map((dept) => (
                   <TableRow key={dept.department}>
-                    <TableCell className="font-medium">{dept.department}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: departmentColors[dept.department as keyof typeof departmentColors] || "#3b82f6" }}
+                        ></div>
+                        {dept.department}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">{dept.cost.toLocaleString()}</TableCell>
                     <TableCell className="text-right">
                       <Badge variant="secondary">{dept.percentage}%</Badge>

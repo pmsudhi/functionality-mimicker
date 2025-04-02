@@ -12,6 +12,7 @@ import {
   Cell
 } from 'recharts';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import ChartTooltip from '@/components/ui/chart-tooltip';
 
 export const StaffingOverviewTab = () => {
   // Mock data - in a real app, this would come from props or a data fetching hook
@@ -24,18 +25,6 @@ export const StaffingOverviewTab = () => {
   ];
 
   const totalStaff = 175;
-
-  // Custom tooltip for the pie chart
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background/95 backdrop-blur-sm p-2 border rounded-lg shadow-md">
-          <p className="font-medium text-sm">{`${payload[0].name}: ${payload[0].value}%`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <Card className="border shadow-sm">
@@ -69,7 +58,12 @@ export const StaffingOverviewTab = () => {
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip 
+                  content={<ChartTooltip 
+                    labelFormatter={() => "Staff Distribution"} 
+                    valueFormatter={(value) => `${value}%`}
+                  />} 
+                />
                 <Legend 
                   layout="horizontal" 
                   verticalAlign="bottom" 
