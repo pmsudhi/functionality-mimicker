@@ -22,7 +22,7 @@ const EfficiencyComparison = () => {
               <CardTitle>Department Efficiency</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md">
+              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md pie-chart-container">
                 <p className="text-muted-foreground">Department efficiency chart</p>
               </div>
             </CardContent>
@@ -56,7 +56,7 @@ const EfficiencyComparison = () => {
               <CardTitle>Role Efficiency</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md">
+              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md pie-chart-container">
                 <p className="text-muted-foreground">Role efficiency chart</p>
               </div>
             </CardContent>
@@ -69,7 +69,7 @@ const EfficiencyComparison = () => {
               <CardTitle>Scenario Efficiency</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md">
+              <div className="h-80 flex items-center justify-center border-2 border-dashed rounded-md pie-chart-container">
                 <p className="text-muted-foreground">Scenario efficiency chart</p>
               </div>
             </CardContent>

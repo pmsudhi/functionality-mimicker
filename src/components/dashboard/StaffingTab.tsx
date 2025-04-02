@@ -49,20 +49,20 @@ export const StaffingTab = () => {
       </CardHeader>
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="h-[320px] flex flex-col">
+          <div className="h-[320px] flex flex-col pie-chart-container">
             <Badge variant="outline" className="self-start mb-2 font-medium bg-primary/5">
               <BadgeCheck className="h-3.5 w-3.5 mr-1 text-primary" />
               Department Overview
             </Badge>
             <div className="flex-1 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="85%">
                 <PieChart>
                   <Pie
                     data={staffDistribution}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    outerRadius={120}
+                    outerRadius={110}
                     innerRadius={60}
                     fill="#8884d8"
                     dataKey="value"
