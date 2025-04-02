@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { PageLayout } from '@/components/ui/page-layout';
-import SavedScenariosTab from './tabs/SavedScenariosTab';
-import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
 import { BriefcaseBusiness, ArrowLeft, FileIcon, LightbulbIcon } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { PageLayout } from '@/components/ui/page-layout';
 import { PageHeader } from '@/components/ui/page-header';
+import { ConsistentTabs } from '@/components/ui/consistent-tabs';
+import SavedScenariosTab from './tabs/SavedScenariosTab';
+import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
 
 const ScenarioManager = () => {
   const [activeTab, setActiveTab] = useState('saved');
@@ -15,6 +15,21 @@ const ScenarioManager = () => {
   
   // Check if we came from the dashboard
   const showBackButton = location.state && location.state.from === "dashboard";
+
+  const tabs = [
+    {
+      value: 'saved',
+      label: 'Saved Scenarios',
+      icon: FileIcon,
+      content: <SavedScenariosTab />
+    },
+    {
+      value: 'what-if',
+      label: 'What-If Analysis',
+      icon: LightbulbIcon,
+      content: <WhatIfAnalysisTab />
+    }
+  ];
 
   return (
     <PageLayout>
@@ -33,26 +48,12 @@ const ScenarioManager = () => {
           )}
         </PageHeader>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="bg-muted/40 mb-6 p-1 border border-border/20 rounded-md">
-            <TabsTrigger value="saved" className="data-[state=active]:bg-background rounded-md flex items-center gap-2 px-4">
-              <FileIcon className="h-4 w-4" />
-              Saved Scenarios
-            </TabsTrigger>
-            <TabsTrigger value="what-if" className="data-[state=active]:bg-background rounded-md flex items-center gap-2 px-4">
-              <LightbulbIcon className="h-4 w-4" />
-              What-If Analysis
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="saved" className="space-y-6">
-            <SavedScenariosTab />
-          </TabsContent>
-          
-          <TabsContent value="what-if" className="space-y-6">
-            <WhatIfAnalysisTab />
-          </TabsContent>
-        </Tabs>
+        <ConsistentTabs
+          tabs={tabs}
+          value={activeTab}
+          onValueChange={setActiveTab}
+          variant="outline"
+        />
       </div>
     </PageLayout>
   );
