@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { PageLayout } from "@/components/ui/page-layout";
-import { FilterBar } from "@/components/ui/filter-bar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { mockOutlets, mockBrands, mockLocations } from "@/services/mockData";
 
@@ -23,24 +22,50 @@ const Dashboard = () => {
   const currentLocation = currentOutlet ? mockLocations.find(l => l.id === currentOutlet.locationId) : null;
 
   return (
-    <PageLayout>
+    <PageLayout className="dashboard-container p-0">
       <div className="container mx-auto">
-        <DashboardHeader 
-          selectedOutlet={selectedOutlet} 
-          setSelectedOutlet={setSelectedOutlet} 
-        />
+        <div className="dashboard-header px-6">
+          <DashboardHeader 
+            selectedOutlet={selectedOutlet} 
+            setSelectedOutlet={setSelectedOutlet} 
+          />
+        </div>
         
         {currentOutlet && currentBrand && currentLocation && (
           <>
-            <div className="pb-6">
+            <div className="px-6">
               <MetricCards />
               
-              <Tabs value={selectedSection} onValueChange={setSelectedSection} className="mt-6">
-                <TabsList className="bg-muted/40 mb-6">
-                  <TabsTrigger value="staffing">Staffing Structure</TabsTrigger>
-                  <TabsTrigger value="labor">Labor Cost</TabsTrigger>
-                  <TabsTrigger value="efficiency">Efficiency Metrics</TabsTrigger>
-                  <TabsTrigger value="revenue">Revenue Projections</TabsTrigger>
+              <Tabs 
+                value={selectedSection} 
+                onValueChange={setSelectedSection} 
+                className="mt-6"
+              >
+                <TabsList className="bg-muted/40 mb-6 p-1 rounded-md border border-border/20">
+                  <TabsTrigger 
+                    value="staffing" 
+                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+                  >
+                    Staffing Structure
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="labor" 
+                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+                  >
+                    Labor Cost
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="efficiency" 
+                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+                  >
+                    Efficiency Metrics
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="revenue" 
+                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+                  >
+                    Revenue Projections
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="staffing" className="space-y-6">

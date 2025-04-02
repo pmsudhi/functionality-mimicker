@@ -18,11 +18,11 @@ const ScenarioManager = () => {
   return (
     <PageLayout>
       <div className="container mx-auto p-6">
-        <div className="mb-6">
+        <div className="mb-6 bg-gradient-to-r from-primary/5 to-transparent rounded-lg p-4">
           <div className="flex items-center gap-3 mb-2">
             {showBackButton && (
               <Link to="/">
-                <Button variant="outline" size="icon" className="mr-2">
+                <Button variant="outline" size="icon" className="mr-2 hover:bg-background/80 transition-colors">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
@@ -38,7 +38,7 @@ const ScenarioManager = () => {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="bg-muted/40 mb-6 p-1">
+          <TabsList className="bg-muted/40 mb-6 p-1 border border-border/20 rounded-md">
             <TabsTrigger value="saved" className="data-[state=active]:bg-background rounded-md flex items-center gap-2 px-4">
               <FileText className="h-4 w-4" />
               Saved Scenarios

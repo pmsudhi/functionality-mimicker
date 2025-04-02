@@ -59,3 +59,22 @@
 .drop-zone.active {
   @apply border-primary;
 }
+
+/* Enhanced dashboard styles */
+.dashboard-container {
+  @apply bg-background bg-opacity-80;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dashboard-card {
+  @apply bg-card shadow-sm hover:shadow-md transition-shadow duration-200 border border-border/30;
+}
+
+.dashboard-header {
+  @apply bg-gradient-to-r from-primary/5 to-transparent py-8 mb-6 border-b border-border/20;
+}
+
+.action-button {
+  @apply transition-all hover:translate-y-[-2px] active:translate-y-[0px] duration-200;
+}
