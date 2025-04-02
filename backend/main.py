@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import os
+import uvicorn
 
 from models import (
     Scenario, 
@@ -23,7 +24,9 @@ from models import (
     PeakHourResult,
     ComparisonResult,
     OptimizationResult,
-    WhatIfResult
+    WhatIfResult,
+    Brand, BrandCreate, BrandUpdate, BrandResponse,
+    Outlet, OutletCreate, OutletUpdate, OutletResponse
 )
 
 from calculations import (
@@ -43,7 +46,8 @@ from database import (
     get_scenario_by_id,
     save_scenario,
     update_scenario,
-    delete_scenario
+    delete_scenario,
+    create_tables
 )
 
 from auth import (
@@ -63,7 +67,30 @@ from ml_models import (
     get_staffing_optimizer
 )
 
-app = FastAPI(title="F&B Manpower Modeling API")
+from routers import (
+    calculations,
+    default_values,
+    operational_constants,
+    staffing,
+    financial,
+    peak_hour,
+    efficiency,
+    revenue,
+    pi,
+    common
+)
+
+from middleware.auth import AuthMiddleware
+from utils.response import create_success_response, create_error_response
+from utils.validation import DataValidator, ScenarioValidator, FinancialValidator
+from utils.cache import cached
+from utils.pagination import get_pagination_params, paginate
+
+app = FastAPI(
+    title="Manpower Planning API",
+    description="API for restaurant manpower planning and optimization",
+    version="1.0.0"
+)
 
 # Configure CORS
 app.add_middleware(
@@ -74,15 +101,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add authentication middleware
+app.add_middleware(AuthMiddleware)
+
+# Include routers
+app.include_router(calculations.router)
+app.include_router(default_values.router)
+app.include_router(operational_constants.router)
+app.include_router(staffing.router)
+app.include_router(financial.router)
+app.include_router(peak_hour.router)
+app.include_router(efficiency.router)
+app.include_router(revenue.router)
+app.include_router(pi.router)
+app.include_router(common.router)
+
 # Initialize database on startup
 @app.on_event("startup")
 async def startup_event():
     init_db()
+    create_tables()
 
 # Root endpoint
 @app.get("/")
 async def root():
-    return {"message": "F&B Manpower Modeling API"}
+    return create_success_response(
+        data={"message": "Welcome to the Manpower Planning API"},
+        message="API is running"
+    )
+
+@app.get("/health")
+async def health_check():
+    return create_success_response(
+        data={"status": "healthy"},
+        message="Health check passed"
+    )
 
 # Authentication endpoints
 @app.post("/token", response_model=Token)
@@ -113,11 +166,26 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 # Scenario endpoints
 @app.get("/scenarios/", response_model=List[Scenario])
+@cached(ttl=300, key_prefix="scenarios")
 async def read_scenarios(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    pagination: PaginationParams = Depends(get_pagination_params)
 ):
-    return await get_scenarios(db, current_user.id)
+    try:
+        scenarios = await get_scenarios(db, current_user.id)
+        paginated_scenarios, total = apply_pagination(scenarios, pagination)
+        
+        return create_success_response(
+            data=paginate(paginated_scenarios, total, pagination.page, pagination.size),
+            message="Scenarios retrieved successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error retrieving scenarios"
+        )
 
 @app.get("/scenarios/{scenario_id}", response_model=Scenario)
 async def read_scenario(
@@ -197,28 +265,92 @@ async def calculate_staffing_endpoint(
     params: StaffingParams,
     current_user: User = Depends(get_current_active_user)
 ):
-    return calculate_staffing_requirements(params)
+    try:
+        # Validate parameters
+        ScenarioValidator.validate_scenario_parameters(params.dict())
+        
+        # Calculate staffing requirements
+        result = calculate_staffing_requirements(params)
+        
+        return create_success_response(
+            data=result,
+            message="Staffing requirements calculated successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error calculating staffing requirements"
+        )
 
 @app.post("/calculations/revenue", response_model=RevenueResult)
 async def generate_revenue_endpoint(
     params: RevenueParams,
     current_user: User = Depends(get_current_active_user)
 ):
-    return generate_revenue_projections(params)
+    try:
+        # Validate parameters
+        FinancialValidator.validate_revenue_parameters(params.dict())
+        
+        # Generate revenue projections
+        result = generate_revenue_projections(params)
+        
+        return create_success_response(
+            data=result,
+            message="Revenue projections generated successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error generating revenue projections"
+        )
 
 @app.post("/calculations/pl", response_model=PLResult)
 async def calculate_pl_endpoint(
     params: PLParams,
     current_user: User = Depends(get_current_active_user)
 ):
-    return calculate_profit_loss(params)
+    try:
+        # Validate parameters
+        FinancialValidator.validate_revenue_parameters(params.dict())
+        
+        # Calculate profit/loss
+        result = calculate_profit_loss(params)
+        
+        return create_success_response(
+            data=result,
+            message="Profit/loss calculated successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error calculating profit/loss"
+        )
 
 @app.post("/calculations/peak-hours", response_model=PeakHourResult)
 async def analyze_peak_hours_endpoint(
     params: PeakHourParams,
     current_user: User = Depends(get_current_active_user)
 ):
-    return analyze_peak_hours(params)
+    try:
+        # Validate parameters
+        ScenarioValidator.validate_scenario_parameters(params.dict())
+        
+        # Analyze peak hours
+        result = analyze_peak_hours(params)
+        
+        return create_success_response(
+            data=result,
+            message="Peak hours analyzed successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error analyzing peak hours"
+        )
 
 @app.post("/calculations/optimize", response_model=OptimizationResult)
 async def optimize_staffing_endpoint(
@@ -266,15 +398,36 @@ async def what_if_analysis_endpoint(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    # Check if scenario exists and user has access
-    scenario = await get_scenario_by_id(db, params.baseScenarioId)
-    if scenario is None:
-        raise HTTPException(status_code=404, detail="Scenario not found")
-    
-    if scenario.owner_id != current_user.id and not current_user.is_superuser:
-        raise HTTPException(status_code=403, detail="Not authorized to access this scenario")
-    
-    return run_what_if_analysis(params)
+    try:
+        # Check if scenario exists and user has access
+        scenario = await get_scenario_by_id(db, params.baseScenarioId)
+        if scenario is None:
+            raise create_error_response(
+                "Scenario not found",
+                status_code=404,
+                message="The specified scenario does not exist"
+            )
+        
+        if scenario.owner_id != current_user.id and not current_user.is_superuser:
+            raise create_error_response(
+                "Not authorized",
+                status_code=403,
+                message="You don't have permission to access this scenario"
+            )
+        
+        # Run what-if analysis
+        result = run_what_if_analysis(params)
+        
+        return create_success_response(
+            data=result,
+            message="What-if analysis completed successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error running what-if analysis"
+        )
 
 @app.post("/calculations/compare", response_model=ComparisonResult)
 async def compare_scenarios_endpoint(
@@ -282,26 +435,52 @@ async def compare_scenarios_endpoint(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    scenario_ids = data.get("scenario_ids", [])
-    if not scenario_ids:
-        raise HTTPException(status_code=400, detail="No scenario IDs provided")
-    
-    scenarios = []
-    for scenario_id in scenario_ids:
-        scenario = await get_scenario_by_id(db, scenario_id)
-        if scenario is None:
-            raise HTTPException(status_code=404, detail=f"Scenario with ID {scenario_id} not found")
+    try:
+        scenario_ids = data.get("scenario_ids", [])
+        if not scenario_ids:
+            raise create_error_response(
+                "No scenario IDs provided",
+                status_code=400,
+                message="Please provide at least one scenario ID to compare"
+            )
         
-        # Check if user has access to this scenario
-        if scenario.owner_id != current_user.id and not current_user.is_superuser:
-            raise HTTPException(status_code=403, detail=f"Not authorized to access scenario {scenario_id}")
+        scenarios = []
+        for scenario_id in scenario_ids:
+            scenario = await get_scenario_by_id(db, scenario_id)
+            if scenario is None:
+                raise create_error_response(
+                    f"Scenario {scenario_id} not found",
+                    status_code=404,
+                    message="One or more scenarios do not exist"
+                )
+            
+            # Check if user has access to this scenario
+            if scenario.owner_id != current_user.id and not current_user.is_superuser:
+                raise create_error_response(
+                    f"Not authorized to access scenario {scenario_id}",
+                    status_code=403,
+                    message="You don't have permission to access one or more scenarios"
+                )
+            
+            scenarios.append(scenario)
         
-        scenarios.append(scenario)
-    
-    return compare_scenarios(scenarios)
+        # Compare scenarios
+        result = compare_scenarios(scenarios)
+        
+        return create_success_response(
+            data=result,
+            message="Scenarios compared successfully"
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error comparing scenarios"
+        )
 
 # Machine learning endpoints
 @app.post("/ml/demand-forecast")
+@cached(ttl=3600)  # Cache for 1 hour
 async def forecast_demand(
     features: Dict[str, Any],
     model_type: str = "random_forest",
@@ -310,9 +489,17 @@ async def forecast_demand(
     try:
         forecaster = get_demand_forecaster(model_type)
         result = forecaster.predict(features)
-        return result
+        
+        return create_success_response(
+            data=result,
+            message="Demand forecast generated successfully"
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error generating demand forecast"
+        )
 
 @app.post("/ml/train-demand-model")
 async def train_demand_model(
@@ -348,7 +535,141 @@ async def train_staffing_model(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Brand endpoints
+@app.post("/brands/", response_model=BrandResponse, status_code=status.HTTP_201_CREATED)
+async def create_brand(
+    brand: BrandCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    try:
+        # Validate brand data
+        DataValidator.validate_model(brand.dict(), BrandCreate)
+        
+        # Create brand
+        db_brand = Brand(
+            id=str(uuid.uuid4()),
+            name=brand.name,
+            service_style=brand.service_style,
+            default_parameters=brand.default_parameters
+        )
+        db.add(db_brand)
+        db.commit()
+        db.refresh(db_brand)
+        
+        return create_success_response(
+            data=db_brand,
+            message="Brand created successfully",
+            status_code=status.HTTP_201_CREATED
+        )
+    except Exception as e:
+        raise create_error_response(
+            str(e),
+            status_code=500,
+            message="Error creating brand"
+        )
+
+@app.get("/brands/", response_model=List[BrandResponse])
+def list_brands(db: Session = Depends(get_db)):
+    return db.query(Brand).all()
+
+@app.get("/brands/{brand_id}", response_model=BrandResponse)
+def get_brand(brand_id: str, db: Session = Depends(get_db)):
+    brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    if not brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    return brand
+
+@app.put("/brands/{brand_id}", response_model=BrandResponse)
+def update_brand(brand_id: str, brand: BrandUpdate, db: Session = Depends(get_db)):
+    db_brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    if not db_brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    
+    update_data = brand.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_brand, field, value)
+    
+    db.commit()
+    db.refresh(db_brand)
+    return db_brand
+
+@app.delete("/brands/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_brand(brand_id: str, db: Session = Depends(get_db)):
+    brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    if not brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    db.delete(brand)
+    db.commit()
+    return None
+
+# Outlet endpoints
+@app.post("/outlets/", response_model=OutletResponse, status_code=status.HTTP_201_CREATED)
+def create_outlet(outlet: OutletCreate, db: Session = Depends(get_db)):
+    # Verify brand exists
+    brand = db.query(Brand).filter(Brand.id == outlet.brand_id).first()
+    if not brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    
+    db_outlet = Outlet(
+        id=str(uuid.uuid4()),
+        brand_id=outlet.brand_id,
+        name=outlet.name,
+        location=outlet.location,
+        currency=outlet.currency,
+        status=outlet.status,
+        space_parameters=outlet.space_parameters.dict(),
+        service_parameters=outlet.service_parameters.dict(),
+        operational_parameters=outlet.operational_parameters.dict()
+    )
+    db.add(db_outlet)
+    db.commit()
+    db.refresh(db_outlet)
+    return db_outlet
+
+@app.get("/outlets/", response_model=List[OutletResponse])
+def list_outlets(brand_id: str = None, db: Session = Depends(get_db)):
+    query = db.query(Outlet)
+    if brand_id:
+        query = query.filter(Outlet.brand_id == brand_id)
+    return query.all()
+
+@app.get("/outlets/{outlet_id}", response_model=OutletResponse)
+def get_outlet(outlet_id: str, db: Session = Depends(get_db)):
+    outlet = db.query(Outlet).filter(Outlet.id == outlet_id).first()
+    if not outlet:
+        raise HTTPException(status_code=404, detail="Outlet not found")
+    return outlet
+
+@app.put("/outlets/{outlet_id}", response_model=OutletResponse)
+def update_outlet(outlet_id: str, outlet: OutletUpdate, db: Session = Depends(get_db)):
+    db_outlet = db.query(Outlet).filter(Outlet.id == outlet_id).first()
+    if not db_outlet:
+        raise HTTPException(status_code=404, detail="Outlet not found")
+    
+    update_data = outlet.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        if value is not None:
+            if field in ["space_parameters", "service_parameters", "operational_parameters"]:
+                current_value = getattr(db_outlet, field)
+                if isinstance(current_value, dict):
+                    current_value.update(value.dict())
+                    value = current_value
+            setattr(db_outlet, field, value)
+    
+    db.commit()
+    db.refresh(db_outlet)
+    return db_outlet
+
+@app.delete("/outlets/{outlet_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_outlet(outlet_id: str, db: Session = Depends(get_db)):
+    outlet = db.query(Outlet).filter(Outlet.id == outlet_id).first()
+    if not outlet:
+        raise HTTPException(status_code=404, detail="Outlet not found")
+    db.delete(outlet)
+    db.commit()
+    return None
+
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Table
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Table, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.sql import func
@@ -6,10 +6,10 @@ from datetime import datetime
 import os
 import json
 from typing import List, Optional, Dict, Any
-from models import Scenario, StaffPosition, SpaceParameters, ServiceParameters, RevenueDrivers, OperationalHours, EfficiencyDrivers
+from models import Scenario, StaffPosition, SpaceParameters, ServiceParameters, RevenueDrivers, OperationalHours, EfficiencyDrivers, ServiceStyle, Currency, OutletStatus
 
 # Get database URL from environment variable or use default
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/fb_manpower")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/manpower_planning")
 
 # Create SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
@@ -49,6 +49,18 @@ class DBUser(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     scenarios = relationship("DBScenario", back_populates="owner")
+
+class DBDefaultValues(Base):
+    __tablename__ = "default_values"
+    
+    id = Column(String, primary_key=True, index=True)
+    category = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
+    value = Column(JSON, nullable=False)
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    is_active = Column(Boolean, default=True)
 
 class DBScenario(Base):
     __tablename__ = "scenarios"
@@ -148,6 +160,35 @@ class DBEfficiencyDrivers(Base):
     seasonality_factor = Column(Float)
     
     scenario = relationship("DBScenario", back_populates="efficiency_drivers")
+
+class Brand(Base):
+    __tablename__ = "brands"
+
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    service_style = Column(Enum(ServiceStyle), nullable=False)
+    default_parameters = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    outlets = relationship("Outlet", back_populates="brand")
+
+class Outlet(Base):
+    __tablename__ = "outlets"
+
+    id = Column(String, primary_key=True)
+    brand_id = Column(String, ForeignKey("brands.id"), nullable=False)
+    name = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    currency = Column(Enum(Currency), nullable=False)
+    status = Column(Enum(OutletStatus), nullable=False, default=OutletStatus.PLANNED)
+    space_parameters = Column(JSON, nullable=False)
+    service_parameters = Column(JSON, nullable=False)
+    operational_parameters = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    brand = relationship("Brand", back_populates="outlets")
 
 # Create all tables
 def create_tables():
