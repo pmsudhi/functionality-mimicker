@@ -4,16 +4,29 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/ui/page-layout';
 import SavedScenariosTab from './tabs/SavedScenariosTab';
 import WhatIfAnalysisTab from './tabs/WhatIfAnalysisTab';
-import { BriefcaseBusiness, FileText, Lightbulb } from 'lucide-react';
+import { BriefcaseBusiness, FileText, Lightbulb, ArrowLeft } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const ScenarioManager = () => {
   const [activeTab, setActiveTab] = useState('saved');
+  const location = useLocation();
+  
+  // Check if we came from the dashboard
+  const showBackButton = location.state && location.state.from === "dashboard";
 
   return (
     <PageLayout>
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
+            {showBackButton && (
+              <Link to="/">
+                <Button variant="outline" size="icon" className="mr-2">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
             <div className="bg-primary/10 p-2 rounded-md">
               <BriefcaseBusiness className="h-6 w-6 text-primary" />
             </div>

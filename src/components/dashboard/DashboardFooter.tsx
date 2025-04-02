@@ -12,7 +12,7 @@ export const DashboardFooter = () => {
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </Link>
-      <Link to="/scenarios">
+      <Link to="/scenarios" state={{ from: "dashboard" }}>
         <Button variant="outline">
           Manage Scenarios
           <ChevronRight className="ml-2 h-4 w-4" />
